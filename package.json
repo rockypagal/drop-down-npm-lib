@@ -1,0 +1,35 @@
+{
+  "name": "ru-react-dropdown-component",
+  "version": "1.0.3",
+  "description": "reusable react dropdown component",
+  "main": "dist/index.es.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-lib": "rollup -c"
+  },
+  "keywords": [
+    "ru-react-dropdown-component",
+    "react",
+    "dropdown",
+    "select",
+    "options",
+    "select dropdown"
+  ],
+  "author": "rockeypagal",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/preset-react": "^7.25.9",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rollup": "^2.79.2",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-terser": "^7.0.2"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
