@@ -179,5 +179,3 @@ export default MyComponent;
 ---
 
 This documentation covers the main aspects of the `DropDownBox` component, including prop types, behaviors, and usage examples. Adjust as needed for your project's specific requirements.
-
-# drop-down-npm-lib
