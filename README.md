@@ -92,10 +92,10 @@ export default MyComponent;
 - **Type:** `object`
 - **Description:** Custom styles for the text within the dropdown.
 
-### `animateDropDownTitleStyle`
+### `titleStyle`
 
 - **Type:** `object`
-- **Description:** Object containing styles for the animated dropdown title. Format: `{ labelDown: { style }, labelUp: { style } }`.
+- **Description:** Object containing styles for the animated dropdown title. Format: `{ fontSize:'14px' }`.
 
 ### `incomingValue`
 

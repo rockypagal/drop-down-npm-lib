@@ -13,7 +13,7 @@ const DropDownBox = ({
   customDropBoxStyles, // ? provide styles in object to style the select box
   disabled = false, // ? provide boolean to disable drop down
   customTextStyle, // ? provide styles to style text in drop down
-  animateDropDownTitleStyle, //? provide the object with 2 object {labelDown:{style},labelUp:{style}}
+  titleStyle = {}, //? provide the object with 2 object {labelDown:{style},labelUp:{style}}
   incomingValue, // ? provide incoming string value which will be set on render
   resetButton, // ? provide boolean or string to show reset button clear selected value
   callCustomFunction, // ? provide formik.setValue
@@ -28,23 +28,35 @@ const DropDownBox = ({
   const [menuOptions, setMenuOptions] = useState(options);
   const [dropDownValue, setDropDownValue] = useState(placeholder);
   const [dropDownValueTwo, setDropDownValueTwo] = useState("");
-
+  const [timerId, setTimerId] = useState(null);
   const handleClick = (e) => {
     setAddStyle(!addStyle);
     // formik.setFieldValue("search", "")
     DropBoxVisibility();
   };
-
   function DropBoxVisibility() {
+    if (timerId) {
+      clearTimeout(timerId);
+      setTimerId(null);
+    }
     if (showMenu) {
       const styleTimer = setTimeout(() => {
         setShowMenu(false);
-        clearTimeout(styleTimer);
+        // clearTimeout(styleTimer);
       }, 200);
+      setTimerId(styleTimer);
     } else {
       setShowMenu(true);
     }
   }
+
+  useEffect(() => {
+    return () => {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+    };
+  }, [timerId]);
   // ? function to set reset button value
   const handleResetBtnText = () => {
     return typeof resetButton === "string" ? resetButton : "All";
@@ -66,9 +78,9 @@ const DropDownBox = ({
 
   useEffect(() => {
     if (dropDownValueTwo || dropDownValue === handleResetBtnText()) {
-      if (callCustomFunction) {
+      if (callCustomFunction && dropDownValueTwo) {
         callCustomFunction(dropDownValueTwo, customValueForCustomFunction);
-      } else if (customFormikLabel) {
+      } else if (customFormikLabel && dropDownValueTwo) {
         customSetter(customFormikLabel, dropDownValueTwo);
       } else {
         customSetter(dropDownValueTwo);
@@ -125,11 +137,7 @@ const DropDownBox = ({
               : "")
           }
           style={
-            animateDropDownTitle
-              ? dropDownValueTwo || showMenu
-                ? { ...animateDropDownTitleStyle?.labelUp, padding: "0" }
-                : { ...animateDropDownTitleStyle?.labelDown, padding: "0" }
-              : {}
+            animateDropDownTitle ? { padding: "0", ...titleStyle } : titleStyle
           }
         >
           <span>{dropDownTitle ? dropDownTitle : ""}</span>
@@ -156,14 +164,7 @@ const DropDownBox = ({
           }}
           style={customDropBoxStyles ? customDropBoxStyles : {}}
         >
-          <div
-            className="default_value"
-            style={
-              customTextStyle && dropDownValue === placeholder
-                ? customTextStyle
-                : {}
-            }
-          >
+          <div className="default_value" style={customTextStyle}>
             {dropDownValue || "\u00A0"}
           </div>
           <svg
@@ -230,7 +231,7 @@ const DropDownMenu = ({
   const [search, setSearch] = useState("");
 
   const handleSearch = (e) => {
-    setSearch(e.target.value.trim());
+    setSearch(e.target.value);
     // formik.setFieldValue("search", e.target.value.toLowerCase())
   };
 
@@ -297,6 +298,7 @@ const DropDownMenu = ({
                 name="search"
                 value={search}
                 onChange={handleSearch}
+                maxLength={80}
               />
             </div>
           ) : null}
