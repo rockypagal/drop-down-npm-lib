@@ -7,6 +7,8 @@ The `ru-react-dropdown-component` library provides the DropDownBox component, a 
 ```jsx
 import React, { useState } from "react";
 import DropDownBox from "ru-react-dropdown-component";
+// Importing CSS is optional. However, if you notice a slight delay in applying styles, consider importing it for better performance.
+import "ru-react-dropdown-component/dist/styles.css";
 
 const MyComponent = () => {
   const [selectedValue, setSelectedValue] = useState("");
@@ -17,15 +19,17 @@ const MyComponent = () => {
 
   return (
     <DropDownBox
-      dropDownTitle="Select an option"
-      animateDropDownTitle={true}
+      title="Select an option"
+      animateTitle={true}
       options={options}
       placeholder="Choose..."
       size="medium"
-      showSearchBar={true}
-      customSetter={setSelectedValue}
-      customDropBoxStyles={{ border: "1px solid #ccc" }}
-      customTextStyle={{ color: "blue" }}
+      showSearch={true}
+      setter={setSelectedValue}
+      styles={{
+        selectStyles: { border: "1px solid #ccc" },
+        selectValueStyle: { color: "blue" },
+      }}
       resetButton={true}
     />
   );
@@ -36,12 +40,12 @@ export default MyComponent;
 
 ## Props
 
-### `dropDownTitle`
+### `title`
 
 - **Type:** `string`
 - **Description:** The label for the dropdown.
 
-### `animateDropDownTitle`
+### `animateTitle`
 
 - **Type:** `boolean`
 - **Description:** If true, animates the dropdown title on focus or when a value is selected.
@@ -59,27 +63,17 @@ export default MyComponent;
 ### `size`
 
 - **Type:** `string`
-- **Description:** Sets predefined sizes for the dropdown. Accepted values are `"small"`, `"medium"`, `"large"`, or `"mini"`.
+- **Description:** Sets predefined sizes for the dropdown. Accepted values are "small", "medium", "large", or "mini".
 
-### `showSearchBar`
+### `showSearch`
 
 - **Type:** `boolean`
 - **Description:** If true, shows a search bar within the dropdown.
 
-### `customSetter`
+### `setter`
 
 - **Type:** `function`
 - **Description:** Function to set the selected value. Typically used with `useState` or `formik.setFieldValue`.
-
-### `customFormikLabel`
-
-- **Type:** `string`
-- **Description:** The label used for `formik.setFieldValue`.
-
-### `customDropBoxStyles`
-
-- **Type:** `object`
-- **Description:** Custom styles for the select box.
 
 ### `disabled`
 
@@ -87,56 +81,34 @@ export default MyComponent;
 - **Default:** `false`
 - **Description:** If true, disables the dropdown.
 
-### `customTextStyle`
+### `resetButton`
 
-- **Type:** `object`
-- **Description:** Custom styles for the text within the dropdown.
-
-### `titleStyle`
-
-- **Type:** `object`
-- **Description:** Object containing styles for the animated dropdown title. Format: `{ fontSize:'14px' }`.
+- **Type:** `boolean | string`
+- **Description:** If true, shows a reset button to clear the selected value. If a string is provided, it will be used as the button text.
 
 ### `incomingValue`
 
 - **Type:** `string`
 - **Description:** Incoming value to be set on render.
 
-### `resetButton`
+### `customArrow`
 
-- **Type:** `boolean`
-- **Description:** If true, shows a reset button to clear the selected value.
+- **Type:** `JSX.Element`
+- **Description:** Custom JSX or SVG element to replace the default dropdown arrow.
 
-### `callCustomFunction`
-
-- **Type:** `function`
-- **Description:** Custom function to be called with the selected value.
-
-### `customValueForCustomFunction`
-
-- **Type:** `any`
-- **Description:** Custom value to be passed to the `callCustomFunction`.
-
-### `listApi`
-
-- **Type:** `function`
-- **Description:** API call function to fetch list options.
-
-### `apiData`
+### `styles`
 
 - **Type:** `object`
-- **Default:** `{}`
-- **Description:** Data to be sent with the API request.
-
-### `dispatch`
-
-- **Type:** `function`
-- **Description:** Redux dispatch function.
-
-### `listOfKeyValue`
-
-- **Type:** `object`
-- **Description:** Object containing label and value keys for options. Format: `{ labelKey: "productName", valueKey: "productId" }`.
+- **Description:** Object containing styles for various parts of the dropdown. Keys include:
+  - `selectStyles`: Styles for the select box.
+  - `selectValueStyle`: Styles for the selected value text.
+  - `placeholderStyle`: Styles for the placeholder text.
+  - `titleStyle`: Styles for the title.
+  - `arrowStyle`: Styles for the dropdown arrow.
+  - `disableStyle`: Styles for the dropdown when disabled.
+  - `optionsBoxStyle`: Styles for the dropdown options container.
+  - `optionsStyle`: Styles for individual options.
+  - `searchBoxStyle`: Styles for the search bar.
 
 ### Behavior
 
@@ -159,7 +131,7 @@ export default MyComponent;
 - `options`
 - `disabled`
 - `addStyle`
-- `showSearchBar`
+- `showSearch`
 - `dropDownValueTwo`
 - `resetButton`
 - `menuOptions`
@@ -168,12 +140,10 @@ export default MyComponent;
 - `setMenuOptions`
 - `showMenu`
 - `handleClick`
-- `listApi`
-- `dispatch`
 
 ### Notes
 
-- Ensure to provide required props such as `options` and `customSetter` for proper functionality.
+- Ensure to provide required props such as `options` and `setter` for proper functionality.
 - The component is designed to be flexible with various styling and functionality customizations.
 
 ---

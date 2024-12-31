@@ -20,10 +20,23 @@
 .drop-down-main-large {
   width: 100%;
 }
-
+.drop-down-main.drop-down-main-large .default_value {
+  max-width: 100%;
+}
+.drop-down-main.drop-down-main-small .default_value,
+.drop-down-main.drop-down-main-mini .default_value,
+.drop-down-main.drop-down-main-medium .default_value {
+  max-width: 90%;
+}
+.drop-down-main .direct .default_value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .drop-down-main .drop-down-title {
   padding: 0.5rem 0;
   font-weight: 500;
+  background: white;
 }
 
 .drop-down-main .drop-down-selector {
@@ -42,13 +55,15 @@
   padding: 0.65rem;
   border-radius: 0.3125rem;
   border: 1px solid #a1a4b9;
+  user-select: none;
 }
 
 .drop-down-selector .drop-arrow {
   font-size: 1rem;
   transition: all 0.15s;
-  cursor: pointer;
+  /* cursor: pointer; */
   color: #415094;
+  pointer-events: none;
 }
 
 .drop-down-selector .up-arrow {
@@ -63,11 +78,12 @@
 
 .drop-down-selector .drop-down-menu {
   position: absolute;
-  top: 3rem;
+  /* top: 3rem; */
+  top: 105%;
   left: 0;
   width: 100%;
   background-color: white;
-  z-index: 7;
+  z-index: 20;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
   /* box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22); */
   /* box-shadow: 0 24px 38px 3px rgb(255 255 255 / 14%),
@@ -79,6 +95,9 @@
   max-height: 10rem;
   overflow-y: scroll;
   margin-bottom: 1rem;
+}
+.drop-down-selector .drop-down-menu.search-height-adjust {
+  max-height: 11.5rem;
 }
 
 .show-drop-scroll .drop-down-menu::-webkit-scrollbar {
@@ -254,6 +273,9 @@
 .drop-down-menu .drop-down-item:hover {
   background-color: #dbedff;
 }
+.drop-down-menu .drop-down-item span {
+  overflow: hidden;
+}
 
 .drop-down-menu .selectedDropBox {
   background-color: #f3f6f9;
@@ -277,7 +299,7 @@
   z-index: 1;
   opacity: 0.7;
   font-size: 1rem;
-  line-height:0;
+  line-height: 0;
 }
 
 .animateDropDownLabel span {
@@ -296,7 +318,7 @@
 
 .animateDropDownLabelUp span {
   font-size: 0.75rem;
-  background: white;
+  background: inherit;
 }
 
 .direct.fixedHeight {

@@ -13,10 +13,11 @@
     "dropdown",
     "select",
     "options",
-    "select dropdown"
+    "select dropdown",
+    "front-end"
   ],
   "author": "rockeypagal",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@babel/preset-react": "^7.25.9",
     "@rollup/plugin-node-resolve": "^15.3.0",
@@ -28,8 +29,16 @@
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-terser": "^7.0.2"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rockypagal/drop-down-npm-lib"
+  },
+  "bugs": {
+    "url": "https://github.com/rockypagal/drop-down-npm-lib/issues"
+  },
+  "homepage": "https://github.com/rockypagal/drop-down-npm-lib",
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
   }
 }
