@@ -1,6 +1,6 @@
 {
   "name": "ru-react-dropdown-component",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "reusable react dropdown component",
   "main": "dist/index.es.js",
   "scripts": {
@@ -39,6 +39,6 @@
   "homepage": "https://github.com/rockypagal/drop-down-npm-lib",
   "peerDependencies": {
     "react": "^18 || ^19",
-    "react-dom": "^18 || ^19"
+    "react-dom": "^18 || ^19"
   }
 }
