@@ -94,7 +94,7 @@ const DropDownBox = ({
           "Dropdown component requires a setter or callback function to handle value changes. Please provide a valid 'setter', or 'onSelect' prop."
         );
       } else if ((onSelect && dropDownValueTwo) || (onSelect && isReset)) {
-        onSelect(dropDownValueTwo, customValueForCustomFunction);
+        onSelect(dropDownValueTwo);
       } else if (setter || (setter && isReset)) {
         setter(dropDownValueTwo);
       }
@@ -134,13 +134,7 @@ const DropDownBox = ({
   const memoizedOptions = useMemo(() => options, [options]);
 
   useEffect(() => {
-    if (false) {
-      const newOptions = options.splice(0, 500);
-
-      setMenuOptions(newOptions);
-    } else {
-      setMenuOptions(options);
-    }
+    setMenuOptions(options);
   }, [memoizedOptions]);
 
   useEffect(() => {
@@ -149,7 +143,6 @@ const DropDownBox = ({
       (!dropDownValueTwo && incomingValue)
     ) {
       const result = options?.find((item) => item?.value === incomingValue);
-
       if (result?.value === incomingValue) {
         setHistoryIncomingValue(result?.value);
         setDropDownValueTwo(result?.value);

@@ -7,7 +7,8 @@ The `ru-react-dropdown-component` library provides the DropDownBox component, a 
 ```jsx
 import React, { useState } from "react";
 import DropDownBox from "ru-react-dropdown-component";
-// Importing CSS is optional. However, if you notice a slight delay in applying styles, consider importing it for better performance.
+// Importing CSS is optional. However, if you notice a slight delay in
+// applying styles, consider importing it for better performance.
 import "ru-react-dropdown-component/dist/styles.css";
 
 const MyComponent = () => {
@@ -38,7 +39,29 @@ const MyComponent = () => {
 export default MyComponent;
 ```
 
+### Notes
+
+- Ensure to provide required props such as `options` and `setter` or `onSelect` for proper functionality.
+- The component is designed to be flexible with various styling and functionality customizations.
+
 ## Props
+
+### `options`
+
+- **Type:** `Array[{label: string, value: string}]`
+- **Description:** Array of objects to populate the dropdown options.
+
+### `onSelect`
+
+- **Type:** `function`
+- **Description:** Callback function triggered when an option is selected. `Receives two arguments: first the selected value and an optional object` for additional data.
+- **Note:** Useful for executing additional logic, such as updating state or triggering side effects, when a value is selected `use can use only one function to get selected value either use onSelect or setter`.
+
+### `setter`
+
+- **Type:** `function`
+- **Description:** Function to set the selected value. Typically used with `useState`.
+- **Note:** It is easy to use and simple and recommended if you only want to get the selected value.
 
 ### `title`
 
@@ -50,10 +73,19 @@ export default MyComponent;
 - **Type:** `boolean`
 - **Description:** If true, animates the dropdown title on focus or when a value is selected.
 
-### `options`
+### `styles`
 
-- **Type:** `Array<{label: string, value: string}>`
-- **Description:** Array of objects to populate the dropdown options.
+- **Type:** `object`
+- **Description:** Object containing styles for various parts of the dropdown. Keys include:
+  - `selectStyles`: Styles for the select box.
+  - `selectValueStyle`: Styles for the selected value text.
+  - `placeholderStyle`: Styles for the placeholder text.
+  - `titleStyle`: Styles for the title.
+  - `arrowStyle`: Styles for the dropdown arrow.
+  - `disableStyle`: Styles for the dropdown when disabled.
+  - `optionsBoxStyle`: Styles for the dropdown options container.
+  - `optionsStyle`: Styles for individual options.
+  - `searchBoxStyle`: Styles for the search bar.
 
 ### `placeholder`
 
@@ -69,11 +101,6 @@ export default MyComponent;
 
 - **Type:** `boolean`
 - **Description:** If true, shows a search bar within the dropdown.
-
-### `setter`
-
-- **Type:** `function`
-- **Description:** Function to set the selected value. Typically used with `useState` or `formik.setFieldValue`.
 
 ### `disabled`
 
@@ -96,55 +123,33 @@ export default MyComponent;
 - **Type:** `JSX.Element`
 - **Description:** Custom JSX or SVG element to replace the default dropdown arrow.
 
-### `styles`
+### List of All Props
 
-- **Type:** `object`
-- **Description:** Object containing styles for various parts of the dropdown. Keys include:
-  - `selectStyles`: Styles for the select box.
-  - `selectValueStyle`: Styles for the selected value text.
-  - `placeholderStyle`: Styles for the placeholder text.
-  - `titleStyle`: Styles for the title.
-  - `arrowStyle`: Styles for the dropdown arrow.
-  - `disableStyle`: Styles for the dropdown when disabled.
-  - `optionsBoxStyle`: Styles for the dropdown options container.
-  - `optionsStyle`: Styles for individual options.
-  - `searchBoxStyle`: Styles for the search bar.
+1. `title`
+2. `animateTitle`
+3. `options`
+4. `placeholder`
+5. `size`
+6. `showSearch`
+7. `setter`
+8. `disabled`
+9. `incomingValue`
+10. `resetButton`
+11. `onSelect`
+12. `beforeSelect`
+13. `afterSelect`
+14. `customArrow`
+15. `styles`
 
-### Behavior
-
-### State Variables
-
-- `showMenu`: Controls the visibility of the dropdown menu.
-- `addStyle`: Toggles additional styles for the dropdown arrow.
-- `menuOptions`: Holds the options to be displayed in the dropdown menu.
-- `dropDownValue`: Holds the current displayed value of the dropdown.
-- `dropDownValueTwo`: Holds the current selected value's internal representation.
-
-### Methods
-
-- `handleClick`: Toggles the dropdown menu visibility and handles styling.
-- `DropBoxVisibility`: Manages the visibility of the dropdown menu with a delay for smooth transition.
-- `useEffect` for updating state based on props and other dependencies.
-
-#### All Props
-
-- `options`
-- `disabled`
-- `addStyle`
-- `showSearch`
-- `dropDownValueTwo`
-- `resetButton`
-- `menuOptions`
-- `setDropDownValue`
-- `setDropDownValueTwo`
-- `setMenuOptions`
-- `showMenu`
-- `handleClick`
-
-### Notes
-
-- Ensure to provide required props such as `options` and `setter` for proper functionality.
-- The component is designed to be flexible with various styling and functionality customizations.
+- `selectStyles`
+- `selectValueStyle`
+- `placeholderStyle`
+- `titleStyle`
+- `arrowStyle`
+- `disableStyle`
+- `optionsBoxStyle`
+- `optionsStyle`
+- `searchBoxStyle`
 
 ---
 
