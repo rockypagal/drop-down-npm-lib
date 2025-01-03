@@ -54,8 +54,9 @@ export default MyComponent;
 ### `onSelect`
 
 - **Type:** `function`
-- **Description:** Callback function triggered when an option is selected. `Receives two arguments: first the selected value and an optional object` for additional data.
-- **Note:** Useful for executing additional logic, such as updating state or triggering side effects, when a value is selected `use can use only one function to get selected value either use onSelect or setter`.
+- **Description:** Callback function triggered when an option is selected. `Receives two arguments: selected value and an optional object` for additional data.
+  Here’s the improved version of your line:
+- **Note:** Useful for executing additional logic, such as updating state or triggering side effects, when a value is selected. Use either `onSelect` or `setter` to get the selected value.
 
 ### `setter`
 

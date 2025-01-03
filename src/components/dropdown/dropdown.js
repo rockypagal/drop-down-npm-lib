@@ -255,11 +255,7 @@ const DropDownBox = ({
             {dropDownValue || "\u00A0"}
           </div>
           {customArrow && customArrow?.element ? (
-            <div
-            // className={`drop-arrow ${
-            //   disabled ? "disabledDropBox" : addStyle ? "up-arrow" : ""
-            // }`}
-            >
+            <div className={`drop-arrow ${addStyle ? "up-arrow" : ""}`}>
               {customArrow?.element}
             </div>
           ) : (
