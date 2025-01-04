@@ -131,6 +131,7 @@ export default MyComponent;
 
 - **Type:** `string`
 - **Description:** Incoming value to be set on render.
+- **Note:** Useful when value is coming from api or some other external sources.
 
 ### `customArrow`
 
@@ -189,7 +190,7 @@ export default MyComponent;
 4. `placeholder`
 5. `size`
 6. `showSearch`
-7. `setter`
+7. `customArrow`
 8. `disabled`
 9. `incomingValue`
 10. `resetButton`
@@ -197,8 +198,11 @@ export default MyComponent;
 12. `beforeSelect`
 13. `afterSelect`
 14. `changeObserver`
-15. `customArrow`
-16. `styles`
+
+- `target`
+- `handler`
+
+15. `styles`
 
 - `selectStyles`
 - `selectValueStyle`
