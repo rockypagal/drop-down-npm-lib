@@ -3,7 +3,7 @@ declare module "ru-react-dropdown-component" {
 
   export interface DropDownOption {
     label: string;
-    value: string;
+    value: any;
   }
 
   export interface DropDownBoxProps {
@@ -26,7 +26,7 @@ declare module "ru-react-dropdown-component" {
     showSearch?: boolean;
 
     /** Function to set the selected value, e.g., useState or Formik setFieldValue */
-    setter?: (value: string | null) => void;
+    // setter?: (value: string | null) => void;
 
     /** Disables the dropdown if set to true */
     disabled?: boolean;
@@ -38,11 +38,11 @@ declare module "ru-react-dropdown-component" {
     resetButton?: boolean | string;
 
     /** Callback triggered when a value is selected */
-    onSelect?: (value: string, extraData?: any) => void;
+    onSelect?: (value: any, extraData?: any) => void;
 
     /** Function called before selecting a value */
     beforeSelect?: (
-      value: string | null,
+      value: any | null,
       context: {
         oldValue: any;
         index: number;
@@ -51,11 +51,11 @@ declare module "ru-react-dropdown-component" {
     ) => void;
 
     /** Function called after selecting a value */
-    afterSelect?: (value: string | null) => void;
+    afterSelect?: (value: any | null) => void;
     changeObserver?: {
       target: string | any;
       handler: (
-        setter: (value: string | null) => void,
+        setter: (value: any | null) => void,
         context: {
           newTargetedValue: any;
           oldTargetedValue: any;
