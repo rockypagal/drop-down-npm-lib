@@ -65,54 +65,11 @@ export default MyComponent;
 - **Type:** `Array[{label: string, value: string}]`
 - **Description:** Array of objects to populate the dropdown options.
 
--
-
 ### `onSelect`
 
 - **Type:** `function`
 - **Description:** Callback function triggered when an option is selected. `Receives two arguments: first the selected value and an optional object` for additional data.
 - **Note:** Useful for executing additional logic, such as updating state or triggering side effects, when a value is selected `use can use only one function to get selected value either use onSelect or setter`.
-
-## Here are detailed documentation entries for the `beforeSelect`, `afterSelect`, and `changeObserver` props based on the provided library code:
-
-### `beforeSelect`
-
-- **Type:** `function`
-- **Description:** A callback function that executes before an option is selected. It can be used to validate or modify the selection process.
-- **Arguments:**
-  - `value` (string): The value of the option being selected.
-  - `context` (object): Contains additional information about the selection:
-    - `oldValue`: The previously selected value.
-    - `index`: The index of the selected option in the options array.
-    - `row`: The entire option object (`{ label, value }`).
-- **Return Value:** Returning `false` from this function prevents the selection and keeps the dropdown in its current state.
-- **Note:** Useful for implementing conditional logic or validation before updating the selected value.
--
-
-### `afterSelect`
-
-- **Type:** `function`
-- **Description:** A callback function triggered after a value is successfully selected.
-- **Arguments:**
-  - `selectedValue` (string): The value of the option that was selected.
-- **Note:** Ideal for performing side effects such as API calls, updating analytics, or dispatching additional actions after a selection is made.
-
-### `changeObserver`
-
-- **Type:** `object`
-- **Description:** An object used to observe changes in an external value and programmatically update the dropdown state.
-- **Properties:**
-  - `target` (any): The value to observe for changes.
-  - `handler` (function): A callback function that executes whenever the `target` value changes.
-    - **Arguments:**
-      - `setter` (function): A function to update the dropdown's selected value.
-      - `context` (object): Contains:
-        - `newTargetedValue`: The updated value of the `target`.
-        - `oldTargetedValue`: The previous value of the `target`.
-        - `dropdownValue`: The current value of the dropdown.
-- **Note:** Use this to synchronize the dropdown with external data sources, such as Redux state or form values.
-
--
 
 ### `setter`
 
@@ -180,6 +137,42 @@ export default MyComponent;
 - **Type:** `JSX.Element`
 - **Description:** Custom JSX or SVG element to replace the default dropdown arrow.
 
+### `beforeSelect`
+
+- **Type:** `function`
+- **Description:** A callback function that executes before an option is selected. It can be used to validate or modify the selection process.
+- **Arguments:**
+  - `value` (string): The value of the option being selected.
+  - `context` (object): Contains additional information about the selection:
+    - `oldValue`: The previously selected value.
+    - `index`: The index of the selected option in the options array.
+    - `row`: The entire option object (`{ label, value }`).
+- **Return Value:** Returning `false` from this function prevents the selection and keeps the dropdown in its current state.
+- **Note:** Useful for implementing conditional logic or validation before updating the selected value.
+
+### `afterSelect`
+
+- **Type:** `function`
+- **Description:** A callback function triggered after a value is successfully selected.
+- **Arguments:**
+  - `selectedValue` (string): The value of the option that was selected.
+- **Note:** Ideal for performing side effects such as API calls, updating analytics, or dispatching additional actions after a selection is made.
+
+### `changeObserver`
+
+- **Type:** `object`
+- **Description:** An object used to observe changes in an external value and programmatically update the dropdown state.
+- **Properties:**
+  - `target` (any): The value to observe for changes.
+  - `handler` (function): A callback function that executes whenever the `target` value changes.
+    - **Arguments:**
+      - `setter` (function): A function to update the dropdown's selected value.
+      - `context` (object): Contains:
+        - `newTargetedValue`: The updated value of the `target`.
+        - `oldTargetedValue`: The previous value of the `target`.
+        - `dropdownValue`: The current value of the dropdown.
+- **Note:** Use this to synchronize the dropdown with external data sources, such as Redux state or form values.
+
 ### List of All Props
 
 1. `title`
@@ -195,8 +188,9 @@ export default MyComponent;
 11. `onSelect`
 12. `beforeSelect`
 13. `afterSelect`
-14. `customArrow`
-15. `styles`
+14. `changeObserver`
+15. `customArrow`
+16. `styles`
 
 - `selectStyles`
 - `selectValueStyle`
