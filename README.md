@@ -11,7 +11,7 @@ import DropDownBox from "ru-react-dropdown-component";
 //  styles being applied, consider importing it for better performance.
 import "ru-react-dropdown-component/dist/styles.css";
 
-const MyComponent = () => {
+const MyComponent = ({ country }) => {
   const [selectedValue, setSelectedValue] = useState("");
   const options = [
     { label: "Option 1", value: "option1" },
@@ -68,15 +68,8 @@ export default MyComponent;
 ### `onSelect`
 
 - **Type:** `function`
-- **Description:** Callback function triggered when an option is selected. `Receives two arguments: selected value and an optional object` for additional data.
-  Here’s the improved version of your line:
-- **Note:** Useful for executing additional logic, such as updating state or triggering side effects, when a value is selected. Use either `onSelect` or `setter` to get the selected value.
-
-### `setter`
-
-- **Type:** `function`
-- **Description:** Function to set the selected value. Typically used with `useState`.
-- **Note:** It is easy to use and simple and recommended if you only want to get the selected value.
+- **Description:** Callback function triggered when an option is selected. And Receives the selected value as arguments
+- **Note:** Useful for executing additional logic, such as updating state or triggering side effects, when a value is selected.
 
 ### `title`
 
@@ -86,7 +79,7 @@ export default MyComponent;
 ### `animateTitle`
 
 - **Type:** `boolean`
-- **Description:** If true, animates the dropdown title on focus or when a value is selected.
+- **Description:** If true, animates the dropdown title on focus or when a value is selected and use only when placeholder is not in use.
 
 ### `styles`
 

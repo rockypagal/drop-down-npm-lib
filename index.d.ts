@@ -56,7 +56,11 @@ declare module "ru-react-dropdown-component" {
       target: string | any;
       handler: (
         setter: (value: string | null) => void,
-        valueObj: { targetValue: string; dropdownValue: string }
+        valueObj: {
+          newTargetedValue: string;
+          oldTargetedValue: string;
+          dropdownValue: string;
+        }
       ) => void;
     };
 
