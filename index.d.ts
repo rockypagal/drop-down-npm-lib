@@ -43,10 +43,10 @@ declare module "ru-react-dropdown-component" {
     /** Function called before selecting a value */
     beforeSelect?: (
       value: string | null,
-      {
-        oldValue: any,
-        index: number,
-        row: { label: string, value: any },
+      context: {
+        oldValue: any;
+        index: number;
+        row: { label: string; value: any };
       }
     ) => void;
 
@@ -56,10 +56,10 @@ declare module "ru-react-dropdown-component" {
       target: string | any;
       handler: (
         setter: (value: string | null) => void,
-        valueObj: {
-          newTargetedValue: string;
-          oldTargetedValue: string;
-          dropdownValue: string;
+        context: {
+          newTargetedValue: any;
+          oldTargetedValue: any;
+          dropdownValue: any;
         }
       ) => void;
     };

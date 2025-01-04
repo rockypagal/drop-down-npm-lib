@@ -101,17 +101,18 @@
 }
 
 .show-drop-scroll .drop-down-menu::-webkit-scrollbar {
-  width: 5px;
+  width: 5px !important;
+  display: block !important;
 }
 
 .show-drop-scroll .drop-down-menu::-webkit-scrollbar-thumb {
-  background: #818181;
-  border-radius: 10px;
+  background: #818181 !important;
+  border-radius: 10px !important;
 }
 
 .show-drop-scroll .drop-down-menu::-webkit-scrollbar-thumb:hover {
-  background: #a4a4a4;
-  cursor: pointer;
+  background: #a4a4a4 !important;
+  cursor: pointer !important;
 }
 
 .hide-drop-scroll .drop-down-menu {
