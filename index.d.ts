@@ -38,13 +38,20 @@ declare module "ru-react-dropdown-component" {
     resetButton?: boolean | string;
 
     /** Callback triggered when a value is selected */
-    onSelect?: (value: string | null, extraData?: any) => void;
+    onSelect?: (value: string, extraData?: any) => void;
 
     /** Function called before selecting a value */
     beforeSelect?: (value: string | null) => void;
 
     /** Function called after selecting a value */
     afterSelect?: (value: string | null) => void;
+    changeObserver?: {
+      target: string | any;
+      handler: (
+        setter: (value: string | null) => void,
+        valueObj: { targetValue: string; dropdownValue: string }
+      ) => void;
+    };
 
     /** Custom arrow icon for the dropdown */
     customArrow?: {

@@ -8,7 +8,7 @@ The `ru-react-dropdown-component` library provides the DropDownBox component, a 
 import React, { useState } from "react";
 import DropDownBox from "ru-react-dropdown-component";
 // Importing CSS is optional. However, if you notice a slight delay in
-// applying styles, consider importing it for better performance.
+//  styles being applied, consider importing it for better performance.
 import "ru-react-dropdown-component/dist/styles.css";
 
 const MyComponent = () => {
