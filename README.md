@@ -68,7 +68,7 @@ export default MyComponent;
 ### `onSelect`
 
 - **Type:** `function`
-- **Description:** Callback function triggered when an option is selected. And Receives the selected value as arguments
+- **Description:** Callback function triggered when an option is selected. And receives the selected value as arguments
 - **Note:** Useful for executing additional logic, such as updating state or triggering side effects, when a value is selected.
 
 ### `title`
