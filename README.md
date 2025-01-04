@@ -159,7 +159,7 @@ export default MyComponent;
 ### `changeObserver`
 
 - **Type:** `object`
-- **Description:** Synchronizes dropdown state with external values like Redux or form fields.
+- **Description:** An object used to observe changes in an external value and programmatically update the dropdown state.
 - **Properties:**
   - `target`: Observed value.
   - `handler` (function): Updates the dropdown when `target` changes.
