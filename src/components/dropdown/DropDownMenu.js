@@ -8,11 +8,8 @@ export const DropDownMenu = ({
   dropDownValueTwo,
   resetButton,
   menuOptions,
-  setDropDownValue,
-  setDropDownValueTwo,
   setMenuOptions,
   showMenu,
-  handleClick,
   incomingValue,
   handleResetBtnText,
   optionsBoxStyle,
@@ -163,7 +160,7 @@ export const DropDownMenu = ({
                   // setDropDownValueTwo(value);
                   // handleClick();
 
-                  handleSetValues(label, value);
+                  handleSetValues(label, value, index);
                 }}
                 style={optionsStyle}
               >

@@ -13,10 +13,10 @@ const DropDownBox = ({
   disabled = false, // ? provide boolean to disable drop down
   incomingValue, // ? provide incoming string value which will be set on render
   resetButton, // ? provide boolean or string to show reset button clear selected value
-  onSelect, // ? provide formik.setValue
-  beforeSelect,
-  afterSelect,
-  changeObserver = {},
+  onSelect, // ? provide callback function which sets selected value to state
+  beforeSelect, //?provide a callback function that executes before an option is selected. It can be used to validate or modify the selection process.
+  afterSelect, //?provide  a callback function triggered after a value is successfully selected.
+  changeObserver = {}, //?provide a object which used to observe changes in an external value and programmatically update the dropdown state.
   customArrow, //? provide jsx or svg to replace the default down arrow
   styles = {
     selectStyles: false, // ? provide styles in object to style the select box
@@ -38,6 +38,7 @@ const DropDownBox = ({
   const [historyIncomingValue, setHistoryIncomingValue] = useState("");
   const [timerId, setTimerId] = useState(null);
   const mainRef = useRef(null);
+  let oldTargetedValue = useRef("");
   const handleClick = () => {
     setAddStyle(!addStyle);
     // formik.setFieldValue("search", "")
@@ -83,13 +84,17 @@ const DropDownBox = ({
     }
   }
 
-  function handleSetValues(label, value) {
-    let temp;
+  function handleSetValues(label, value, index) {
+    let beforeSelectCheck;
 
     if (beforeSelect && typeof beforeSelect === "function") {
-      temp = beforeSelect(value, dropDownValueTwo);
+      beforeSelectCheck = beforeSelect(value, {
+        oldValue: dropDownValueTwo,
+        index,
+        row: { label, value },
+      });
     }
-    if (temp !== false && (label || value)) {
+    if (beforeSelectCheck !== false && (label || value)) {
       setDropDownValue(label);
       setDropDownValueTwo(value);
     }
@@ -107,9 +112,10 @@ const DropDownBox = ({
   //? useEffect to handle the setValue to the onSelect
 
   useEffect(() => {
-    const isReset = dropDownValue === handleResetBtnText();
+    const resetButtonText = handleResetBtnText();
+    const isReset = dropDownValue === resetButtonText;
 
-    if (dropDownValueTwo || dropDownValue === handleResetBtnText()) {
+    if (dropDownValueTwo || dropDownValue === resetButtonText) {
       if (!onSelect) {
         console.error(
           "Dropdown component requires a callback function to handle value changes. Please provide a valid 'onSelect' prop."
@@ -122,11 +128,11 @@ const DropDownBox = ({
         afterSelect(dropDownValueTwo);
       }
 
-      if (dropDownValue === handleResetBtnText()) {
+      if (dropDownValue === resetButtonText) {
         //  else if (setter || (setter && isReset)) {
         //   setter(dropDownValueTwo);
         // }
-        setDropDownValue(placeholder ? placeholder : "");
+        setDropDownValue(placeholder || "");
       }
     }
   }, [dropDownValueTwo]);
@@ -157,7 +163,6 @@ const DropDownBox = ({
     }
   }, [disabled]);
 
-  let oldTargetedValue = useRef("");
   useEffect(() => {
     const { target, handler } = changeObserver;
 
@@ -291,12 +296,9 @@ const DropDownBox = ({
             dropDownValueTwo={dropDownValueTwo}
             resetButton={resetButton}
             menuOptions={menuOptions}
-            setDropDownValue={setDropDownValue}
-            setDropDownValueTwo={setDropDownValueTwo}
             options={options}
             setMenuOptions={setMenuOptions}
             showMenu={showMenu}
-            handleClick={handleClick}
             handleResetBtnText={handleResetBtnText}
             optionsBoxStyle={styles?.optionsBoxStyle}
             optionsStyle={styles?.optionsStyle}

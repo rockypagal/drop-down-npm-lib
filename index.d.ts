@@ -41,7 +41,14 @@ declare module "ru-react-dropdown-component" {
     onSelect?: (value: string, extraData?: any) => void;
 
     /** Function called before selecting a value */
-    beforeSelect?: (value: string | null) => void;
+    beforeSelect?: (
+      value: string | null,
+      {
+        oldValue: any,
+        index: number,
+        row: { label: string, value: any },
+      }
+    ) => void;
 
     /** Function called after selecting a value */
     afterSelect?: (value: string | null) => void;
