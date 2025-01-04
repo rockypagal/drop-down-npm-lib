@@ -65,7 +65,7 @@ export default MyComponent;
 - **Type:** `Array[{label: string, value: string}]`
 - **Description:** Array of objects to populate the dropdown options.
 
----
+-
 
 ### `onSelect`
 
@@ -73,9 +73,7 @@ export default MyComponent;
 - **Description:** Callback function triggered when an option is selected. `Receives two arguments: first the selected value and an optional object` for additional data.
 - **Note:** Useful for executing additional logic, such as updating state or triggering side effects, when a value is selected `use can use only one function to get selected value either use onSelect or setter`.
 
-Here are detailed documentation entries for the `beforeSelect`, `afterSelect`, and `changeObserver` props based on the provided library code:
-
----
+## Here are detailed documentation entries for the `beforeSelect`, `afterSelect`, and `changeObserver` props based on the provided library code:
 
 ### `beforeSelect`
 
@@ -89,6 +87,7 @@ Here are detailed documentation entries for the `beforeSelect`, `afterSelect`, a
     - `row`: The entire option object (`{ label, value }`).
 - **Return Value:** Returning `false` from this function prevents the selection and keeps the dropdown in its current state.
 - **Note:** Useful for implementing conditional logic or validation before updating the selected value.
+-
 
 ### `afterSelect`
 
@@ -113,7 +112,7 @@ Here are detailed documentation entries for the `beforeSelect`, `afterSelect`, a
         - `dropdownValue`: The current value of the dropdown.
 - **Note:** Use this to synchronize the dropdown with external data sources, such as Redux state or form values.
 
----
+-
 
 ### `setter`
 
