@@ -141,46 +141,34 @@ export default MyComponent;
 ### `beforeSelect`
 
 - **Type:** `function`
-- **Description:** A callback function that executes before an option is selected. It can be used to validate or modify the selection process.
-- **Return Value:** Returning `false` from this function prevents the selection and keeps the dropdown in its current state.
-- **Note:** Useful for implementing conditional logic or validation before updating the selected value.
-
+- **Description:** Executes before an option is selected. Return `false` to prevent the selection. Useful for validation or conditional logic.
 - **Arguments:**
-
-  - `value` (string): The value of the option being selected.
-  - `context` (object): Contains additional information about the selection:
-    - `oldValue`: The previously selected value.
-    - `index`: The index of the selected option in the options array.
-    - `row`: The entire option object (`{ label, value }`).
+  - `value` (string): The selected option's value.
+  - `context` (object):
+    - `oldValue`: Previously selected value.
+    - `index`: Index of the option.
+    - `row`: Option object (`{ label, value }`).
 
 ### `afterSelect`
 
 - **Type:** `function`
-- **Description:** A callback function triggered after a value is successfully selected.
-- **Note:** Ideal for performing side effects such as API calls, updating analytics, or dispatching additional actions after a selection is made.
-
+- **Description:** Triggered after a value is selected. Ideal for side effects like API calls or analytics.
 - **Arguments:**
-
-  - `selectedValue` (string): The value of the option that was selected.
+  - `selectedValue` (string): The selected value.
 
 ### `changeObserver`
 
 - **Type:** `object`
-- **Description:** An object used to observe changes in an external value and programmatically update the dropdown state.
-- **Note:** Use this to synchronize the dropdown with external data sources, such as Redux state or form values.
-
+- **Description:** Synchronizes dropdown state with external values like Redux or form fields.
 - **Properties:**
-
-  - `target` (any): The value to observe for changes.
-  - `handler` (function): A callback function that executes whenever the `target` value changes.
-
+  - `target`: Observed value.
+  - `handler` (function): Updates the dropdown when `target` changes.
     - **Arguments:**
-
-      - `setter` (function): A function to update the dropdown's selected value.
-      - `context` (object): Contains:
-        - `newTargetedValue`: The updated value of the `target`.
-        - `oldTargetedValue`: The previous value of the `target`.
-        - `dropdownValue`: The current value of the dropdown.
+      - `setter`: Updates dropdown's selected value.
+      - `context` (object):
+        - `newTargetedValue`: Updated `target` value.
+        - `oldTargetedValue`: Previous `target` value.
+        - `dropdownValue`: Current dropdown value.
 
 ### List of All Props
 
