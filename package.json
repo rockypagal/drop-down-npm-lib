@@ -1,6 +1,6 @@
 {
   "name": "ru-react-dropdown-component",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "reusable react dropdown component",
   "main": "dist/index.es.js",
   "types": "./index.d.ts",

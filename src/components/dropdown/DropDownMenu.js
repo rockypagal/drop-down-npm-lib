@@ -8,11 +8,8 @@ export const DropDownMenu = ({
   dropDownValueTwo,
   resetButton,
   menuOptions,
-  setDropDownValue,
-  setDropDownValueTwo,
   setMenuOptions,
   showMenu,
-  handleClick,
   incomingValue,
   handleResetBtnText,
   optionsBoxStyle,
@@ -20,6 +17,7 @@ export const DropDownMenu = ({
   inputSearchStyle,
   mainRef,
   animateTitle,
+  handleSetValues,
 }) => {
   const [search, setSearch] = useState("");
   const [menuPosition, setMenuPosition] = useState("");
@@ -51,7 +49,8 @@ export const DropDownMenu = ({
   useEffect(() => {
     const handleGlobalClick = (event) => {
       if (menuRef?.current && !menuRef?.current?.contains(event.target)) {
-        handleClick();
+        // handleClick();
+        handleSetValues();
       }
     };
 
@@ -76,7 +75,6 @@ export const DropDownMenu = ({
   //     setMenuOptions(options);
   //   }
   // }, [options]);
-  const handleMenuPosition = () => {};
 
   useEffect(() => {
     let viewportHeight = window.innerHeight;
@@ -137,9 +135,11 @@ export const DropDownMenu = ({
             <div
               className="drop-down-item"
               onClick={() => {
-                setDropDownValue(handleResetBtnText());
-                setDropDownValueTwo("");
-                handleClick();
+                // setDropDownValue(handleResetBtnText());
+                // setDropDownValueTwo("");
+                // handleClick();
+
+                handleSetValues(handleResetBtnText(), "");
               }}
               style={optionsStyle}
             >
@@ -156,9 +156,11 @@ export const DropDownMenu = ({
                   (dropDownValueTwo === value ? " selectedDropBox" : "")
                 }
                 onClick={() => {
-                  setDropDownValue(label);
-                  setDropDownValueTwo(value);
-                  handleClick();
+                  // setDropDownValue(label);
+                  // setDropDownValueTwo(value);
+                  // handleClick();
+
+                  handleSetValues(label, value, index);
                 }}
                 style={optionsStyle}
               >

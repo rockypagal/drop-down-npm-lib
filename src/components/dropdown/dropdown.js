@@ -9,13 +9,14 @@ const DropDownBox = ({
   placeholder, // ? provide string to show placeholder for drop down it can be use stand alone or with title
   size, // ? provide the values in string as "small","medium","large", or "mini" to set predefine sizes for drop down
   showSearch, // ? provide boolean to show search bar in drop down
-  setter, // ? provide set function of useState or formik.setFieldValue to get selected value
+  // setter, // ? provide set function of useState or formik.setFieldValue to get selected value
   disabled = false, // ? provide boolean to disable drop down
   incomingValue, // ? provide incoming string value which will be set on render
   resetButton, // ? provide boolean or string to show reset button clear selected value
-  onSelect, // ? provide formik.setValue
-  beforeSelect,
-  afterSelect,
+  onSelect, // ? provide callback function which sets selected value to state
+  beforeSelect, //?provide a callback function that executes before an option is selected. It can be used to validate or modify the selection process.
+  afterSelect, //?provide  a callback function triggered after a value is successfully selected.
+  changeObserver = {}, //?provide a object which used to observe changes in an external value and programmatically update the dropdown state.
   customArrow, //? provide jsx or svg to replace the default down arrow
   styles = {
     selectStyles: false, // ? provide styles in object to style the select box
@@ -37,7 +38,8 @@ const DropDownBox = ({
   const [historyIncomingValue, setHistoryIncomingValue] = useState("");
   const [timerId, setTimerId] = useState(null);
   const mainRef = useRef(null);
-  const handleClick = (e) => {
+  let oldTargetedValue = useRef("");
+  const handleClick = () => {
     setAddStyle(!addStyle);
     // formik.setFieldValue("search", "")
     DropBoxVisibility();
@@ -59,6 +61,46 @@ const DropDownBox = ({
     }
   }
 
+  // ? function to set reset button value
+  const handleResetBtnText = () => {
+    return typeof resetButton === "string" ? resetButton : "Reset";
+  };
+
+  function handlePlaceholderAndSelectedValueStyle() {
+    // if (
+    //   styles?.selectValueStyle &&
+    //   placeholder &&
+    //   styles?.placeholderStyle &&
+    //   !dropDownValueTwo
+    // ) {
+    //   return { ...styles?.selectValueStyle, ...styles?.placeholderStyle };
+    // } else
+    if (placeholder && styles?.placeholderStyle && !dropDownValueTwo) {
+      return styles?.placeholderStyle;
+    } else if (styles?.selectValueStyle) {
+      return styles?.selectValueStyle;
+    } else {
+      return {};
+    }
+  }
+
+  function handleSetValues(label, value, index) {
+    let beforeSelectCheck;
+
+    if (beforeSelect && typeof beforeSelect === "function") {
+      beforeSelectCheck = beforeSelect(value, {
+        oldValue: dropDownValueTwo,
+        index,
+        row: { label, value },
+      });
+    }
+    if (beforeSelectCheck !== false && (label || value)) {
+      setDropDownValue(label);
+      setDropDownValueTwo(value);
+    }
+    handleClick();
+  }
+
   useEffect(() => {
     return () => {
       if (timerId) {
@@ -66,71 +108,35 @@ const DropDownBox = ({
       }
     };
   }, [timerId]);
-  // ? function to set reset button value
-  const handleResetBtnText = () => {
-    return typeof resetButton === "string" ? resetButton : "Reset";
-  };
-  // async function apiCall() {
-  //   const response = await dispatch(listApi(apiData)) // ? return array containing value
-  //
-  //   if (options.length === 0) {
-  //     const options = response?.payload?.map(item => {
-  //       return { label: item.name, value: item._id }
-  //     })
 
-  //     // if (menuOptions.length === 0) {
-  //     //   setMenuOptions(options)
-  //     //   setCheck(false)
-  //     // }
-  //   }
-  // }
+  //? useEffect to handle the setValue to the onSelect
 
   useEffect(() => {
-    const isReset = dropDownValue === handleResetBtnText();
+    const resetButtonText = handleResetBtnText();
+    const isReset = dropDownValue === resetButtonText;
 
-    if (dropDownValueTwo || dropDownValue === handleResetBtnText()) {
-      if (!setter && !onSelect) {
+    if (dropDownValueTwo || dropDownValue === resetButtonText) {
+      if (!onSelect) {
         console.error(
-          "Dropdown component requires a setter or callback function to handle value changes. Please provide a valid 'setter', or 'onSelect' prop."
+          "Dropdown component requires a callback function to handle value changes. Please provide a valid 'onSelect' prop."
         );
       } else if ((onSelect && dropDownValueTwo) || (onSelect && isReset)) {
         onSelect(dropDownValueTwo);
-      } else if (setter || (setter && isReset)) {
-        setter(dropDownValueTwo);
       }
-      if (dropDownValue === handleResetBtnText()) {
-        setDropDownValue(placeholder ? placeholder : "");
+
+      if (afterSelect && typeof afterSelect === "function") {
+        afterSelect(dropDownValueTwo);
+      }
+
+      if (dropDownValue === resetButtonText) {
+        //  else if (setter || (setter && isReset)) {
+        //   setter(dropDownValueTwo);
+        // }
+        setDropDownValue(placeholder || "");
       }
     }
   }, [dropDownValueTwo]);
 
-  // useEffect(() => {
-  //   options?.forEach((item) => {
-  //     const { label, value } = item;
-
-  //     if (value === incomingValue) {
-  //       setDropDownValueTwo(value);
-  //       setDropDownValue(label);
-  //       // setMenuOptions(options);
-  //     }
-  //   });
-  // }, [options]);
-
-  // useEffect(() => {
-  //   if (
-  //     (historyIncomingValue && historyIncomingValue !== incomingValue) ||
-  //     (!dropDownValueTwo && incomingValue)
-  //   ) {
-  //     options?.forEach((item) => {
-  //       const { label, value } = item;
-  //       if (value === incomingValue) {
-  //         setHistoryIncomingValue(value);
-  //         setDropDownValueTwo(value);
-  //         setDropDownValue(label);
-  //       }
-  //     });
-  //   }
-  // }, [options, incomingValue]);
   const memoizedOptions = useMemo(() => options, [options]);
 
   useEffect(() => {
@@ -151,38 +157,39 @@ const DropDownBox = ({
     }
   }, [incomingValue, memoizedOptions]);
 
-  // useEffect(() => {
-  //   setDropDownValue(placeholder);
-  // }, [placeholder]);
-
-  // useEffect(() => {
-  //   if (options.length === 0 && dispatch && listApi) {
-  //     apiCall()
-  //   }
-  // }, [menuOptions])
-
-  function handlePlaceholderAndSelectedValueStyle() {
-    // if (
-    //   styles?.selectValueStyle &&
-    //   placeholder &&
-    //   styles?.placeholderStyle &&
-    //   !dropDownValueTwo
-    // ) {
-    //   return { ...styles?.selectValueStyle, ...styles?.placeholderStyle };
-    // } else
-    if (placeholder && styles?.placeholderStyle && !dropDownValueTwo) {
-      return styles?.placeholderStyle;
-    } else if (styles?.selectValueStyle) {
-      return styles?.selectValueStyle;
-    } else {
-      return {};
-    }
-  }
   useEffect(() => {
     if (disabled && showMenu) {
       handleClick();
     }
   }, [disabled]);
+
+  useEffect(() => {
+    const { target, handler } = changeObserver;
+
+    if (typeof handler === "function") {
+      const setter = (value) => {
+        let result = { label: value ? value : placeholder, value: value };
+
+        if (value) {
+          result = options?.find((item) => item?.value === value);
+        }
+
+        if (result?.value === value) {
+          setDropDownValueTwo(result?.value);
+          setDropDownValue(result?.label);
+        }
+      };
+
+      handler(setter, {
+        newTargetedValue: target,
+        oldTargetedValue: oldTargetedValue.current,
+        dropdownValue: dropDownValueTwo,
+      });
+
+      oldTargetedValue.current = target;
+    }
+  }, [changeObserver?.target]);
+
   return (
     <div
       className={
@@ -285,12 +292,9 @@ const DropDownBox = ({
             dropDownValueTwo={dropDownValueTwo}
             resetButton={resetButton}
             menuOptions={menuOptions}
-            setDropDownValue={setDropDownValue}
-            setDropDownValueTwo={setDropDownValueTwo}
             options={options}
             setMenuOptions={setMenuOptions}
             showMenu={showMenu}
-            handleClick={handleClick}
             handleResetBtnText={handleResetBtnText}
             optionsBoxStyle={styles?.optionsBoxStyle}
             optionsStyle={styles?.optionsStyle}
@@ -298,6 +302,7 @@ const DropDownBox = ({
             incomingValue={incomingValue}
             mainRef={mainRef}
             animateTitle={animateTitle}
+            handleSetValues={handleSetValues}
           />
         )}
       </div>

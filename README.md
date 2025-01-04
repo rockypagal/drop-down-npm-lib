@@ -8,7 +8,7 @@ The `ru-react-dropdown-component` library provides the DropDownBox component, a 
 import React, { useState } from "react";
 import DropDownBox from "ru-react-dropdown-component";
 // Importing CSS is optional. However, if you notice a slight delay in
-// applying styles, consider importing it for better performance.
+//  styles being applied, consider importing it for better performance.
 import "ru-react-dropdown-component/dist/styles.css";
 
 const MyComponent = () => {
@@ -20,13 +20,27 @@ const MyComponent = () => {
 
   return (
     <DropDownBox
-      title="Select an option"
+      title="Select City"
       animateTitle={true}
       options={options}
       placeholder="Choose..."
       size="medium"
       showSearch={true}
-      setter={setSelectedValue}
+      onSelect={setSelectedValue}
+      beforeSelect={(value, context) => {
+        console.log(value, context);
+      }}
+      afterSelect={(value) => {
+        console.log("value: ", value);
+      }}
+      changeObserver={{
+        target: country,
+        handler: (setter, context) => {
+          if (context.dropdownValue) {
+            setter("");
+          }
+        },
+      }}
       styles={{
         selectStyles: { border: "1px solid #ccc" },
         selectValueStyle: { color: "blue" },
@@ -41,7 +55,7 @@ export default MyComponent;
 
 ### Notes
 
-- Ensure to provide required props such as `options` and `setter` or `onSelect` for proper functionality.
+- Ensure to provide required props such as `options` and `onSelect` for proper functionality.
 - The component is designed to be flexible with various styling and functionality customizations.
 
 ## Props
@@ -118,11 +132,44 @@ export default MyComponent;
 
 - **Type:** `string`
 - **Description:** Incoming value to be set on render.
+- **Note:** Useful when value is coming from api or some other external sources.
 
 ### `customArrow`
 
 - **Type:** `JSX.Element`
 - **Description:** Custom JSX or SVG element to replace the default dropdown arrow.
+
+### `beforeSelect`
+
+- **Type:** `function`
+- **Description:** Executes before an option is selected. Return `false` to prevent the selection. Useful for validation or conditional logic.
+- **Arguments:**
+  - `value` (string): The selected option's value.
+  - `context` (object):
+    - `oldValue`: Previously selected value.
+    - `index`: Index of the option.
+    - `row`: Option object (`{ label, value }`).
+
+### `afterSelect`
+
+- **Type:** `function`
+- **Description:** Triggered after a value is selected. Ideal for side effects like API calls or analytics.
+- **Arguments:**
+  - `selectedValue` (string): The selected value.
+
+### `changeObserver`
+
+- **Type:** `object`
+- **Description:** An object used to observe changes in an external value and programmatically update the dropdown state.
+- **Properties:**
+  - `target`: Observed value.
+  - `handler` (function): Updates the dropdown when `target` changes.
+    - **Arguments:**
+      - `setter`: Updates dropdown's selected value.
+      - `context` (object):
+        - `newTargetedValue`: Updated `target` value.
+        - `oldTargetedValue`: Previous `target` value.
+        - `dropdownValue`: Current dropdown value.
 
 ### List of All Props
 
@@ -132,14 +179,18 @@ export default MyComponent;
 4. `placeholder`
 5. `size`
 6. `showSearch`
-7. `setter`
+7. `customArrow`
 8. `disabled`
 9. `incomingValue`
 10. `resetButton`
 11. `onSelect`
 12. `beforeSelect`
 13. `afterSelect`
-14. `customArrow`
+14. `changeObserver`
+
+- `target`
+- `handler`
+
 15. `styles`
 
 - `selectStyles`
