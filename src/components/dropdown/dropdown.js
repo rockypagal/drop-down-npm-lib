@@ -87,7 +87,7 @@ const DropDownBox = ({
   function handleSetValues(label, value, index) {
     let beforeSelectCheck;
 
-    if (beforeSelect && typeof beforeSelect === "function") {
+    if (beforeSelect && typeof beforeSelect === "function" && index >= 0) {
       beforeSelectCheck = beforeSelect(value, {
         oldValue: dropDownValueTwo,
         index,

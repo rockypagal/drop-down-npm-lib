@@ -2,8 +2,9 @@ declare module "ru-react-dropdown-component" {
   import React, { CSSProperties } from "react";
 
   export interface DropDownOption {
-    label: string;
-    value: any;
+    label: string; // Label to display in the dropdown
+    value: any; // Value associated with the option
+    searchOptions: string[]; // Array of strings used for search functionality
   }
 
   export interface DropDownBoxProps {

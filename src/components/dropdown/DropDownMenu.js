@@ -27,18 +27,33 @@ export const DropDownMenu = ({
     // formik.setFieldValue("search", e.target.value.toLowerCase())
   };
 
+  const getSearchOption = (option) => {
+    if (!option?.searchOptions) {
+      return option?.label.replaceAll(" ", "");
+    }
+
+    return (option?.searchOptions?.join("") + option?.label).replaceAll(
+      " ",
+      ""
+    );
+  };
   useEffect(() => {
+    if (!search) {
+      setMenuOptions(options);
+      return;
+    }
     if (searchBar) {
-      const arr = [];
-      options?.forEach((item) => {
-        if (
-          item.label &&
-          item.label.toLowerCase().includes(search.toLowerCase())
-        ) {
-          arr.push(item);
+      const arr = options.filter((item) => {
+        if (item?.searchOptions) {
+          return getSearchOption(item)
+            ?.toLowerCase()
+            ?.includes(search.replaceAll(" ", "")?.toLowerCase());
+        } else {
+          return getSearchOption(item)
+            ?.toLowerCase()
+            ?.includes(search.replaceAll(" ", "").toLowerCase());
         }
       });
-
       setMenuOptions(arr);
     }
   }, [search]);
