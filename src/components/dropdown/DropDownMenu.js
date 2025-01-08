@@ -29,13 +29,12 @@ export const DropDownMenu = ({
 
   const getSearchOption = (option) => {
     if (!option?.searchOptions) {
-      return option?.label.replaceAll(" ", "");
+      return option?.label.replaceAll(" ", "")?.toLowerCase();
     }
 
-    return (option?.searchOptions?.join("") + option?.label).replaceAll(
-      " ",
-      ""
-    );
+    return (option?.searchOptions?.join("") + option?.label)
+      .replaceAll(" ", "")
+      ?.toLowerCase();
   };
   useEffect(() => {
     if (!search) {
@@ -45,13 +44,13 @@ export const DropDownMenu = ({
     if (searchBar) {
       const arr = options.filter((item) => {
         if (item?.searchOptions) {
-          return getSearchOption(item)
-            ?.toLowerCase()
-            ?.includes(search.replaceAll(" ", "")?.toLowerCase());
+          return getSearchOption(item)?.includes(
+            search.replaceAll(" ", "")?.toLowerCase()
+          );
         } else {
-          return getSearchOption(item)
-            ?.toLowerCase()
-            ?.includes(search.replaceAll(" ", "").toLowerCase());
+          return getSearchOption(item)?.includes(
+            search.replaceAll(" ", "").toLowerCase()
+          );
         }
       });
       setMenuOptions(arr);
