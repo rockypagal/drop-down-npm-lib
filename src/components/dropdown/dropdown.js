@@ -3,32 +3,21 @@ import "./dropdown-style.css";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { DropDownMenu } from "./DropDownMenu";
 const DropDownBox = ({
-  title, // ? provide string to show label for drop down
-  animateTitle, // ? this is boolean value which allow this title to animate on focus or if use select any value
-  options, // ? here provide array [{label:"America",value:"america"}] component will use this data to show options and set value on onclick
-  placeholder, // ? provide string to show placeholder for drop down it can be use stand alone or with title
-  size, // ? provide the values in string as "small","medium","large", or "mini" to set predefine sizes for drop down
-  showSearch, // ? provide boolean to show search bar in drop down
-  // setter, // ? provide set function of useState or formik.setFieldValue to get selected value
-  disabled = false, // ? provide boolean to disable drop down
-  incomingValue, // ? provide incoming string value which will be set on render
-  resetButton, // ? provide boolean or string to show reset button clear selected value
-  onSelect, // ? provide callback function which sets selected value to state
-  beforeSelect, //?provide a callback function that executes before an option is selected. It can be used to validate or modify the selection process.
-  afterSelect, //?provide  a callback function triggered after a value is successfully selected.
-  changeObserver = {}, //?provide a object which used to observe changes in an external value and programmatically update the dropdown state.
-  customArrow, //? provide jsx or svg to replace the default down arrow
-  styles = {
-    selectStyles: false, // ? provide styles in object to style the select box
-    selectValueStyle: false, // ? provide styles to style text in drop down
-    placeholderStyle: false, //? provide styles in object to style the Placeholder
-    titleStyle: {}, //? provide styles in object to style the title
-    arrowStyle: {}, //? provide styles in object to style the arrow svg
-    disableStyle: {}, //? provide styles in object to style dropdown in disable state
-    optionsBoxStyle: {}, //? provide styles in object to style options box
-    optionsStyle: {}, //? provide styles in object to style options box
-    searchBoxStyle: {}, //? provide styles in object to style the input box for search
-  },
+  title,
+  animateTitle,
+  options,
+  placeholder,
+  size,
+  showSearch,
+  disabled = false,
+  incomingValue,
+  resetButton,
+  onSelect,
+  beforeSelect,
+  afterSelect,
+  changeObserver = {},
+  customArrow,
+  styles = {},
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [addStyle, setAddStyle] = useState(false);
@@ -41,10 +30,8 @@ const DropDownBox = ({
   let oldTargetedValue = useRef("");
   const handleClick = () => {
     setAddStyle(!addStyle);
-    // formik.setFieldValue("search", "")
     DropBoxVisibility();
   };
-  //
   function DropBoxVisibility() {
     if (timerId) {
       clearTimeout(timerId);
@@ -67,14 +54,6 @@ const DropDownBox = ({
   };
 
   function handlePlaceholderAndSelectedValueStyle() {
-    // if (
-    //   styles?.selectValueStyle &&
-    //   placeholder &&
-    //   styles?.placeholderStyle &&
-    //   !dropDownValueTwo
-    // ) {
-    //   return { ...styles?.selectValueStyle, ...styles?.placeholderStyle };
-    // } else
     if (placeholder && styles?.placeholderStyle && !dropDownValueTwo) {
       return styles?.placeholderStyle;
     } else if (styles?.selectValueStyle) {
