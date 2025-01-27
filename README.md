@@ -26,7 +26,9 @@ const MyComponent = ({ country }) => {
       placeholder="Choose..."
       size="medium"
       showSearch={true}
-      onSelect={setSelectedValue}
+      onSelect=={(value, context) => {
+        console.log(value, context);
+      }}
       beforeSelect={(value, context) => {
         console.log(value, context);
       }}
@@ -69,7 +71,12 @@ export default MyComponent;
 
 - **Type:** `function`
 - **Description:** Callback function triggered when an option is selected. And receives the selected value as arguments
-- **Note:** Useful for executing additional logic, such as updating state or triggering side effects, when a value is selected.
+- **Arguments:**
+  - `selectedValue` (string): The selected value.
+    - `context` (object):
+      - `oldValue`: Previously selected value.
+      - `index`: Index of the option.
+      - `row`: Option object (`{ label, value }`).
 
 ### `title`
 
@@ -107,8 +114,8 @@ export default MyComponent;
 
 ### `showSearch`
 
-- **Type:** `boolean`
-- **Description:** If true, shows a search bar within the dropdown.
+- **Type:** `boolean | { delay: number (milliseconds) }`
+- **Description:** If `true`, enables a search bar within the dropdown. When provided as an object with a `delay`, it applies a debounce for the specified number of milliseconds to enhance performance.
 
 ### `disabled`
 
@@ -149,6 +156,10 @@ export default MyComponent;
 - **Description:** Triggered after a value is selected. Ideal for side effects like API calls or analytics.
 - **Arguments:**
   - `selectedValue` (string): The selected value.
+    - `context` (object):
+      - `oldValue`: Previously selected value.
+      - `index`: Index of the option.
+      - `row`: Option object (`{ label, value }`).
 
 ### `changeObserver`
 
