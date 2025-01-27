@@ -238,7 +238,7 @@ export const DropDownMenu = ({
                       : null
                   }
                 >
-                  {label} {index}
+                  {label}
                 </span>
               </div>
             ))
