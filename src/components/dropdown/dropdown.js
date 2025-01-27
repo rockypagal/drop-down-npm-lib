@@ -18,6 +18,7 @@ const DropDownBox = ({
   changeObserver = {},
   customArrow,
   styles = {},
+  hideScrollbar = false,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [addStyle, setAddStyle] = useState(false);
@@ -28,6 +29,8 @@ const DropDownBox = ({
   const [timerId, setTimerId] = useState(null);
   const mainRef = useRef(null);
   let oldTargetedValue = useRef("");
+  let contextCollectionRef = useRef(null);
+
   const handleClick = () => {
     setAddStyle(!addStyle);
     DropBoxVisibility();
@@ -62,11 +65,14 @@ const DropDownBox = ({
       return {};
     }
   }
-
-  function handleSetValues(label, value, index) {
+  function handleSetValues(label, value, index = null) {
+    if (label === undefined && value === undefined) {
+      handleClick();
+      return;
+    }
     let beforeSelectCheck;
 
-    if (beforeSelect && typeof beforeSelect === "function" && index >= 0) {
+    if (beforeSelect && typeof beforeSelect === "function") {
       beforeSelectCheck = beforeSelect(value, {
         oldValue: dropDownValueTwo,
         index,
@@ -77,9 +83,14 @@ const DropDownBox = ({
       setDropDownValue(label);
       setDropDownValueTwo(value);
     }
+
+    contextCollectionRef.current = {
+      oldValue: dropDownValueTwo,
+      index,
+      row: { label, value },
+    };
     handleClick();
   }
-
   useEffect(() => {
     return () => {
       if (timerId) {
@@ -100,11 +111,11 @@ const DropDownBox = ({
           "Dropdown component requires a callback function to handle value changes. Please provide a valid 'onSelect' prop."
         );
       } else if ((onSelect && dropDownValueTwo) || (onSelect && isReset)) {
-        onSelect(dropDownValueTwo);
+        onSelect(dropDownValueTwo, contextCollectionRef.current);
       }
 
       if (afterSelect && typeof afterSelect === "function") {
-        afterSelect(dropDownValueTwo);
+        afterSelect(dropDownValueTwo, contextCollectionRef.current);
       }
 
       if (dropDownValue === resetButtonText) {
@@ -114,12 +125,21 @@ const DropDownBox = ({
         setDropDownValue(placeholder || "");
       }
     }
+    if (contextCollectionRef.current) {
+      contextCollectionRef.current = null;
+    }
   }, [dropDownValueTwo]);
 
-  const memoizedOptions = useMemo(() => options, [options]);
+  const memoizedOptions = useMemo(() => {
+    return options;
+  }, [options]);
 
   useEffect(() => {
-    setMenuOptions(options);
+    let arr = memoizedOptions;
+    if (memoizedOptions?.length > 500) {
+      arr = memoizedOptions?.slice(0, 500);
+    }
+    setMenuOptions(arr);
   }, [memoizedOptions]);
 
   useEffect(() => {
@@ -168,6 +188,15 @@ const DropDownBox = ({
       oldTargetedValue.current = target;
     }
   }, [changeObserver?.target]);
+  useEffect(() => {
+    if (placeholder) {
+      if (dropDownValueTwo) {
+        setDropDownValueTwo("");
+      }
+
+      setDropDownValue(placeholder);
+    }
+  }, [placeholder]);
 
   return (
     <div
@@ -212,7 +241,9 @@ const DropDownBox = ({
           "drop-down-selector" +
           (disabled
             ? ""
-            : menuOptions?.length > 4 || (showSearch && menuOptions?.length > 3)
+            : !hideScrollbar &&
+              (menuOptions?.length > 4 ||
+                (showSearch && menuOptions?.length > 3))
             ? " show-drop-scroll"
             : " hide-drop-scroll")
         }

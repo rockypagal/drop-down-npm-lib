@@ -36,6 +36,9 @@
 .drop-down-main .drop-down-title {
   padding: 0.5rem 0;
   font-weight: 500;
+  background:transparent;
+}
+.drop-down-main .drop-down-title.animateDropDownLabel {
   background: white;
 }
 
@@ -107,11 +110,15 @@
 
 .show-drop-scroll .drop-down-menu::-webkit-scrollbar-thumb {
   background: #818181 !important;
-  border-radius: 10px !important;
+  border-radius: 5px !important;
 }
 
 .show-drop-scroll .drop-down-menu::-webkit-scrollbar-thumb:hover {
   background: #a4a4a4 !important;
+  cursor: pointer !important;
+}
+.show-drop-scroll .drop-down-menu::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
   cursor: pointer !important;
 }
 
@@ -298,7 +305,7 @@
   pointer-events: none;
   color: #212229;
   z-index: 1;
-  opacity: 0.7;
+  /* opacity: 0.7; */
   font-size: 1rem;
   line-height: 0;
 }
