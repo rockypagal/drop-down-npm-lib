@@ -65,7 +65,7 @@ const DropDownBox = ({
       return {};
     }
   }
-  function handleSetValues(label, value, index = null) {
+  function handleSetValues(label, value, index = null, menuOptionsLength) {
     if (label === undefined && value === undefined) {
       handleClick();
       return;
@@ -89,6 +89,13 @@ const DropDownBox = ({
       index,
       row: { label, value },
     };
+    setTimeout(() => {
+      if (menuOptionsLength >= 500) {
+        setMenuOptions(options?.slice(0, 500));
+      } else {
+        setMenuOptions(options);
+      }
+    }, 250);
     handleClick();
   }
   useEffect(() => {
@@ -226,8 +233,8 @@ const DropDownBox = ({
             animateTitle
               ? {
                   ...styles?.titleStyle,
-                  padding: "0px !important",
-                  margin: "0px !important",
+                  padding: "0px",
+                  margin: "0px",
                 }
               : styles?.titleStyle
           }

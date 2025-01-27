@@ -42,7 +42,14 @@ declare module "ru-react-dropdown-component" {
     resetButton?: boolean | string;
 
     /** Callback triggered when a value is selected */
-    onSelect?: (value: any, extraData?: any) => void;
+    onSelect?: (
+      value: any,
+      context: {
+        oldValue: any;
+        index: number;
+        row: { label: string; value: any };
+      }
+    ) => void;
 
     /** Function called before selecting a value */
     beforeSelect?: (
@@ -55,7 +62,14 @@ declare module "ru-react-dropdown-component" {
     ) => void;
 
     /** Function called after selecting a value */
-    afterSelect?: (value: any | null) => void;
+    afterSelect?: (
+      value: any | null,
+      context: {
+        oldValue: any;
+        index: number;
+        row: { label: string; value: any };
+      }
+    ) => void;
     changeObserver?: {
       target: string | any;
       handler: (

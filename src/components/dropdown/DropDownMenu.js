@@ -19,13 +19,12 @@ export const DropDownMenu = ({
   animateTitle,
   handleSetValues,
 }) => {
-  console.info('menuOptions: ', menuOptions);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState({ query: "", touched: false });
   const [menuPosition, setMenuPosition] = useState("");
   const inputRef = useRef(null);
   let lastLabelRef = useRef(null);
   const handleSearch = (e) => {
-    setSearch(e.target.value);
+    setSearch({ query: e.target.value, touched: true });
   };
 
   const getSearchOption = (option) => {
@@ -39,11 +38,10 @@ export const DropDownMenu = ({
   };
   useEffect(() => {
     let id;
-    if (searchBar) {
+    if (searchBar && search?.touched) {
       id = setTimeout(
         () => {
-          console.info("search");
-          if (!search) {
+          if (!search?.query) {
             if (menuOptions.length !== 500 && options?.length > 500) {
               setMenuOptions(options.slice(0, 500));
             } else if (options?.length <= 500) {
@@ -55,11 +53,11 @@ export const DropDownMenu = ({
           const arr = options.filter((item) => {
             if (item?.searchOptions) {
               return getSearchOption(item)?.includes(
-                search.replaceAll(" ", "")?.toLowerCase()
+                search?.query.replaceAll(" ", "")?.toLowerCase()
               );
             } else {
               return getSearchOption(item)?.includes(
-                search.replaceAll(" ", "").toLowerCase()
+                search?.query.replaceAll(" ", "").toLowerCase()
               );
             }
           });
@@ -71,7 +69,7 @@ export const DropDownMenu = ({
     return () => {
       clearTimeout(id);
     };
-  }, [search]);
+  }, [search?.query]);
 
   const [globalClick, setGlobalClick] = useState(false);
   const menuRef = useRef();
@@ -127,16 +125,15 @@ export const DropDownMenu = ({
   }, []);
 
   const handleLastLabel = (index, length) => {
-    if (lastLabelRef && index === length - 120) {
+    if (lastLabelRef && index === length - 101) {
       lastLabelRef.current = null;
       return;
     }
-    if (length >= 499 && index === length - 20) {
+    if (length >= 499 && index === length - 1) {
       return lastLabelRef;
     }
   };
   const observerRef = useRef(null); // Store the observer instance
-  console.info('observerRef: ', observerRef);
 
   useEffect(() => {
     if (options?.length >= 500) {
@@ -199,7 +196,7 @@ export const DropDownMenu = ({
                 type="text"
                 placeholder="search here..."
                 name="search"
-                value={search}
+                value={search?.query}
                 onChange={handleSearch}
                 maxLength={80}
               />
@@ -208,7 +205,7 @@ export const DropDownMenu = ({
 
           {resetButton &&
           dropDownValueTwo &&
-          !search &&
+          !search?.query &&
           (incomingValue ? incomingValue !== dropDownValueTwo : true) ? (
             <div
               className="drop-down-item"
@@ -230,7 +227,7 @@ export const DropDownMenu = ({
                   (dropDownValueTwo === value ? " selectedDropBox" : "")
                 }
                 onClick={() => {
-                  handleSetValues(label, value, index);
+                  handleSetValues(label, value, index, menuOptions?.length);
                 }}
                 style={optionsStyle}
               >
