@@ -32,8 +32,8 @@ const MyComponent = ({ country }) => {
       beforeSelect={(value, context) => {
         console.log(value, context);
       }}
-      afterSelect={(value) => {
-        console.log("value: ", value);
+      afterSelect={(value,context) => {
+        console.log(value,context);
       }}
       changeObserver={{
         target: country,
