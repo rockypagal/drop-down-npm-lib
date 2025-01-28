@@ -63,7 +63,7 @@ export const DropDownMenu = ({
           });
           setMenuOptions(arr);
         },
-        searchBar?.delay ? searchBar?.delay : 400
+        typeof Number(searchBar?.delay) === "number" ? searchBar?.delay : 400
       );
     }
     return () => {
@@ -210,7 +210,11 @@ export const DropDownMenu = ({
             <div
               className="drop-down-item"
               onClick={() => {
-                handleSetValues(handleResetBtnText(), "");
+                handleSetValues({
+                  label: handleResetBtnText(),
+                  value: "",
+                  isReset: true,
+                });
               }}
               style={optionsStyle}
             >
@@ -219,26 +223,31 @@ export const DropDownMenu = ({
           ) : null}
 
           {menuOptions?.length > 0 ? (
-            menuOptions?.map(({ label, value }, index) => (
+            menuOptions?.map((row, index) => (
               <div
                 key={index}
                 className={
                   "drop-down-item" +
-                  (dropDownValueTwo === value ? " selectedDropBox" : "")
+                  (dropDownValueTwo === row?.value ? " selectedDropBox" : "")
                 }
                 onClick={() => {
-                  handleSetValues(label, value, index, menuOptions?.length);
+                  handleSetValues(
+                    row,
+                    index,
+                    options?.length,
+                    search?.query && search?.touched
+                  );
                 }}
                 style={optionsStyle}
               >
                 <span
                   ref={
-                    menuOptions?.length >= 499
+                    menuOptions?.length >= 500
                       ? handleLastLabel(index, menuOptions?.length)
                       : null
                   }
                 >
-                  {label}
+                  {row?.label}
                 </span>
               </div>
             ))

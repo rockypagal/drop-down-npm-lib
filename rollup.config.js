@@ -7,12 +7,23 @@ export default [
   {
     input: "./src/index.js",
     output: [{ file: "dist/index.es.js", format: "es", exports: "named" }],
-    plugins: [
+   plugins: [
       postcss(),
       babel({ exclude: "node_modules/**", presets: ["@babel/preset-react"] }),
       external(),
       resolve(),
       terser(),
+      {
+        name: "custom-message", 
+        buildEnd() {
+          console.log(
+            "🎉 Compilation Complete! Your code is ready.",
+            new Date().toLocaleTimeString("en-IN", {
+              hour12: true,
+            })
+          );
+        },
+      },
     ],
   },
 ];

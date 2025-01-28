@@ -65,37 +65,41 @@ const DropDownBox = ({
       return {};
     }
   }
-  function handleSetValues(label, value, index = null, menuOptionsLength) {
+  function handleSetValues(row = {}, index = null, optionsLength, isSearched) {
+    const { label, value, isReset = false } = row;
+    if (row?.isReset) {
+      delete row?.isReset;
+    }
     if (label === undefined && value === undefined) {
       handleClick();
       return;
     }
     let beforeSelectCheck;
-
+    let detailsObj = {
+      oldValue: dropDownValueTwo,
+      index,
+      row: { ...row, label: isReset ? "" : row?.label },
+    };
     if (beforeSelect && typeof beforeSelect === "function") {
-      beforeSelectCheck = beforeSelect(value, {
-        oldValue: dropDownValueTwo,
-        index,
-        row: { label, value },
-      });
+      beforeSelectCheck = beforeSelect(value, detailsObj);
     }
     if (beforeSelectCheck !== false && (label || value)) {
       setDropDownValue(label);
       setDropDownValueTwo(value);
     }
 
-    contextCollectionRef.current = {
-      oldValue: dropDownValueTwo,
-      index,
-      row: { label, value },
-    };
-    setTimeout(() => {
-      if (menuOptionsLength >= 500) {
-        setMenuOptions(options?.slice(0, 500));
-      } else {
-        setMenuOptions(options);
-      }
-    }, 250);
+    contextCollectionRef.current = detailsObj;
+
+    if (isSearched) {
+      console.info("filtered");
+      setTimeout(() => {
+        if (optionsLength >= 500) {
+          setMenuOptions(options?.slice(0, 500));
+        } else {
+          setMenuOptions(options);
+        }
+      }, 250);
+    }
     handleClick();
   }
   useEffect(() => {
@@ -195,7 +199,13 @@ const DropDownBox = ({
       oldTargetedValue.current = target;
     }
   }, [changeObserver?.target]);
+
   useEffect(() => {
+    if (dropDownValue && !placeholder) {
+      setDropDownValue("");
+      return;
+    }
+
     if (placeholder) {
       if (dropDownValueTwo) {
         setDropDownValueTwo("");

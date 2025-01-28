@@ -15,7 +15,13 @@ const MyComponent = ({ country }) => {
   const [selectedValue, setSelectedValue] = useState("");
   const options = [
     { label: "Option 1", value: "option1" },
-    { label: "Option 2", value: "option2" },
+   {
+    label: "Option 2",
+    value: "option2",
+    // Additional searchable values for this option
+    searchOptions: ["xyz@email.com", "123-456-789"]
+   }
+
   ];
 
   return (
@@ -64,19 +70,20 @@ export default MyComponent;
 
 ### `options`
 
-- **Type:** `Array[{label: string, value: string}]`
-- **Description:** Array of objects to populate the dropdown options.
+- **Type:** `Array<{ label: string, value: string }>`
+- **Extended Type (Optional):** `Array<{ label: string, value: string, searchOptions: string[] }>`
+- **Description:** Defines the options for the dropdown as an array of objects. Each object requires a `label` (display text) and a `value`. Optionally, include a `searchOptions` array to add extra searchable values for that particular option.
 
 ### `onSelect`
 
 - **Type:** `function`
-- **Description:** Callback function triggered when an option is selected. And receives the selected value as arguments
+  **Description:** Callback function triggered when an option is selected. It receives two arguments: the first is the selected value, and the second is a context object containing metadata about the selected option.
 - **Arguments:**
   - `selectedValue` (string): The selected value.
-    - `context` (object):
-      - `oldValue`: Previously selected value.
-      - `index`: Index of the option.
-      - `row`: Option object (`{ label, value }`).
+  - `context` (object):
+    - `oldValue`: Previously selected value.
+    - `index`: Index of the option.
+    - `row`: Option object (`{ label, value }`).
 
 ### `title`
 
@@ -142,7 +149,7 @@ export default MyComponent;
 ### `beforeSelect`
 
 - **Type:** `function`
-- **Description:** Executes before an option is selected. Return `false` to prevent the selection. Useful for validation or conditional logic.
+- **Description:** Executes before an option is selected. Return `false` to prevent the selection. Useful for validation or conditional logic. It receives two arguments: the first is the selected value, and the second is a context object containing metadata about the selected option.
 - **Arguments:**
   - `value` (string): The selected option's value.
   - `context` (object):
@@ -153,13 +160,13 @@ export default MyComponent;
 ### `afterSelect`
 
 - **Type:** `function`
-- **Description:** Triggered after a value is selected. Ideal for side effects like API calls or analytics.
+- **Description:** Triggered after a value is selected. Ideal for side effects like API calls or analytics. It receives two arguments: the first is the selected value, and the second is a context object containing metadata about the selected option.
 - **Arguments:**
   - `selectedValue` (string): The selected value.
-    - `context` (object):
-      - `oldValue`: Previously selected value.
-      - `index`: Index of the option.
-      - `row`: Option object (`{ label, value }`).
+  - `context` (object):
+    - `oldValue`: Previously selected value.
+    - `index`: Index of the option.
+    - `row`: Option object (`{ label, value }`).
 
 ### `changeObserver`
 
