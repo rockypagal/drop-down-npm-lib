@@ -178,15 +178,13 @@ export const DropDownMenu = ({
           } ${searchBar ? " search-height-adjust " : ""} `}
           ref={showMenu && globalClick ? menuRef : null}
           id="drop_$_down_$_menu"
-          style={
-            menuPosition
-              ? {
-                  ...optionsBoxStyle,
-                  top: "auto",
-                  bottom: `${animateTitle ? "85%" : "70%"}`,
-                }
-              : optionsBoxStyle
-          }
+          style={{
+            ...optionsBoxStyle,
+            ...(menuPosition && {
+              top: "auto",
+              bottom: `${animateTitle ? "85%" : "70%"}`,
+            }),
+          }}
         >
           {searchBar ? (
             <div className="drop-down-search-bar">

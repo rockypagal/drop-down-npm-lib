@@ -2,6 +2,7 @@
 import "./dropdown-style.css";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { DropDownMenu } from "./DropDownMenu";
+import { cssSizeList, cssSizeUnits } from "../../constant/constant";
 const DropDownBox = ({
   title,
   animateTitle,
@@ -168,10 +169,14 @@ const DropDownBox = ({
   }, [incomingValue, memoizedOptions]);
 
   useEffect(() => {
-    if (disabled && showMenu) {
-      handleClick();
-    }
-  }, [disabled]);
+    const id = setTimeout(() => {
+      if (disabled && showMenu) {
+        handleClick();
+      }
+    }, 250);
+
+    return () => clearTimeout(id);
+  }, [disabled, showMenu]);
 
   useEffect(() => {
     const { target, handler } = changeObserver;
@@ -215,19 +220,35 @@ const DropDownBox = ({
     }
   }, [placeholder]);
 
+  function handleCSSUnits(size) {
+    const unit = size?.replaceAll(/\d/g, "");
+    if (cssSizeUnits.includes(unit)) {
+      return cssSizeUnits.includes(unit);
+    }
+    // console.error(
+    //   `Invalid CSS unit: ${size}. Only the following units are supported by this component: px, em, rem, %, vw, vmin, vmax.`
+    // );
+
+    return false;
+  }
+
   return (
     <div
-      className={
-        "drop-down-main" +
-        (size === "small"
-          ? " drop-down-main-small"
-          : size === "medium"
-          ? " drop-down-main-medium"
-          : size === "mini"
-          ? " drop-down-main-mini"
-          : " drop-down-main-large")
-      }
+      className={`drop-down-main ${
+        typeof size === "string" && cssSizeList.includes(size)
+          ? `drop-down-main-${size}`
+          : "drop-down-main-large"
+      }`}
       ref={mainRef}
+      style={{
+        ...(size && typeof parseInt(size) === "number"
+          ? {
+              width: handleCSSUnits(size) ? size : `${parseInt(size)}px`,
+            }
+          : styles?.selectStyles?.width && {
+              width: styles?.selectStyles?.width,
+            }),
+      }}
     >
       {title && (
         <div
@@ -239,15 +260,11 @@ const DropDownBox = ({
                 : " animateDropDownLabel"
               : "")
           }
-          style={
-            animateTitle
-              ? {
-                  ...styles?.titleStyle,
-                  padding: "0px",
-                  margin: "0px",
-                }
-              : styles?.titleStyle
-          }
+          style={{
+            ...styles?.titleStyle,
+            ...(animateTitle && { padding: "0px" }),
+            ...(animateTitle && { margin: "0px" }),
+          }}
         >
           <span>{title ? title : ""}</span>
         </div>
@@ -272,24 +289,39 @@ const DropDownBox = ({
               handleClick();
             }
           }}
-          style={
-            styles?.selectStyles && disabled && styles?.disableStyle
-              ? { ...styles?.selectStyles, ...styles?.disableStyle }
-              : disabled && styles?.disableStyle
-              ? { ...styles?.disableStyle }
-              : styles?.selectStyles
-              ? { ...styles?.selectStyles }
-              : {}
-          }
+          style={{
+            ...(styles?.selectStyles && {
+              ...styles?.selectStyles,
+              ...(size && { width: "auto" }),
+              ...(disabled &&
+                !styles?.disableStyle && {
+                  backgroundColor: "#e2e2e24b",
+                  cursor: "not-allowed",
+                }),
+            }),
+            ...(disabled &&
+              styles?.disableStyle && {
+                ...styles?.disableStyle,
+              }),
+          }}
         >
           <div
             className="default_value"
-            style={handlePlaceholderAndSelectedValueStyle()}
+            style={{
+              ...(styles?.selectValueStyle && styles?.selectValueStyle),
+              ...(placeholder &&
+                styles?.placeholderStyle &&
+                !dropDownValueTwo &&
+                styles?.placeholderStyle),
+            }}
           >
             {dropDownValue || "\u00A0"}
           </div>
           {customArrow && customArrow?.element ? (
-            <div className={`drop-arrow ${addStyle ? "up-arrow" : ""}`}>
+            <div
+              className={`drop-arrow ${addStyle ? "up-arrow" : ""}`}
+              style={styles?.arrowStyle}
+            >
               {customArrow?.element}
             </div>
           ) : (
