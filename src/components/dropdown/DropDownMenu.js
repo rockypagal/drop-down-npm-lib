@@ -63,7 +63,10 @@ export const DropDownMenu = ({
           });
           setMenuOptions(arr);
         },
-        typeof Number(searchBar?.delay) === "number" ? searchBar?.delay : 400
+
+        searchBar?.delay && typeof Number(searchBar?.delay) === "number" //*********
+          ? searchBar?.delay
+          : 400
       );
     }
     return () => {
@@ -201,10 +204,7 @@ export const DropDownMenu = ({
             </div>
           ) : null}
 
-          {resetButton &&
-          dropDownValueTwo &&
-          !search?.query &&
-          (incomingValue ? incomingValue !== dropDownValueTwo : true) ? (
+          {resetButton && dropDownValueTwo && !search?.query ? (
             <div
               className="drop-down-item"
               onClick={() => {

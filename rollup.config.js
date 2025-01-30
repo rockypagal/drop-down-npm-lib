@@ -18,7 +18,7 @@ export default [
         buildEnd() {
           console.log(
             "🎉 Compilation Complete! Your code is ready.",
-            new Date().toLocaleTimeString("en-IN", {
+            new Date().toLocaleTimeString("en-GB", {
               hour12: true,
             })
           );

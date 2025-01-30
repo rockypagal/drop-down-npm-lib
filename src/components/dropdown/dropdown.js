@@ -57,21 +57,12 @@ const DropDownBox = ({
     return typeof resetButton === "string" ? resetButton : "Reset";
   };
 
-  function handlePlaceholderAndSelectedValueStyle() {
-    if (placeholder && styles?.placeholderStyle && !dropDownValueTwo) {
-      return styles?.placeholderStyle;
-    } else if (styles?.selectValueStyle) {
-      return styles?.selectValueStyle;
-    } else {
-      return {};
-    }
-  }
   function handleSetValues(row = {}, index = null, optionsLength, isSearched) {
     const { label, value, isReset = false } = row;
     if (row?.isReset) {
       delete row?.isReset;
     }
-    if (label === undefined && value === undefined) {
+    if (label === undefined && value === undefined && showMenu) {
       handleClick();
       return;
     }
@@ -92,7 +83,6 @@ const DropDownBox = ({
     contextCollectionRef.current = detailsObj;
 
     if (isSearched) {
-      console.info("filtered");
       setTimeout(() => {
         if (optionsLength >= 500) {
           setMenuOptions(options?.slice(0, 500));
@@ -101,7 +91,8 @@ const DropDownBox = ({
         }
       }, 250);
     }
-    handleClick();
+
+    if (showMenu) handleClick();
   }
   useEffect(() => {
     return () => {
@@ -115,9 +106,10 @@ const DropDownBox = ({
 
   useEffect(() => {
     const resetButtonText = handleResetBtnText();
-    const isReset = dropDownValue === resetButtonText;
+    const isReset =
+      dropDownValue === resetButtonText && dropDownValueTwo === ""; //*********
 
-    if (dropDownValueTwo || dropDownValue === resetButtonText) {
+    if (dropDownValueTwo || isReset) {
       if (!onSelect) {
         console.error(
           "Dropdown component requires a callback function to handle value changes. Please provide a valid 'onSelect' prop."
@@ -130,7 +122,7 @@ const DropDownBox = ({
         afterSelect(dropDownValueTwo, contextCollectionRef.current);
       }
 
-      if (dropDownValue === resetButtonText) {
+      if (isReset) {
         //  else if (setter || (setter && isReset)) {
         //   setter(dropDownValueTwo);
         // }
@@ -159,11 +151,19 @@ const DropDownBox = ({
       (historyIncomingValue && historyIncomingValue !== incomingValue) ||
       (!dropDownValueTwo && incomingValue)
     ) {
-      const result = options?.find((item) => item?.value === incomingValue);
+      let index = null;
+      const result = options?.find((item, i) => {
+        //*********
+        if (item?.value === incomingValue) {
+          index = i;
+          return true;
+        }
+        return false;
+      });
+
       if (result?.value === incomingValue) {
         setHistoryIncomingValue(result?.value);
-        setDropDownValueTwo(result?.value);
-        setDropDownValue(result?.label);
+        handleSetValues(result, index);
       }
     }
   }, [incomingValue, memoizedOptions]);
@@ -183,15 +183,21 @@ const DropDownBox = ({
 
     if (typeof handler === "function") {
       const setter = (value) => {
+        //*********
         let result = { label: value ? value : placeholder, value: value };
-
+        let index = null;
         if (value) {
-          result = options?.find((item) => item?.value === value);
+          result = options?.find((item, i) => {
+            if (item?.value === value) {
+              index = i;
+              return true;
+            }
+            return false;
+          });
         }
 
         if (result?.value === value) {
-          setDropDownValueTwo(result?.value);
-          setDropDownValue(result?.label);
+          handleSetValues(result, index);
         }
       };
 
@@ -220,15 +226,15 @@ const DropDownBox = ({
     }
   }, [placeholder]);
 
-  function handleCSSUnits(size) {
-    const unit = size?.replaceAll(/\d/g, "");
-    if (cssSizeUnits.includes(unit)) {
-      return cssSizeUnits.includes(unit);
+  function isValidCSSUnit(size) {
+    const unit = size?.replaceAll(/\d/g, ""); //*********
+    const isValidUnit = cssSizeUnits.includes(unit);
+    if (isValidUnit) {
+      return isValidUnit;
     }
     // console.error(
     //   `Invalid CSS unit: ${size}. Only the following units are supported by this component: px, em, rem, %, vw, vmin, vmax.`
     // );
-
     return false;
   }
 
@@ -243,7 +249,7 @@ const DropDownBox = ({
       style={{
         ...(size && typeof parseInt(size) === "number"
           ? {
-              width: handleCSSUnits(size) ? size : `${parseInt(size)}px`,
+              width: isValidCSSUnit(size) ? size : `${parseInt(size)}px`,
             }
           : styles?.selectStyles?.width && {
               width: styles?.selectStyles?.width,
@@ -253,12 +259,19 @@ const DropDownBox = ({
       {title && (
         <div
           className={
-            "drop-down-title" +
-            (animateTitle
-              ? dropDownValueTwo || showMenu
-                ? " animateDropDownLabel animateDropDownLabelUp"
-                : " animateDropDownLabel"
-              : "")
+            `drop-down-title animateDropDownLabel ${
+              //*********
+              animateTitle && (dropDownValueTwo || showMenu)
+                ? "animateDropDownLabelUp"
+                : ""
+            }`
+
+            // "drop-down-title" +
+            // (animateTitle
+            //   ? dropDownValueTwo || showMenu
+            //     ? " animateDropDownLabel animateDropDownLabelUp"
+            //     : " animateDropDownLabel"
+            //   : "")
           }
           style={{
             ...styles?.titleStyle,
@@ -283,7 +296,7 @@ const DropDownBox = ({
         }
       >
         <div
-          className={disabled ? " direct disabledDropBox" : "direct"}
+          className={`direct ${disabled ? "disabledDropBox" : ""}`} //*********
           onClick={(e) => {
             if (!disabled) {
               handleClick();
@@ -315,7 +328,9 @@ const DropDownBox = ({
                 styles?.placeholderStyle),
             }}
           >
-            {dropDownValue || "\u00A0"}
+            {dropDownValue === handleResetBtnText() && dropDownValueTwo === "" //*********
+              ? "\u00A0"
+              : dropDownValue || "\u00A0"}
           </div>
           {customArrow && customArrow?.element ? (
             <div
