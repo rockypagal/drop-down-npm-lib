@@ -58,10 +58,9 @@ const DropDownBox = ({
   };
 
   function handleSetValues(row = {}, index = null, optionsLength, isSearched) {
-    const { label, value, isReset = false } = row;
-    if (row?.isReset) {
-      delete row?.isReset;
-    }
+    const { label, value, key } = row;
+    if (row?.key) delete row?.key;
+
     if (label === undefined && value === undefined && showMenu) {
       handleClick();
       return;
@@ -70,7 +69,7 @@ const DropDownBox = ({
     let detailsObj = {
       oldValue: dropDownValueTwo,
       index,
-      row: { ...row, label: isReset ? "" : row?.label },
+      row: { ...row, label: key && key === "reset" ? "" : row?.label },
     };
     if (beforeSelect && typeof beforeSelect === "function") {
       beforeSelectCheck = beforeSelect(value, detailsObj);
@@ -84,15 +83,15 @@ const DropDownBox = ({
 
     if (isSearched) {
       setTimeout(() => {
-        if (optionsLength >= 500) {
-          setMenuOptions(options?.slice(0, 500));
+        if (optionsLength >= 100) {
+          setMenuOptions(options?.slice(0, 100));
         } else {
           setMenuOptions(options);
         }
       }, 250);
     }
 
-    if (showMenu) handleClick();
+    if (key !== "incomingValue") handleClick();
   }
   useEffect(() => {
     return () => {
@@ -140,8 +139,8 @@ const DropDownBox = ({
 
   useEffect(() => {
     let arr = memoizedOptions;
-    if (memoizedOptions?.length > 500) {
-      arr = memoizedOptions?.slice(0, 500);
+    if (memoizedOptions?.length > 100) {
+      arr = memoizedOptions?.slice(0, 100);
     }
     setMenuOptions(arr);
   }, [memoizedOptions]);
@@ -163,7 +162,7 @@ const DropDownBox = ({
 
       if (result?.value === incomingValue) {
         setHistoryIncomingValue(result?.value);
-        handleSetValues(result, index);
+        handleSetValues({ ...result, key: "incomingValue" }, index);
       }
     }
   }, [incomingValue, memoizedOptions]);
@@ -197,7 +196,7 @@ const DropDownBox = ({
         }
 
         if (result?.value === value) {
-          handleSetValues(result, index);
+          handleSetValues({ ...result, key: "incomingValue" }, index);
         }
       };
 
@@ -251,8 +250,8 @@ const DropDownBox = ({
           ? {
               width: isValidCSSUnit(size) ? size : `${parseInt(size)}px`,
             }
-          : styles?.selectStyles?.width && {
-              width: styles?.selectStyles?.width,
+          : styles?.selectBox?.width && {
+              width: styles?.selectBox?.width,
             }),
       }}
     >
@@ -274,7 +273,7 @@ const DropDownBox = ({
             //   : "")
           }
           style={{
-            ...styles?.titleStyle,
+            ...styles?.title,
             ...(animateTitle && { padding: "0px" }),
             ...(animateTitle && { margin: "0px" }),
           }}
@@ -303,29 +302,29 @@ const DropDownBox = ({
             }
           }}
           style={{
-            ...(styles?.selectStyles && {
-              ...styles?.selectStyles,
+            ...(styles?.selectBox && {
+              ...styles?.selectBox,
               ...(size && { width: "auto" }),
               ...(disabled &&
-                !styles?.disableStyle && {
+                !styles?.disabledState && {
                   backgroundColor: "#e2e2e24b",
                   cursor: "not-allowed",
                 }),
             }),
             ...(disabled &&
-              styles?.disableStyle && {
-                ...styles?.disableStyle,
+              styles?.disabledState && {
+                ...styles?.disabledState,
               }),
           }}
         >
           <div
             className="default_value"
             style={{
-              ...(styles?.selectValueStyle && styles?.selectValueStyle),
+              ...(styles?.selectedValue && styles?.selectedValue),
               ...(placeholder &&
-                styles?.placeholderStyle &&
+                styles?.placeholder &&
                 !dropDownValueTwo &&
-                styles?.placeholderStyle),
+                styles?.placeholder),
             }}
           >
             {dropDownValue === handleResetBtnText() && dropDownValueTwo === "" //*********
@@ -335,7 +334,7 @@ const DropDownBox = ({
           {customArrow && customArrow?.element ? (
             <div
               className={`drop-arrow ${addStyle ? "up-arrow" : ""}`}
-              style={styles?.arrowStyle}
+              style={styles?.arrow}
             >
               {customArrow?.element}
             </div>
@@ -343,11 +342,11 @@ const DropDownBox = ({
             <svg
               className={`drop-arrow ${addStyle ? "up-arrow" : ""}`}
               // style={
-              //   styles?.selectValueStyle && dropDownValue === placeholder
-              //     ? styles?.selectValueStyle
+              //   styles?.selectedValue && dropDownValue === placeholder
+              //     ? styles?.selectedValue
               //     : {}
               // }
-              style={styles?.arrowStyle}
+              style={styles?.arrow}
               xmlns="http://www.w3.org/2000/svg"
               height="1rem"
               viewBox="0 -960 960 960"
@@ -370,9 +369,9 @@ const DropDownBox = ({
             setMenuOptions={setMenuOptions}
             showMenu={showMenu}
             handleResetBtnText={handleResetBtnText}
-            optionsBoxStyle={styles?.optionsBoxStyle}
-            optionsStyle={styles?.optionsStyle}
-            inputSearchStyle={styles?.searchBoxStyle}
+            optionsContainer={styles?.optionsContainer}
+            optionItem={styles?.optionItem}
+            inputSearchStyle={styles?.searchInput}
             incomingValue={incomingValue}
             mainRef={mainRef}
             animateTitle={animateTitle}

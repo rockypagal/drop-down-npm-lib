@@ -89,15 +89,15 @@ declare module "ru-react-dropdown-component" {
 
     /** Custom styles for various dropdown elements */
     styles?: {
-      selectStyles?: CSSProperties;
-      selectValueStyle?: CSSProperties;
-      placeholderStyle?: CSSProperties;
-      titleStyle?: CSSProperties;
-      arrowStyle?: CSSProperties;
-      disableStyle?: CSSProperties;
-      optionsBoxStyle?: CSSProperties;
-      optionsStyle?: CSSProperties;
-      searchBoxStyle?: CSSProperties;
+      selectBox?: CSSProperties;
+      selectedValue?: CSSProperties;
+      placeholder?: CSSProperties;
+      title?: CSSProperties;
+      arrow?: CSSProperties;
+      disabledState?: CSSProperties;
+      optionsContainer?: CSSProperties;
+      optionItem?: CSSProperties;
+      searchInput?: CSSProperties;
     };
   }
 

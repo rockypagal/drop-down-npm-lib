@@ -50,8 +50,8 @@ const MyComponent = ({ country }) => {
         },
       }}
       styles={{
-        selectStyles: { border: "1px solid #ccc" },
-        selectValueStyle: { color: "blue" },
+        selectBox: { border: "1px solid #ccc" },
+        selectedValue: { color: "blue" },
       }}
       resetButton={true}
     />
@@ -99,15 +99,15 @@ export default MyComponent;
 
 - **Type:** `object`
 - **Description:** Object containing styles for various parts of the dropdown. Keys include:
-  - `selectStyles`: Styles for the select box.
-  - `selectValueStyle`: Styles for the selected value text.
-  - `placeholderStyle`: Styles for the placeholder text.
-  - `titleStyle`: Styles for the title.
-  - `arrowStyle`: Styles for the dropdown arrow.
-  - `disableStyle`: Styles for the dropdown when disabled.
-  - `optionsBoxStyle`: Styles for the dropdown options container.
-  - `optionsStyle`: Styles for individual options.
-  - `searchBoxStyle`: Styles for the search bar.
+  - `selectBox`: Styles for the select box.
+  - `selectedValue`: Styles for the selected value text.
+  - `placeholder`: Styles for the placeholder text.
+  - `title`: Styles for the title.
+  - `arrow`: Styles for the dropdown arrow.
+  - `disabledState`: Styles for the dropdown when disabled.
+  - `optionsContainer`: Styles for the dropdown options container.
+  - `optionItem`: Styles for individual options.
+  - `searchInput`: Styles for the search bar.
 
 ### `placeholder`
 
@@ -204,15 +204,15 @@ export default MyComponent;
 
 15. `styles`
 
-- `selectStyles`
-- `selectValueStyle`
-- `placeholderStyle`
-- `titleStyle`
-- `arrowStyle`
-- `disableStyle`
-- `optionsBoxStyle`
-- `optionsStyle`
-- `searchBoxStyle`
+- `selectBox`
+- `selectedValue`
+- `placeholder`
+- `title`
+- `arrow`
+- `disabledState`
+- `optionsContainer`
+- `optionItem`
+- `searchInput`
 
 ---
 

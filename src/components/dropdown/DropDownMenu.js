@@ -12,8 +12,8 @@ export const DropDownMenu = ({
   showMenu,
   incomingValue,
   handleResetBtnText,
-  optionsBoxStyle,
-  optionsStyle,
+  optionsContainer,
+  optionItem,
   inputSearchStyle,
   mainRef,
   animateTitle,
@@ -42,9 +42,9 @@ export const DropDownMenu = ({
       id = setTimeout(
         () => {
           if (!search?.query) {
-            if (menuOptions.length !== 500 && options?.length > 500) {
-              setMenuOptions(options.slice(0, 500));
-            } else if (options?.length <= 500) {
+            if (menuOptions.length !== 100 && options?.length > 100) {
+              setMenuOptions(options.slice(0, 100));
+            } else if (options?.length <= 100) {
               setMenuOptions(options);
             }
             return;
@@ -83,8 +83,8 @@ export const DropDownMenu = ({
         handleSetValues();
 
         setTimeout(() => {
-          if (options?.length >= 500) {
-            setMenuOptions(options?.slice(0, 500));
+          if (options?.length >= 100) {
+            setMenuOptions(options?.slice(0, 100));
           } else {
             setMenuOptions(options);
           }
@@ -132,14 +132,14 @@ export const DropDownMenu = ({
       lastLabelRef.current = null;
       return;
     }
-    if (length >= 499 && index === length - 1) {
+    if (length >= 100 && index === length - 1) {
       return lastLabelRef;
     }
   };
   const observerRef = useRef(null); // Store the observer instance
 
   useEffect(() => {
-    if (options?.length >= 500) {
+    if (options?.length >= 100) {
       // Create the observer only if it doesn't already exist
       if (!observerRef.current) {
         observerRef.current = new IntersectionObserver((elements) => {
@@ -182,7 +182,7 @@ export const DropDownMenu = ({
           ref={showMenu && globalClick ? menuRef : null}
           id="drop_$_down_$_menu"
           style={{
-            ...optionsBoxStyle,
+            ...optionsContainer,
             ...(menuPosition && {
               top: "auto",
               bottom: `${animateTitle ? "85%" : "70%"}`,
@@ -211,10 +211,10 @@ export const DropDownMenu = ({
                 handleSetValues({
                   label: handleResetBtnText(),
                   value: "",
-                  isReset: true,
+                  key: "reset",
                 });
               }}
-              style={optionsStyle}
+              style={optionItem}
             >
               <span>{handleResetBtnText()}</span>
             </div>
@@ -236,11 +236,11 @@ export const DropDownMenu = ({
                     search?.query && search?.touched
                   );
                 }}
-                style={optionsStyle}
+                style={optionItem}
               >
                 <span
                   ref={
-                    menuOptions?.length >= 500
+                    menuOptions?.length >= 100
                       ? handleLastLabel(index, menuOptions?.length)
                       : null
                   }
@@ -250,7 +250,7 @@ export const DropDownMenu = ({
               </div>
             ))
           ) : (
-            <div className="drop-down-item" style={optionsStyle}>
+            <div className="drop-down-item" style={optionItem}>
               <span>No Data Found</span>
             </div>
           )}
