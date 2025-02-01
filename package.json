@@ -37,7 +37,7 @@
   "bugs": {
     "url": "https://github.com/rockypagal/drop-down-npm-lib/issues"
   },
-  "homepage": "https://github.com/rockypagal/drop-down-npm-lib",
+  "homepage": "https://ru-react-dropdown-component.vercel.app",
   "peerDependencies": {
     "react": "^18 || ^19",
     "react-dom": "^18 || ^19"

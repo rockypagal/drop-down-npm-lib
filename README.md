@@ -130,6 +130,12 @@ export default MyComponent;
 - **Default:** `false`
 - **Description:** If true, disables the dropdown.
 
+### `hideScrollbar`
+
+- **Type:** `boolean`
+- **Default:** `false`
+- **Description:** If true, hides scroll in the menu.
+
 ### `resetButton`
 
 - **Type:** `boolean | string`
@@ -137,7 +143,7 @@ export default MyComponent;
 
 ### `incomingValue`
 
-- **Type:** `string`
+- **Type:** `any`
 - **Description:** Incoming value to be set on render.
 - **Note:** Useful when value is coming from api or some other external sources.
 

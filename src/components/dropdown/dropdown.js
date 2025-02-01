@@ -2,7 +2,8 @@
 import "./dropdown-style.css";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { DropDownMenu } from "./DropDownMenu";
-import { cssSizeList, cssSizeUnits } from "../../constant/constant";
+import { cssSizeList, keys } from "../../constant/constant";
+import { checkType, isValidCSSUnit, trim } from "../../helper/helper";
 const DropDownBox = ({
   title,
   animateTitle,
@@ -54,14 +55,17 @@ const DropDownBox = ({
 
   // ? function to set reset button value
   const handleResetBtnText = () => {
-    return typeof resetButton === "string" ? resetButton : "Reset";
+    return checkType(resetButton, "string", {
+      ifTrue: resetButton,
+      ifFalse: keys?.resetKey,
+    });
   };
 
   function handleSetValues(row = {}, index = null, optionsLength, isSearched) {
     const { label, value, key } = row;
     if (row?.key) delete row?.key;
 
-    if (label === undefined && value === undefined && showMenu) {
+    if (key === keys?.globalKey && showMenu) {
       handleClick();
       return;
     }
@@ -69,9 +73,9 @@ const DropDownBox = ({
     let detailsObj = {
       oldValue: dropDownValueTwo,
       index,
-      row: { ...row, label: key && key === "reset" ? "" : row?.label },
+      row: { ...row, label: key && key === keys?.resetKey ? "" : row?.label },
     };
-    if (beforeSelect && typeof beforeSelect === "function") {
+    if (beforeSelect && checkType(beforeSelect, "function")) {
       beforeSelectCheck = beforeSelect(value, detailsObj);
     }
     if (beforeSelectCheck !== false && (label || value)) {
@@ -91,7 +95,7 @@ const DropDownBox = ({
       }, 250);
     }
 
-    if (key !== "incomingValue") handleClick();
+    if (key !== keys?.incomingKey) handleClick();
   }
   useEffect(() => {
     return () => {
@@ -106,7 +110,7 @@ const DropDownBox = ({
   useEffect(() => {
     const resetButtonText = handleResetBtnText();
     const isReset =
-      dropDownValue === resetButtonText && dropDownValueTwo === ""; //*********
+      dropDownValue === resetButtonText && dropDownValueTwo === "";
 
     if (dropDownValueTwo || isReset) {
       if (!onSelect) {
@@ -117,7 +121,7 @@ const DropDownBox = ({
         onSelect(dropDownValueTwo, contextCollectionRef.current);
       }
 
-      if (afterSelect && typeof afterSelect === "function") {
+      if (afterSelect && checkType(afterSelect, "function")) {
         afterSelect(dropDownValueTwo, contextCollectionRef.current);
       }
 
@@ -152,7 +156,6 @@ const DropDownBox = ({
     ) {
       let index = null;
       const result = options?.find((item, i) => {
-        //*********
         if (item?.value === incomingValue) {
           index = i;
           return true;
@@ -162,7 +165,7 @@ const DropDownBox = ({
 
       if (result?.value === incomingValue) {
         setHistoryIncomingValue(result?.value);
-        handleSetValues({ ...result, key: "incomingValue" }, index);
+        handleSetValues({ ...result, key: keys?.incomingKey }, index);
       }
     }
   }, [incomingValue, memoizedOptions]);
@@ -180,9 +183,8 @@ const DropDownBox = ({
   useEffect(() => {
     const { target, handler } = changeObserver;
 
-    if (typeof handler === "function") {
+    if (checkType(handler, "function")) {
       const setter = (value) => {
-        //*********
         let result = { label: value ? value : placeholder, value: value };
         let index = null;
         if (value) {
@@ -196,7 +198,7 @@ const DropDownBox = ({
         }
 
         if (result?.value === value) {
-          handleSetValues({ ...result, key: "incomingValue" }, index);
+          handleSetValues({ ...result, key: keys?.incomingKey }, index);
         }
       };
 
@@ -225,32 +227,21 @@ const DropDownBox = ({
     }
   }, [placeholder]);
 
-  function isValidCSSUnit(size) {
-    const unit = size?.replaceAll(/\d/g, ""); //*********
-    const isValidUnit = cssSizeUnits.includes(unit);
-    if (isValidUnit) {
-      return isValidUnit;
-    }
-    // console.error(
-    //   `Invalid CSS unit: ${size}. Only the following units are supported by this component: px, em, rem, %, vw, vmin, vmax.`
-    // );
-    return false;
-  }
-
   return (
     <div
       className={`drop-down-main ${
-        typeof size === "string" && cssSizeList.includes(size)
+        checkType(size, "string") && cssSizeList.includes(size)
           ? `drop-down-main-${size}`
           : "drop-down-main-large"
       }`}
       ref={mainRef}
       style={{
-        ...(size && typeof parseInt(size) === "number"
+        ...(size && checkType(parseInt(size) === "number")
           ? {
               width: isValidCSSUnit(size) ? size : `${parseInt(size)}px`,
             }
-          : styles?.selectBox?.width && {
+          : checkType(styles?.selectBox, "object") &&
+            styles?.selectBox?.width && {
               width: styles?.selectBox?.width,
             }),
       }}
@@ -258,12 +249,18 @@ const DropDownBox = ({
       {title && (
         <div
           className={
-            `drop-down-title animateDropDownLabel ${
-              //*********
-              animateTitle && (dropDownValueTwo || showMenu)
-                ? "animateDropDownLabelUp"
+            trim(`drop-down-title  ${
+              animateTitle
+                ? dropDownValueTwo || showMenu
+                  ? " animateDropDownLabel animateDropDownLabelUp"
+                  : " animateDropDownLabel"
                 : ""
-            }`
+            }
+            ${checkType(styles?.title, "string", {
+              ifTrue: styles?.title,
+              ifFalse: "",
+            })}
+            `)
 
             // "drop-down-title" +
             // (animateTitle
@@ -273,7 +270,9 @@ const DropDownBox = ({
             //   : "")
           }
           style={{
-            ...styles?.title,
+            ...(styles?.title &&
+              checkType(styles?.title, "object") &&
+              styles?.title),
             ...(animateTitle && { padding: "0px" }),
             ...(animateTitle && { margin: "0px" }),
           }}
@@ -295,58 +294,97 @@ const DropDownBox = ({
         }
       >
         <div
-          className={`direct ${disabled ? "disabledDropBox" : ""}`} //*********
+          className={trim(`direct ${
+            disabled ? "disabledDropBox" : ""
+          } ${checkType(styles?.selectBox, "string", {
+            ifTrue: styles?.selectBox,
+            ifFalse: "",
+          })}
+          ${
+            disabled
+              ? checkType(styles?.disabledState, "string", {
+                  ifTrue: styles?.disabledState,
+                  ifFalse: "",
+                })
+              : ""
+          }`)}
           onClick={(e) => {
             if (!disabled) {
               handleClick();
             }
           }}
           style={{
-            ...(styles?.selectBox && {
-              ...styles?.selectBox,
-              ...(size && { width: "auto" }),
-              ...(disabled &&
-                !styles?.disabledState && {
-                  backgroundColor: "#e2e2e24b",
-                  cursor: "not-allowed",
-                }),
-            }),
+            ...(checkType(styles?.selectBox, "object") &&
+              styles?.selectBox && {
+                ...styles?.selectBox,
+                ...(size && { width: "auto" }),
+                ...(disabled &&
+                  !styles?.disabledState && {
+                    backgroundColor: "#e2e2e24b",
+                    cursor: "not-allowed",
+                  }),
+              }),
             ...(disabled &&
-              styles?.disabledState && {
+              styles?.disabledState &&
+              checkType(styles?.disabledState, "object") && {
                 ...styles?.disabledState,
               }),
           }}
         >
           <div
-            className="default_value"
+            className={trim(
+              `default_value ${
+                dropDownValueTwo &&
+                checkType(styles?.selectedValue, "string", {
+                  ifTrue: styles?.selectedValue,
+                  ifFalse: "",
+                })
+              } ${
+                !dropDownValueTwo && checkType(styles?.placeholder, "string")
+                  ? styles?.placeholder
+                  : ""
+              }`
+            )}
             style={{
-              ...(styles?.selectedValue && styles?.selectedValue),
+              ...(styles?.selectedValue &&
+                dropDownValueTwo &&
+                checkType(styles?.selectedValue, "object") &&
+                styles?.selectedValue),
               ...(placeholder &&
                 styles?.placeholder &&
+                checkType(styles?.placeholder, "object") &&
                 !dropDownValueTwo &&
                 styles?.placeholder),
             }}
           >
-            {dropDownValue === handleResetBtnText() && dropDownValueTwo === "" //*********
+            {dropDownValue === handleResetBtnText() && dropDownValueTwo === ""
               ? "\u00A0"
               : dropDownValue || "\u00A0"}
           </div>
           {customArrow && customArrow?.element ? (
             <div
-              className={`drop-arrow ${addStyle ? "up-arrow" : ""}`}
-              style={styles?.arrow}
+              // className={`drop-arrow ${addStyle ? "up-arrow" : ""}`}
+              className={`drop-arrow ${addStyle ? "up-arrow" : ""} ${
+                checkType(styles?.arrow, "string") ? styles?.arrow : ""
+              }`}
+              style={checkType(styles?.arrow, "object", {
+                ifTrue: styles?.arrow,
+                ifFalse: {},
+              })}
             >
               {customArrow?.element}
             </div>
           ) : (
             <svg
-              className={`drop-arrow ${addStyle ? "up-arrow" : ""}`}
+              className={`drop-arrow ${addStyle ? "up-arrow" : ""} ${
+                checkType(styles?.arrow, "string") ? styles?.arrow : ""
+              }`}
               // style={
               //   styles?.selectedValue && dropDownValue === placeholder
               //     ? styles?.selectedValue
               //     : {}
               // }
-              style={styles?.arrow}
+              style={checkType(styles?.arrow, "object") ? styles?.arrow : {}}
               xmlns="http://www.w3.org/2000/svg"
               height="1rem"
               viewBox="0 -960 960 960"
@@ -370,9 +408,9 @@ const DropDownBox = ({
             showMenu={showMenu}
             handleResetBtnText={handleResetBtnText}
             optionsContainer={styles?.optionsContainer}
-            optionItem={styles?.optionItem}
+            optionItemStyle={styles?.optionItem}
             inputSearchStyle={styles?.searchInput}
-            incomingValue={incomingValue}
+            selectedOptionItemStyle={styles?.selectedOptionItem}
             mainRef={mainRef}
             animateTitle={animateTitle}
             handleSetValues={handleSetValues}

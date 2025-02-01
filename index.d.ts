@@ -23,8 +23,8 @@ declare module "ru-react-dropdown-component" {
     /** To hide the scrollbar in menu */
     hideScrollbar?: boolean;
 
-    /** Size of the dropdown (e.g., "small", "medium", "large", "mini") */
-    size?: "small" | "medium" | "large" | "mini";
+    /** Size of the dropdown (e.g., "small", "large", "mini") */
+    size?: "small" | "medium" | "mini";
 
     /** Enables the search bar within the dropdown */
     showSearch?: boolean | { delay: number };
@@ -36,7 +36,7 @@ declare module "ru-react-dropdown-component" {
     disabled?: boolean;
 
     /** The incoming value to be set on render */
-    incomingValue?: string;
+    incomingValue?: any;
 
     /** Enables or customizes the reset button */
     resetButton?: boolean | string;
@@ -71,7 +71,7 @@ declare module "ru-react-dropdown-component" {
       }
     ) => void;
     changeObserver?: {
-      target: string | any;
+      target: any;
       handler: (
         setter: (value: any | null) => void,
         context: {
@@ -89,15 +89,16 @@ declare module "ru-react-dropdown-component" {
 
     /** Custom styles for various dropdown elements */
     styles?: {
-      selectBox?: CSSProperties;
-      selectedValue?: CSSProperties;
-      placeholder?: CSSProperties;
-      title?: CSSProperties;
-      arrow?: CSSProperties;
-      disabledState?: CSSProperties;
-      optionsContainer?: CSSProperties;
-      optionItem?: CSSProperties;
-      searchInput?: CSSProperties;
+      selectBox?: CSSProperties | string;
+      selectedValue?: CSSProperties | string;
+      placeholder?: CSSProperties | string;
+      title?: CSSProperties | string;
+      arrow?: CSSProperties | string;
+      disabledState?: CSSProperties | string;
+      optionsContainer?: CSSProperties | string;
+      optionItem?: CSSProperties | string;
+      selectedOptionItem?: CSSProperties | string;
+      searchInput?: CSSProperties | string;
     };
   }
 

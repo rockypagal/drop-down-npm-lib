@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
+import { checkType, trim } from "../../helper/helper";
+import { keys } from "../../constant/constant";
 
 export const DropDownMenu = ({
   options,
@@ -10,11 +12,11 @@ export const DropDownMenu = ({
   menuOptions,
   setMenuOptions,
   showMenu,
-  incomingValue,
   handleResetBtnText,
   optionsContainer,
-  optionItem,
+  optionItemStyle,
   inputSearchStyle,
+  selectedOptionItemStyle,
   mainRef,
   animateTitle,
   handleSetValues,
@@ -64,7 +66,7 @@ export const DropDownMenu = ({
           setMenuOptions(arr);
         },
 
-        searchBar?.delay && typeof Number(searchBar?.delay) === "number" //*********
+        searchBar?.delay && checkType(Number(searchBar?.delay), "number")
           ? searchBar?.delay
           : 400
       );
@@ -80,7 +82,7 @@ export const DropDownMenu = ({
   useEffect(() => {
     const handleGlobalClick = (event) => {
       if (menuRef?.current && !menuRef?.current?.contains(event.target)) {
-        handleSetValues();
+        handleSetValues({ key: keys?.globalKey });
 
         setTimeout(() => {
           if (options?.length >= 100) {
@@ -102,7 +104,7 @@ export const DropDownMenu = ({
     if (showMenu) {
       setGlobalClick(true);
     }
-    if (searchBar && inputRef) {
+    if (searchBar && inputRef.current) {
       inputRef.current.focus();
     }
   }, []);
@@ -176,13 +178,20 @@ export const DropDownMenu = ({
         ""
       ) : showMenu ? (
         <div
-          className={`drop-down-menu ${
+          className={trim(`drop-down-menu ${
             addStyle ? "" : " hide_drop-down-menu "
-          } ${searchBar ? " search-height-adjust " : ""} `}
+          } ${searchBar ? " search-height-adjust " : ""} 
+          ${checkType(optionsContainer, "string", {
+            ifTrue: optionsContainer,
+            ifFalse: "",
+          })}
+          `)}
           ref={showMenu && globalClick ? menuRef : null}
           id="drop_$_down_$_menu"
           style={{
-            ...optionsContainer,
+            ...(optionsContainer &&
+              checkType(optionsContainer, "object") &&
+              optionsContainer),
             ...(menuPosition && {
               top: "auto",
               bottom: `${animateTitle ? "85%" : "70%"}`,
@@ -192,7 +201,15 @@ export const DropDownMenu = ({
           {searchBar ? (
             <div className="drop-down-search-bar">
               <input
-                style={inputSearchStyle}
+                className={`drop-down-search-input ${checkType(inputSearchStyle, "string", {
+                  ifTrue: inputSearchStyle,
+                  ifFalse: "",
+                })}`}
+                style={{
+                  ...(inputSearchStyle &&
+                    checkType(inputSearchStyle, "object") &&
+                    inputSearchStyle),
+                }}
                 ref={inputRef}
                 type="text"
                 placeholder="search here..."
@@ -206,15 +223,26 @@ export const DropDownMenu = ({
 
           {resetButton && dropDownValueTwo && !search?.query ? (
             <div
-              className="drop-down-item"
+              className={`drop-down-item ${checkType(
+                optionItemStyle,
+                "string",
+                {
+                  ifTrue: optionItemStyle,
+                  ifFalse: "",
+                }
+              )}`}
               onClick={() => {
                 handleSetValues({
                   label: handleResetBtnText(),
                   value: "",
-                  key: "reset",
+                  key: keys?.resetKey,
                 });
               }}
-              style={optionItem}
+              style={{
+                ...(optionItemStyle &&
+                  checkType(optionItemStyle, "object") &&
+                  optionItemStyle),
+              }}
             >
               <span>{handleResetBtnText()}</span>
             </div>
@@ -224,10 +252,22 @@ export const DropDownMenu = ({
             menuOptions?.map((row, index) => (
               <div
                 key={index}
-                className={
-                  "drop-down-item" +
-                  (dropDownValueTwo === row?.value ? " selectedDropBox" : "")
-                }
+                // className={
+                //   "drop-down-item" +
+                //   (dropDownValueTwo === row?.value ? " selectedDropBox" : "")
+                // }
+
+                className={trim(`drop-down-item ${checkType(optionItemStyle, "string", {
+                   ifTrue: optionItemStyle,
+                   ifFalse: "",
+                 })}
+                  ${
+                  dropDownValueTwo === row?.value ?
+                  checkType(selectedOptionItemStyle, "string", {
+                    ifTrue: selectedOptionItemStyle,
+                    ifFalse: " selectedDropBox",
+                  }):""
+                }`)}
                 onClick={() => {
                   handleSetValues(
                     row,
@@ -236,7 +276,15 @@ export const DropDownMenu = ({
                     search?.query && search?.touched
                   );
                 }}
-                style={optionItem}
+                style={{
+                  ...(optionItemStyle &&
+                    checkType(optionItemStyle, "object") &&
+                    optionItemStyle),
+                  ...(selectedOptionItemStyle &&
+                    dropDownValueTwo === row?.value &&
+                    checkType(selectedOptionItemStyle, "object") &&
+                    selectedOptionItemStyle),
+                }}
               >
                 <span
                   ref={
@@ -250,7 +298,21 @@ export const DropDownMenu = ({
               </div>
             ))
           ) : (
-            <div className="drop-down-item" style={optionItem}>
+            <div
+              className={`drop-down-item ${checkType(
+                optionItemStyle,
+                "string",
+                {
+                  ifTrue: optionItemStyle,
+                  ifFalse: "",
+                }
+              )}`}
+              style={{
+                ...(optionItemStyle &&
+                  checkType(optionItemStyle, "object") &&
+                  optionItemStyle),
+              }}
+            >
               <span>No Data Found</span>
             </div>
           )}

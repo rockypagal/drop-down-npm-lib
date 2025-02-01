@@ -1,3 +1,8 @@
+export const keys = {
+  resetKey: "Reset",
+  globalKey: "globalClick",
+  incomingKey: "incomingValue", 
+};
 export const cssSizeUnits = [
   "px", // Pixels
   "em", // Relative to the font-size of the element

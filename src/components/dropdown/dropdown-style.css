@@ -74,7 +74,7 @@
   rotate: 180deg;
 }
 
-.input-field input[disabled],
+.input-field input.drop-down-search-input[disabled],
 .drop-down-main .drop-down-selector .disabledDropBox {
   background-color: #e2e2e24b;
   cursor: not-allowed;
@@ -98,7 +98,7 @@
   animation: drop-down-animation 0.13s ease-in-out;
   max-height: 10rem;
   overflow-y: scroll;
-  margin-bottom: 1rem;
+  /* margin-bottom: 1rem; */
 }
 .drop-down-selector .drop-down-menu.search-height-adjust {
   max-height: 11.5rem;
@@ -151,7 +151,7 @@
   animation: show_component-common-animation 0.1s ease-in-out forwards;
 }
 
-.drop-down-search-bar input {
+.drop-down-search-bar input.drop-down-search-input {
   box-sizing: border-box;
   display: inline-block;
   vertical-align: middle;
