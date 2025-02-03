@@ -49,7 +49,7 @@
 
 .drop-down-main .drop-down-selector .direct {
   box-sizing: border-box;
-  width: 100%;
+  width: 100% !important;
   display: flex;
   justify-content: space-between;
   cursor: pointer;

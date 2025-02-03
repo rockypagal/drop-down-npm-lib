@@ -232,13 +232,24 @@ const DropDownBox = ({
       className={`drop-down-main ${
         checkType(size, "string") && cssSizeList.includes(size)
           ? `drop-down-main-${size}`
-          : "drop-down-main-large"
+          : `drop-down-main-large ${
+              checkType(size, "string") &&
+              String(parseInt(size)) === "NaN" &&
+              !isValidCSSUnit(size)
+                ? size
+                : ""
+            }`
       }`}
       ref={mainRef}
       style={{
-        ...(size && checkType(parseInt(size) === "number")
+        ...(size &&
+        checkType(parseInt(size), "number") &&
+        String(parseInt(size)) !== "NaN"
           ? {
-              width: isValidCSSUnit(size) ? size : `${parseInt(size)}px`,
+              width:
+                checkType(size, "string") && isValidCSSUnit(size)
+                  ? size
+                  : `${parseInt(size)}px`,
             }
           : checkType(styles?.selectBox, "object") &&
             styles?.selectBox?.width && {

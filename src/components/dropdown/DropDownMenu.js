@@ -194,17 +194,21 @@ export const DropDownMenu = ({
               optionsContainer),
             ...(menuPosition && {
               top: "auto",
-              bottom: `${animateTitle ? "85%" : "70%"}`,
+              bottom: `${animateTitle ? "115%" : "105%"}`, //*******
             }),
           }}
         >
           {searchBar ? (
             <div className="drop-down-search-bar">
               <input
-                className={`drop-down-search-input ${checkType(inputSearchStyle, "string", {
-                  ifTrue: inputSearchStyle,
-                  ifFalse: "",
-                })}`}
+                className={`drop-down-search-input ${checkType(
+                  inputSearchStyle,
+                  "string",
+                  {
+                    ifTrue: inputSearchStyle,
+                    ifFalse: "",
+                  }
+                )}`}
                 style={{
                   ...(inputSearchStyle &&
                     checkType(inputSearchStyle, "object") &&
@@ -257,17 +261,22 @@ export const DropDownMenu = ({
                 //   (dropDownValueTwo === row?.value ? " selectedDropBox" : "")
                 // }
 
-                className={trim(`drop-down-item ${checkType(optionItemStyle, "string", {
-                   ifTrue: optionItemStyle,
-                   ifFalse: "",
-                 })}
+                className={trim(`drop-down-item ${checkType(
+                  optionItemStyle,
+                  "string",
+                  {
+                    ifTrue: optionItemStyle,
+                    ifFalse: "",
+                  }
+                )}
                   ${
-                  dropDownValueTwo === row?.value ?
-                  checkType(selectedOptionItemStyle, "string", {
-                    ifTrue: selectedOptionItemStyle,
-                    ifFalse: " selectedDropBox",
-                  }):""
-                }`)}
+                    dropDownValueTwo === row?.value
+                      ? checkType(selectedOptionItemStyle, "string", {
+                          ifTrue: selectedOptionItemStyle,
+                          ifFalse: " selectedDropBox",
+                        })
+                      : ""
+                  }`)}
                 onClick={() => {
                   handleSetValues(
                     row,
