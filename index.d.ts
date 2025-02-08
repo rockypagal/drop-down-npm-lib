@@ -24,7 +24,7 @@ declare module "ru-react-dropdown-component" {
     hideScrollbar?: boolean;
 
     /** Size of the dropdown (e.g., "small", "large", "mini") */
-    size?: "small" | "medium" | "mini";
+    size?: "small" | "medium" | "mini" | string | number;
 
     /** Enables the search bar within the dropdown */
     showSearch?: boolean | { delay: number };
