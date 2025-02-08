@@ -2,6 +2,10 @@
 
 The `ru-react-dropdown-component` library provides the DropDownBox component, a customizable and feature-rich dropdown selector for React applications. This documentation outlines its props, behavior, and usage.
 
+## Demo and DOCS
+
+[ru-react-dropdown-component.vercel.app](https://ru-react-dropdown-component.vercel.app)
+
 ## Usage Example
 
 ```jsx
