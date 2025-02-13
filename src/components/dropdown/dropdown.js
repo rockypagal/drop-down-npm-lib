@@ -73,7 +73,13 @@ const DropDownBox = ({
     let detailsObj = {
       oldValue: dropDownValueTwo,
       index,
-      row: { ...row, label: key && key === keys?.resetKey ? "" : row?.label },
+      row: {
+        ...row,
+        label:
+          key && (key === keys?.resetKey || key === keys?.globalResetKey)
+            ? ""
+            : row?.label,
+      },
     };
     if (beforeSelect && checkType(beforeSelect, "function")) {
       beforeSelectCheck = beforeSelect(value, detailsObj);
@@ -95,7 +101,8 @@ const DropDownBox = ({
       }, 250);
     }
 
-    if (key !== keys?.incomingKey) handleClick();
+    if (key !== keys?.incomingKey && key !== keys?.globalResetKey)
+      handleClick();
   }
   useEffect(() => {
     return () => {
@@ -185,6 +192,15 @@ const DropDownBox = ({
 
     if (checkType(handler, "function")) {
       const setter = (value) => {
+        if (value === "" || value === handleResetBtnText()) {
+          handleSetValues({
+            label: handleResetBtnText(),
+            value: "",
+            key: keys?.globalResetKey,
+          });
+          return;
+        }
+
         let result = { label: value ? value : placeholder, value: value };
         let index = null;
         if (value) {

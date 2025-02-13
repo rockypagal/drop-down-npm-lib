@@ -27,7 +27,7 @@ declare module "ru-react-dropdown-component" {
     size?: "small" | "medium" | "mini" | string | number;
 
     /** Enables the search bar within the dropdown */
-    showSearch?: boolean | { delay: number };
+    showSearch?: boolean | { delay: number | string };
 
     /** Function to set the selected value, e.g., useState or Formik setFieldValue */
     // setter?: (value: string | null) => void;

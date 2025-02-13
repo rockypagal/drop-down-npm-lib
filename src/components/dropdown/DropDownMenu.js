@@ -66,7 +66,9 @@ export const DropDownMenu = ({
           setMenuOptions(arr);
         },
 
-        searchBar?.delay && checkType(Number(searchBar?.delay), "number")
+        searchBar?.delay ||
+          (searchBar?.delay === 0 &&
+            checkType(Number(searchBar?.delay), "number"))
           ? searchBar?.delay
           : 400
       );

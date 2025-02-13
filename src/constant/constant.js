@@ -1,7 +1,8 @@
 export const keys = {
   resetKey: "Reset",
   globalKey: "globalClick",
-  incomingKey: "incomingValue", 
+  globalResetKey: "GlobalReset",
+  incomingKey: "incomingValue",
 };
 export const cssSizeUnits = [
   "px", // Pixels
