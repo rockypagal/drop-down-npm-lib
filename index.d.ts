@@ -2,7 +2,7 @@ declare module "ru-react-dropdown-component" {
   import React, { CSSProperties } from "react";
 
   export interface DropDownOption {
-    label: string; // Label to display in the dropdown
+    label: string | React.ReactNode; // Label to display in the dropdown
     value: any; // Value associated with the option
     searchOptions?: string[]; // Array of strings used for search functionality
   }
@@ -27,13 +27,21 @@ declare module "ru-react-dropdown-component" {
     size?: "small" | "medium" | "mini" | string | number;
 
     /** Enables the search bar within the dropdown */
-    showSearch?: boolean | { delay: number | string };
+    showSearch?:
+      | boolean
+      | {
+          delay: number | string;
+          onSearch: (value: any, options: DropDownOption[]) => void;
+        };
 
     /** Function to set the selected value, e.g., useState or Formik setFieldValue */
     // setter?: (value: string | null) => void;
 
     /** Disables the dropdown if set to true */
     disabled?: boolean;
+
+    /** Shows the loading animation if set to true */
+    loading?: boolean;
 
     /** The incoming value to be set on render */
     incomingValue?: any;
@@ -59,7 +67,7 @@ declare module "ru-react-dropdown-component" {
         index: number;
         row: { label: string; value: any };
       }
-    ) => void;
+    ) => boolean | void;
 
     /** Function called after selecting a value */
     afterSelect?: (

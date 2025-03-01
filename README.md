@@ -20,8 +20,7 @@ const MyComponent = ({ country }) => {
   const options = [
     { label: "Option 1", value: "option1" },
    {
-    label: "Option 2",
-    value: "option2",
+    label: "Option 2", value: "option2",
     // Additional searchable values for this option
     searchOptions: ["xyz@email.com", "123-456-789"]
    }
@@ -85,6 +84,7 @@ export default MyComponent;
 - **Arguments:**
   - `selectedValue` (string): The selected value.
   - `context` (object):
+    - `triggeredBy`: The method that triggered the selection
     - `oldValue`: Previously selected value.
     - `index`: Index of the option.
     - `row`: Option object (`{ label, value }`).
@@ -125,7 +125,7 @@ export default MyComponent;
 
 ### `showSearch`
 
-- **Type:** `boolean | { delay: number (milliseconds) }`
+- **Type:** `boolean | { delay: number (milliseconds), onSearch:Function }`
 - **Description:** If `true`, enables a search bar within the dropdown. When provided as an object with a `delay`, it applies a debounce for the specified number of milliseconds to enhance performance.
 
 ### `disabled`
@@ -133,6 +133,12 @@ export default MyComponent;
 - **Type:** `boolean`
 - **Default:** `false`
 - **Description:** If true, disables the dropdown.
+
+### `loading`
+
+- **Type:** `boolean`
+- **Default:** `false`
+- **Description:** If true, shows the loading animation and removes the options.
 
 ### `hideScrollbar`
 
@@ -163,6 +169,7 @@ export default MyComponent;
 - **Arguments:**
   - `value` (string): The selected option's value.
   - `context` (object):
+    - `triggeredBy`: The method that triggered the selection
     - `oldValue`: Previously selected value.
     - `index`: Index of the option.
     - `row`: Option object (`{ label, value }`).
@@ -174,6 +181,7 @@ export default MyComponent;
 - **Arguments:**
   - `selectedValue` (string): The selected value.
   - `context` (object):
+    - `triggeredBy`: The method that triggered the selection
     - `oldValue`: Previously selected value.
     - `index`: Index of the option.
     - `row`: Option object (`{ label, value }`).
@@ -202,17 +210,19 @@ export default MyComponent;
 6. `showSearch`
 7. `customArrow`
 8. `disabled`
-9. `incomingValue`
-10. `resetButton`
-11. `onSelect`
-12. `beforeSelect`
-13. `afterSelect`
-14. `changeObserver`
+9. `loading`
+10. `hideScrollbar`
+11. `incomingValue`
+12. `resetButton`
+13. `onSelect`
+14. `beforeSelect`
+15. `afterSelect`
+16. `changeObserver`
 
 - `target`
 - `handler`
 
-15. `styles`
+17. `styles`
 
 - `selectBox`
 - `selectedValue`

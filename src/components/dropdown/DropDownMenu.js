@@ -31,7 +31,7 @@ export const DropDownMenu = ({
   };
 
   const getSearchOption = (option) => {
-    if (!option?.searchOptions) {
+    if (!option?.searchOptions && checkType(option?.label, "string")) {
       return option?.label.replaceAll(" ", "")?.toLowerCase();
     }
 
@@ -61,6 +61,7 @@ export const DropDownMenu = ({
             const newSearchQuery = search?.query
               .replaceAll(" ", "")
               ?.toLowerCase();
+
             if (item?.searchOptions) {
               return getSearchOption(item)?.includes(newSearchQuery);
             } else {
