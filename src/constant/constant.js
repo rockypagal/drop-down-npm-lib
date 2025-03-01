@@ -2,8 +2,10 @@ export const keys = {
   resetKey: "Reset",
   globalKey: "globalClick",
   globalResetKey: "GlobalReset",
-  incomingKey: "incomingValue",
+  changeObserverKey: "changeObserver",
+  incomingValueKey: "incomingValue",
   inputNameKey: "mpnxmaxQGA-DropDownBox-search-gNcFybupRk",
+  triggeredByKey: "onSelect",
 };
 export const cssSizeUnits = [
   "px", // Pixels

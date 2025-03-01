@@ -21,10 +21,12 @@ const DropDownBox = ({
   customArrow,
   styles = {},
   hideScrollbar = false,
+  loading = false,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [addStyle, setAddStyle] = useState(false);
   const [menuOptions, setMenuOptions] = useState(options);
+
   const [dropDownValue, setDropDownValue] = useState(placeholder);
   const [dropDownValueTwo, setDropDownValueTwo] = useState("");
   const [historyIncomingValue, setHistoryIncomingValue] = useState("");
@@ -63,6 +65,7 @@ const DropDownBox = ({
 
   function handleSetValues(row = {}, index = null, optionsLength, isSearched) {
     const { label, value, key } = row;
+
     if (row?.key) delete row?.key;
 
     if (key === keys?.globalKey && showMenu) {
@@ -80,6 +83,7 @@ const DropDownBox = ({
             ? ""
             : row?.label,
       },
+      ...(key ? { triggeredBy: key } : { triggeredBy: keys?.triggeredByKey }),
     };
     if (beforeSelect && checkType(beforeSelect, "function")) {
       beforeSelectCheck = beforeSelect(value, detailsObj);
@@ -99,11 +103,20 @@ const DropDownBox = ({
           setMenuOptions(options);
         }
       }, 250);
+    } else {
+      setMenuOptions(options);
     }
 
-    if (key !== keys?.incomingKey && key !== keys?.globalResetKey)
+    if (
+      ![
+        keys?.changeObserverKey,
+        keys?.globalResetKey,
+        keys?.incomingValueKey,
+      ].includes(key)
+    )
       handleClick();
   }
+
   useEffect(() => {
     return () => {
       if (timerId) {
@@ -112,8 +125,21 @@ const DropDownBox = ({
     };
   }, [timerId]);
 
-  //? useEffect to handle the setValue to the onSelect
+  useEffect(() => {
+    if (dropDownValue && !placeholder) {
+      setDropDownValue("");
+      return;
+    }
 
+    if (placeholder) {
+      if (dropDownValueTwo) {
+        setDropDownValueTwo("");
+      }
+
+      setDropDownValue(placeholder);
+    }
+  }, [placeholder]);
+  //? useEffect to handle the setValue to the onSelect
   useEffect(() => {
     const resetButtonText = handleResetBtnText();
     const isReset =
@@ -158,8 +184,9 @@ const DropDownBox = ({
 
   useEffect(() => {
     if (
-      (historyIncomingValue && historyIncomingValue !== incomingValue) ||
-      (!dropDownValueTwo && incomingValue)
+      incomingValue &&
+      historyIncomingValue !== incomingValue &&
+      !dropDownValueTwo
     ) {
       let index = null;
       const result = options?.find((item, i) => {
@@ -172,7 +199,7 @@ const DropDownBox = ({
 
       if (result?.value === incomingValue) {
         setHistoryIncomingValue(result?.value);
-        handleSetValues({ ...result, key: keys?.incomingKey }, index);
+        handleSetValues({ ...result, key: keys?.incomingValueKey }, index);
       }
     }
   }, [incomingValue, memoizedOptions]);
@@ -214,7 +241,7 @@ const DropDownBox = ({
         }
 
         if (result?.value === value) {
-          handleSetValues({ ...result, key: keys?.incomingKey }, index);
+          handleSetValues({ ...result, key: keys?.changeObserverKey }, index);
         }
       };
 
@@ -227,21 +254,6 @@ const DropDownBox = ({
       oldTargetedValue.current = target;
     }
   }, [changeObserver?.target]);
-
-  useEffect(() => {
-    if (dropDownValue && !placeholder) {
-      setDropDownValue("");
-      return;
-    }
-
-    if (placeholder) {
-      if (dropDownValueTwo) {
-        setDropDownValueTwo("");
-      }
-
-      setDropDownValue(placeholder);
-    }
-  }, [placeholder]);
 
   return (
     <div
@@ -388,12 +400,18 @@ const DropDownBox = ({
               ? "\u00A0"
               : dropDownValue || "\u00A0"}
           </div>
-          {customArrow && customArrow?.element ? (
+          {loading ? (
+            <div className="dropdown-direct-loading">
+              <span className="loading__dot"></span>
+              <span className="loading__dot"></span>
+              <span className="loading__dot"></span>
+            </div>
+          ) : customArrow && customArrow?.element ? (
             <div
               // className={`drop-arrow ${addStyle ? "up-arrow" : ""}`}
-              className={`drop-arrow ${addStyle ? "up-arrow" : ""} ${
-                checkType(styles?.arrow, "string") ? styles?.arrow : ""
-              }`}
+              className={`drop-arrow custom-arrow-style ${
+                addStyle ? "up-arrow" : ""
+              } ${checkType(styles?.arrow, "string") ? styles?.arrow : ""}`}
               style={checkType(styles?.arrow, "object", {
                 ifTrue: styles?.arrow,
                 ifFalse: {},
@@ -442,6 +460,7 @@ const DropDownBox = ({
             mainRef={mainRef}
             animateTitle={animateTitle}
             handleSetValues={handleSetValues}
+            loading={loading}
           />
         )}
       </div>

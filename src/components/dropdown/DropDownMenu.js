@@ -20,6 +20,7 @@ export const DropDownMenu = ({
   mainRef,
   animateTitle,
   handleSetValues,
+  loading,
 }) => {
   const [search, setSearch] = useState({ query: "", touched: false });
   const [menuPosition, setMenuPosition] = useState("");
@@ -41,6 +42,10 @@ export const DropDownMenu = ({
   useEffect(() => {
     let id;
     if (searchBar && search?.touched) {
+      if (searchBar?.onSearch && checkType(searchBar?.onSearch, "function")) {
+        searchBar?.onSearch(search?.query, options);
+        return;
+      }
       id = setTimeout(
         () => {
           if (!search?.query) {
@@ -53,14 +58,13 @@ export const DropDownMenu = ({
           }
 
           const arr = options.filter((item) => {
+            const newSearchQuery = search?.query
+              .replaceAll(" ", "")
+              ?.toLowerCase();
             if (item?.searchOptions) {
-              return getSearchOption(item)?.includes(
-                search?.query.replaceAll(" ", "")?.toLowerCase()
-              );
+              return getSearchOption(item)?.includes(newSearchQuery);
             } else {
-              return getSearchOption(item)?.includes(
-                search?.query.replaceAll(" ", "").toLowerCase()
-              );
+              return getSearchOption(item)?.includes(newSearchQuery);
             }
           });
           setMenuOptions(arr);
@@ -226,7 +230,7 @@ export const DropDownMenu = ({
             </div>
           ) : null}
 
-          {resetButton && dropDownValueTwo && !search?.query ? (
+          {resetButton && dropDownValueTwo && !loading && !search?.query ? (
             <div
               className={`drop-down-item ${checkType(
                 optionItemStyle,
@@ -253,7 +257,9 @@ export const DropDownMenu = ({
             </div>
           ) : null}
 
-          {menuOptions?.length > 0 ? (
+          {loading ? (
+            <div className="drop-down-item">Loading...</div>
+          ) : menuOptions?.length > 0 ? (
             menuOptions?.map((row, index) => (
               <div
                 key={index}
@@ -283,7 +289,7 @@ export const DropDownMenu = ({
                     row,
                     index,
                     options?.length,
-                    search?.query && search?.touched
+                    search?.query && search?.touched && !searchBar?.onSearch
                   );
                 }}
                 style={{
