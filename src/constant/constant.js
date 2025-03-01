@@ -3,6 +3,7 @@ export const keys = {
   globalKey: "globalClick",
   globalResetKey: "GlobalReset",
   incomingKey: "incomingValue",
+  inputNameKey: "mpnxmaxQGA-DropDownBox-search-gNcFybupRk",
 };
 export const cssSizeUnits = [
   "px", // Pixels

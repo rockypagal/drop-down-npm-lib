@@ -416,7 +416,8 @@ const DropDownBox = ({
               height="1rem"
               viewBox="0 -960 960 960"
               width="24px"
-              fill="#415094"
+              //fill="#415094"
+              fill="black"
             >
               <path d="M480-80 200-360l56-56 184 183v-647h80v647l184-184 56 57L480-80Z" />
             </svg>

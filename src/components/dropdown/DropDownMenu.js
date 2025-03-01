@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { checkType, trim } from "../../helper/helper";
 import { keys } from "../../constant/constant";
 
@@ -110,7 +110,7 @@ export const DropDownMenu = ({
     }
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const calculatePosition = () => {
       const viewportHeight = window.innerHeight;
       const mainSectionBRC = mainRef.current.getBoundingClientRect();

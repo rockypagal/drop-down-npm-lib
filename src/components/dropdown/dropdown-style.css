@@ -53,7 +53,8 @@
   display: flex;
   justify-content: space-between;
   cursor: pointer;
-  color: #415094;
+  /* color: #415094; */
+  color: black;
   align-items: center;
   padding: 0.65rem;
   border-radius: 0.3125rem;
@@ -66,7 +67,8 @@
   font-size: 1rem;
   transition: all 0.15s;
   /* cursor: pointer; */
-  color: #415094;
+  /* color: #415094; */
+  color: black;
   pointer-events: none;
 }
 
