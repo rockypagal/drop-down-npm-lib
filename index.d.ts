@@ -1,12 +1,16 @@
 declare module "ru-react-dropdown-component" {
   import React, { CSSProperties } from "react";
 
+  // export interface DropDownOption {
+  //   label: string | React.ReactNode; // Label to display in the dropdown
+  //   value: any; // Value associated with the option
+  //   searchOptions?: string[]; // Array of strings used for search functionality
+  // }
   export interface DropDownOption {
     label: string | React.ReactNode; // Label to display in the dropdown
-    value: any; // Value associated with the option
+    value: Exclude<undefined | null>; // Value cannot be undefined or null
     searchOptions?: string[]; // Array of strings used for search functionality
   }
-
   export interface DropDownBoxProps {
     /** The title to be displayed for the dropdown */
     title?: string;
@@ -30,8 +34,8 @@ declare module "ru-react-dropdown-component" {
     showSearch?:
       | boolean
       | {
-          delay: number | string;
-          onSearch: (value: any, options: DropDownOption[]) => void;
+          delay?: number | string;
+          onSearch?: (value: any, options: DropDownOption[]) => void;
         };
 
     /** Function to set the selected value, e.g., useState or Formik setFieldValue */
@@ -47,7 +51,7 @@ declare module "ru-react-dropdown-component" {
     incomingValue?: any;
 
     /** Enables or customizes the reset button */
-    resetButton?: boolean | string;
+    resetButton?: boolean | (string & { length: Exclude<number, 0> });
 
     /** Callback triggered when a value is selected */
     onSelect?: (

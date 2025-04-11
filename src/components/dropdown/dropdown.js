@@ -2,8 +2,18 @@
 import "./dropdown-style.css";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { DropDownMenu } from "./DropDownMenu";
-import { cssSizeList, keys } from "../../constant/constant";
+import {
+  cssSizeList,
+  defaultValueCSS,
+  direct,
+  dropArrowCSS,
+  dropdownMainCSS,
+  dropdownSelector,
+  dropdownTitleCSS,
+  keys,
+} from "../../constant/constant";
 import { checkType, isValidCSSUnit, trim } from "../../helper/helper";
+import { createPortal } from "react-dom";
 const DropDownBox = ({
   title,
   animateTitle,
@@ -254,7 +264,6 @@ const DropDownBox = ({
       oldTargetedValue.current = target;
     }
   }, [changeObserver?.target]);
-
   return (
     <div
       className={`drop-down-main ${
@@ -270,6 +279,7 @@ const DropDownBox = ({
       }`}
       ref={mainRef}
       style={{
+        ...dropdownMainCSS,
         ...(size &&
         checkType(parseInt(size), "number") &&
         String(parseInt(size)) !== "NaN"
@@ -309,6 +319,7 @@ const DropDownBox = ({
             //   : "")
           }
           style={{
+            ...dropdownTitleCSS,
             ...(styles?.title &&
               checkType(styles?.title, "object") &&
               styles?.title),
@@ -331,6 +342,7 @@ const DropDownBox = ({
             ? " show-drop-scroll"
             : " hide-drop-scroll")
         }
+        style={{ ...dropdownSelector }}
       >
         <div
           className={trim(`direct ${
@@ -353,6 +365,7 @@ const DropDownBox = ({
             }
           }}
           style={{
+            ...direct,
             ...(checkType(styles?.selectBox, "object") &&
               styles?.selectBox && {
                 ...styles?.selectBox,
@@ -385,6 +398,7 @@ const DropDownBox = ({
               }`
             )}
             style={{
+              ...defaultValueCSS,
               ...(styles?.selectedValue &&
                 dropDownValueTwo &&
                 checkType(styles?.selectedValue, "object") &&
@@ -429,7 +443,10 @@ const DropDownBox = ({
               //     ? styles?.selectedValue
               //     : {}
               // }
-              style={checkType(styles?.arrow, "object") ? styles?.arrow : {}}
+              style={{
+                ...dropArrowCSS,
+                ...(checkType(styles?.arrow, "object") ? styles?.arrow : {}),
+              }}
               xmlns="http://www.w3.org/2000/svg"
               height="1rem"
               viewBox="0 -960 960 960"
@@ -441,28 +458,46 @@ const DropDownBox = ({
             </svg>
           )}
         </div>
-        {showMenu && (
-          <DropDownMenu
-            disabled={disabled}
-            addStyle={addStyle}
-            searchBar={showSearch}
-            dropDownValueTwo={dropDownValueTwo}
-            resetButton={resetButton}
-            menuOptions={menuOptions}
-            options={options}
-            setMenuOptions={setMenuOptions}
-            showMenu={showMenu}
-            handleResetBtnText={handleResetBtnText}
-            optionsContainer={styles?.optionsContainer}
-            optionItemStyle={styles?.optionItem}
-            inputSearchStyle={styles?.searchInput}
-            selectedOptionItemStyle={styles?.selectedOptionItem}
-            mainRef={mainRef}
-            animateTitle={animateTitle}
-            handleSetValues={handleSetValues}
-            loading={loading}
-          />
-        )}
+        <div
+          className="focus-element"
+          // ***********
+          onFocus={(e) => {
+            console.info("hello", placeholder);
+            if (!disabled) {
+              handleClick();
+            }
+          }}
+          tabIndex={showMenu ? "-1" : "0"}
+          // onKeyDown={(e) => {
+          //   if (e.key === "Tab" && showMenu) {
+          //     handleClick();
+          //   }
+          // }}
+        />
+        {showMenu &&
+          createPortal(
+            <DropDownMenu
+              disabled={disabled}
+              addStyle={addStyle}
+              searchBar={showSearch}
+              dropDownValueTwo={dropDownValueTwo}
+              resetButton={resetButton}
+              menuOptions={menuOptions}
+              options={options}
+              setMenuOptions={setMenuOptions}
+              showMenu={showMenu}
+              handleResetBtnText={handleResetBtnText}
+              optionsContainer={styles?.optionsContainer}
+              optionItemStyle={styles?.optionItem}
+              inputSearchStyle={styles?.searchInput}
+              selectedOptionItemStyle={styles?.selectedOptionItem}
+              mainRef={mainRef}
+              animateTitle={animateTitle}
+              handleSetValues={handleSetValues}
+              loading={loading}
+            />,
+            document.body
+          )}
       </div>
     </div>
   );

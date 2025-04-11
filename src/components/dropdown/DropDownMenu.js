@@ -24,6 +24,7 @@ export const DropDownMenu = ({
 }) => {
   const [search, setSearch] = useState({ query: "", touched: false });
   const [menuPosition, setMenuPosition] = useState("");
+  const [focusIndex, setFocusIndex] = useState(0);
   const inputRef = useRef(null);
   let lastLabelRef = useRef(null);
   const handleSearch = (e) => {
@@ -110,9 +111,9 @@ export const DropDownMenu = ({
     if (showMenu) {
       setGlobalClick(true);
     }
-    if (searchBar && inputRef.current) {
-      inputRef.current.focus();
-    }
+    // if (searchBar && inputRef.current) {
+    //   inputRef.current.focus();
+    // }
   }, []);
 
   useLayoutEffect(() => {
@@ -221,12 +222,23 @@ export const DropDownMenu = ({
                     inputSearchStyle),
                 }}
                 ref={inputRef}
+                autoFocus // ***********
                 type="text"
                 placeholder="search here..."
                 name="search"
                 value={search?.query}
                 onChange={handleSearch}
                 maxLength={80}
+                onKeyDown={(e) => {
+                  // if (e.key === "Tab" && showMenu) {
+                  //   handleSetValues({ key: keys?.globalKey });
+                  //   // ***********
+                  // }
+                  if (e.key === "ArrowDown") {
+                    console.info("down");
+                  }
+                }}
+                autoComplete="false"
               />
             </div>
           ) : null}
@@ -252,6 +264,19 @@ export const DropDownMenu = ({
                 ...(optionItemStyle &&
                   checkType(optionItemStyle, "object") &&
                   optionItemStyle),
+              }}
+              tabIndex={0} // ***********
+              onKeyDown={(e) => {
+                if (e.key === "Enter")
+                  handleSetValues({
+                    label: handleResetBtnText(),
+                    value: "",
+                    key: keys?.resetKey,
+                  });
+                else if (e.key !== "Tab" && search) {
+                  // setSearch({ query: e.key, touched: true });
+                  inputRef?.current?.focus();
+                }
               }}
             >
               <span>{handleResetBtnText()}</span>
@@ -290,7 +315,7 @@ export const DropDownMenu = ({
                     row,
                     index,
                     options?.length,
-                    search?.query && search?.touched && !searchBar?.onSearch
+                    search?.query && search?.touched
                   );
                 }}
                 style={{
@@ -301,6 +326,23 @@ export const DropDownMenu = ({
                     dropDownValueTwo === row?.value &&
                     checkType(selectedOptionItemStyle, "object") &&
                     selectedOptionItemStyle),
+                }}
+                tabIndex={0} // ***********
+                onKeyDown={(e) => {
+                  if (e.key === "Tab" && index === menuOptions?.length - 1) {
+                    handleSetValues({ key: keys?.globalKey });
+                  }
+                  if (e.key === "Enter") { 
+                    handleSetValues(
+                      row,
+                      index, // ***********
+                      options?.length,
+                      search?.query && search?.touched
+                    );
+                  } else if (e.key !== "Tab" && search) {
+                    // setSearch({ query: e.key, touched: true });
+                    inputRef?.current?.focus();
+                  }
                 }}
               >
                 <span

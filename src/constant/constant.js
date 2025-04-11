@@ -17,3 +17,45 @@ export const cssSizeUnits = [
   "vmax", // Maximum of viewport width or height
 ];
 export const cssSizeList = ["small", "medium", "mini"];
+
+export const dropdownMainCSS = {
+  position: "relative",
+};
+
+export const dropdownSelector = {
+  width: "100%",
+  position: "relative",
+};
+export const direct = {
+  boxSizing: "border-box",
+  width: "100% !important",
+  display: "flex",
+  justifyContent: "space-between",
+  cursor: "pointer",
+  /* color: #415094, */
+  color: "black",
+  alignItems: "center",
+  padding: "0.65rem",
+  borderRadius: "0.3125rem",
+  border: "1px solid #a1a4b9",
+  userSelect: "none",
+  backgroundColor: "white",
+};
+
+export const defaultValueCSS = {
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+};
+
+export const dropArrowCSS = {
+  fontSize: "1rem",
+  transition: "all 0.15s",
+  color: "black",
+  pointerEvents: "none",
+};
+export const dropdownTitleCSS = {
+  padding: "0.5rem 0",
+  fontWeight: "500",
+  background: "transparent",
+};
