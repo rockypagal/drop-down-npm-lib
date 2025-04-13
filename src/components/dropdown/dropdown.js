@@ -461,18 +461,19 @@ const DropDownBox = ({
         <div
           className="focus-element"
           // ***********
-          onFocus={(e) => {
-            console.info("hello", placeholder);
-            if (!disabled) {
-              handleClick();
-            }
-          }}
-          tabIndex={showMenu ? "-1" : "0"}
-          // onKeyDown={(e) => {
-          //   if (e.key === "Tab" && showMenu) {
+          // onFocus={(e) => {
+          //   console.info("hello", placeholder);
+          //   if (!disabled) {
           //     handleClick();
           //   }
           // }}
+          style={{ outline: "none" }}
+          tabIndex={showMenu ? "-1" : "0"}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !showMenu) {
+              handleClick();
+            }
+          }}
         />
         {showMenu &&
           createPortal(
@@ -495,6 +496,15 @@ const DropDownBox = ({
               animateTitle={animateTitle}
               handleSetValues={handleSetValues}
               loading={loading}
+              scrollbarClass={
+                disabled
+                  ? ""
+                  : !hideScrollbar &&
+                    (menuOptions?.length > 4 ||
+                      (showSearch && menuOptions?.length > 3))
+                  ? " show-drop-scroll"
+                  : " hide-drop-scroll"
+              }
             />,
             document.body
           )}

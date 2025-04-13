@@ -21,9 +21,10 @@ export const DropDownMenu = ({
   animateTitle,
   handleSetValues,
   loading,
+  scrollbarClass,
 }) => {
   const [search, setSearch] = useState({ query: "", touched: false });
-  const [menuPosition, setMenuPosition] = useState("");
+  const [menuPosition, setMenuPosition] = useState({});
   const [focusIndex, setFocusIndex] = useState(0);
   const inputRef = useRef(null);
   let lastLabelRef = useRef(null);
@@ -84,6 +85,7 @@ export const DropDownMenu = ({
   }, [search?.query]);
 
   const [globalClick, setGlobalClick] = useState(false);
+
   const menuRef = useRef();
 
   useEffect(() => {
@@ -116,25 +118,45 @@ export const DropDownMenu = ({
     // }
   }, []);
 
+  //* optimize this this
   useLayoutEffect(() => {
     const calculatePosition = () => {
       const viewportHeight = window.innerHeight;
       const mainSectionBRC = mainRef.current.getBoundingClientRect();
-      const menuHeight =
-        document.getElementById("drop_$_down_$_menu")?.getBoundingClientRect()
-          .height || 0;
+      const scrollY = window.scrollY;
+      const menuElement = document.getElementById("drop_$_down_$_menu");
+      menuElement.firstChild.focus();
+      const menuHeight = menuElement?.getBoundingClientRect().height || 0;
+      menuPosition; // temporary
 
-      setMenuPosition(
-        viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) <
+      setMenuPosition({
+        // openUp:
+        //   viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) <
+        //   menuHeight,
+
+        top: `${
+          viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) <
           menuHeight
-      );
+            ? mainSectionBRC?.bottom -
+              menuHeight -
+              mainSectionBRC?.height -
+              3 +
+              mainRef.current?.firstChild?.getBoundingClientRect()?.height +
+              scrollY
+            : mainSectionBRC?.bottom + 3 + scrollY
+        }px`,
+        left: `${mainSectionBRC?.left}px`,
+        width: `${mainSectionBRC?.width}px`,
+      });
     };
-
     calculatePosition();
     window.addEventListener("resize", calculatePosition);
 
     return () => window.removeEventListener("resize", calculatePosition);
-  }, []);
+  }, [
+    mainRef.current.getBoundingClientRect().left,
+    menuRef?.current?.getBoundingClientRect()?.height,
+  ]);
 
   const handleLastLabel = (index, length) => {
     if (lastLabelRef && index === length - 101) {
@@ -185,7 +207,7 @@ export const DropDownMenu = ({
         ""
       ) : showMenu ? (
         <div
-          className={trim(`drop-down-menu ${
+          className={trim(`drop-down-menu ${scrollbarClass} ${
             addStyle ? "" : " hide_drop-down-menu "
           } ${searchBar ? " search-height-adjust " : ""} 
           ${checkType(optionsContainer, "string", {
@@ -199,10 +221,12 @@ export const DropDownMenu = ({
             ...(optionsContainer &&
               checkType(optionsContainer, "object") &&
               optionsContainer),
-            ...(menuPosition && {
-              top: "auto",
-              bottom: `${animateTitle ? "115%" : "105%"}`, //*******
-            }),
+            ...menuPosition,
+            // ...(menuPosition && {
+            //   top: "auto",
+            //   bottom: `${animateTitle ? "115%" : "105%"}`, //*******
+            // }
+            // ),
           }}
         >
           {searchBar ? (
@@ -235,10 +259,12 @@ export const DropDownMenu = ({
                   //   // ***********
                   // }
                   if (e.key === "ArrowDown") {
-                    console.info("down");
+                    console.log("e: ", e);
+                    e.preventDefault();
+                    e.target.parentElement.nextElementSibling.focus();
                   }
                 }}
-                autoComplete="false"
+                autoComplete="off"
               />
             </div>
           ) : null}
@@ -317,6 +343,8 @@ export const DropDownMenu = ({
                     options?.length,
                     search?.query && search?.touched
                   );
+                  // *******
+                  mainRef.current.lastChild.lastChild.focus();
                 }}
                 style={{
                   ...(optionItemStyle &&
@@ -329,19 +357,43 @@ export const DropDownMenu = ({
                 }}
                 tabIndex={0} // ***********
                 onKeyDown={(e) => {
+                  console.log("e: ", e.key);
                   if (e.key === "Tab" && index === menuOptions?.length - 1) {
+                    e.preventDefault();
                     handleSetValues({ key: keys?.globalKey });
+                    mainRef.current.lastChild.lastChild.focus();
                   }
-                  if (e.key === "Enter") { 
+                  if (e.key === "Enter") {
+                    e.preventDefault();
                     handleSetValues(
                       row,
                       index, // ***********
                       options?.length,
                       search?.query && search?.touched
                     );
-                  } else if (e.key !== "Tab" && search) {
+                    mainRef.current.lastChild.lastChild.focus();
+                    console.log(
+                      "mainRef.current.lastChild.lastChild: ",
+                      mainRef.current.lastChild.lastChild
+                    );
+                  } else if (
+                    e.key !== "Tab" &&
+                    e.key !== "ArrowDown" &&
+                    e.key !== "ArrowUp" &&
+                    search
+                  ) {
                     // setSearch({ query: e.key, touched: true });
                     inputRef?.current?.focus();
+                  } else if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    if (index < menuOptions?.length - 1) {
+                      e.target.nextElementSibling.focus();
+                    }
+                  } else if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    if (index > 0) {
+                      e.target.previousElementSibling.focus();
+                    }
                   }
                 }}
               >
