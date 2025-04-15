@@ -220,11 +220,12 @@ export const DropDownMenu = ({
       if (index < menuOptions?.length - 1) {
         e.target.nextElementSibling.focus();
       }
-    } else if (e.key === "ArrowUp") {
+    } else if (
+      e.key === "ArrowUp" &&
+      (index > 0 || (resetButton && dropDownValueTwo))
+    ) {
       e.preventDefault();
-      if (index > 0 || (resetButton && dropDownValueTwo)) {
-        e.target.previousElementSibling.focus();
-      }
+      e.target.previousElementSibling.focus();
     } else if (search) {
       // setSearch({ query: e.key, touched: true });
       inputRef?.current?.focus();
