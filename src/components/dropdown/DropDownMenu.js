@@ -25,7 +25,7 @@ export const DropDownMenu = ({
 }) => {
   const [search, setSearch] = useState({ query: "", touched: false });
   const [menuPosition, setMenuPosition] = useState({});
-  const [focusIndex, setFocusIndex] = useState(0);
+
   const inputRef = useRef(null);
   let lastLabelRef = useRef(null);
   const handleSearch = (e) => {
@@ -109,15 +109,6 @@ export const DropDownMenu = ({
     };
   }, [menuRef, menuOptions?.length]);
 
-  useEffect(() => {
-    if (showMenu) {
-      setGlobalClick(true);
-    }
-    // if (searchBar && inputRef.current) {
-    //   inputRef.current.focus();
-    // }
-  }, []);
-
   //* optimize this this
   useLayoutEffect(() => {
     const calculatePosition = () => {
@@ -125,7 +116,7 @@ export const DropDownMenu = ({
       const mainSectionBRC = mainRef.current.getBoundingClientRect();
       const scrollY = window.scrollY;
       const menuElement = document.getElementById("drop_$_down_$_menu");
-      menuElement.firstChild.focus();
+
       const menuHeight = menuElement?.getBoundingClientRect().height || 0;
       menuPosition; // temporary
 
@@ -157,6 +148,15 @@ export const DropDownMenu = ({
     mainRef.current.getBoundingClientRect().left,
     menuRef?.current?.getBoundingClientRect()?.height,
   ]);
+
+  useEffect(() => {
+    if (showMenu) {
+      setGlobalClick(true);
+    }
+    //*******
+    const menuElement = document.getElementById("drop_$_down_$_menu");
+    menuElement.firstChild.focus();
+  }, []);
 
   const handleLastLabel = (index, length) => {
     if (lastLabelRef && index === length - 101) {
@@ -200,6 +200,36 @@ export const DropDownMenu = ({
       }
     };
   }, [options, menuOptions, setMenuOptions]);
+
+  const handleKeyDown = (e, index, row) => {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      handleSetValues({ key: keys?.globalKey });
+      mainRef.current.lastChild.lastChild.focus();
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      handleSetValues(
+        row,
+        index, // ***********
+        options?.length,
+        search?.query && search?.touched
+      );
+      mainRef.current.lastChild.lastChild.focus();
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (index < menuOptions?.length - 1) {
+        e.target.nextElementSibling.focus();
+      }
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (index > 0 || (resetButton && dropDownValueTwo)) {
+        e.target.previousElementSibling.focus();
+      }
+    } else if (search) {
+      // setSearch({ query: e.key, touched: true });
+      inputRef?.current?.focus();
+    }
+  };
 
   return (
     <>
@@ -254,12 +284,11 @@ export const DropDownMenu = ({
                 onChange={handleSearch}
                 maxLength={80}
                 onKeyDown={(e) => {
-                  // if (e.key === "Tab" && showMenu) {
-                  //   handleSetValues({ key: keys?.globalKey });
-                  //   // ***********
-                  // }
-                  if (e.key === "ArrowDown") {
-                    console.log("e: ", e);
+                  if (e.key === "Tab" && showMenu) {
+                    e.preventDefault();
+                    handleSetValues({ key: keys?.globalKey });
+                    mainRef.current.lastChild.lastChild.focus();
+                  } else if (e.key === "ArrowDown") {
                     e.preventDefault();
                     e.target.parentElement.nextElementSibling.focus();
                   }
@@ -293,17 +322,25 @@ export const DropDownMenu = ({
               }}
               tabIndex={0} // ***********
               onKeyDown={(e) => {
-                if (e.key === "Enter")
+                if (e.key === "Enter") {
+                  e.preventDefault();
                   handleSetValues({
                     label: handleResetBtnText(),
                     value: "",
                     key: keys?.resetKey,
                   });
-                else if (e.key !== "Tab" && search) {
+                  mainRef.current.lastChild.lastChild.focus();
+                } else if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  if (menuOptions?.length > 0) {
+                    e.target.nextElementSibling.focus();
+                  }
+                } else if (e.key !== "Tab" && search) {
                   // setSearch({ query: e.key, touched: true });
                   inputRef?.current?.focus();
                 }
               }}
+              // onKeyDown={handleKeyDown}
             >
               <span>{handleResetBtnText()}</span>
             </div>
@@ -356,46 +393,7 @@ export const DropDownMenu = ({
                     selectedOptionItemStyle),
                 }}
                 tabIndex={0} // ***********
-                onKeyDown={(e) => {
-                  console.log("e: ", e.key);
-                  if (e.key === "Tab" && index === menuOptions?.length - 1) {
-                    e.preventDefault();
-                    handleSetValues({ key: keys?.globalKey });
-                    mainRef.current.lastChild.lastChild.focus();
-                  }
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleSetValues(
-                      row,
-                      index, // ***********
-                      options?.length,
-                      search?.query && search?.touched
-                    );
-                    mainRef.current.lastChild.lastChild.focus();
-                    console.log(
-                      "mainRef.current.lastChild.lastChild: ",
-                      mainRef.current.lastChild.lastChild
-                    );
-                  } else if (
-                    e.key !== "Tab" &&
-                    e.key !== "ArrowDown" &&
-                    e.key !== "ArrowUp" &&
-                    search
-                  ) {
-                    // setSearch({ query: e.key, touched: true });
-                    inputRef?.current?.focus();
-                  } else if (e.key === "ArrowDown") {
-                    e.preventDefault();
-                    if (index < menuOptions?.length - 1) {
-                      e.target.nextElementSibling.focus();
-                    }
-                  } else if (e.key === "ArrowUp") {
-                    e.preventDefault();
-                    if (index > 0) {
-                      e.target.previousElementSibling.focus();
-                    }
-                  }
-                }}
+                onKeyDown={(e) => handleKeyDown(e, index, row)}
               >
                 <span
                   ref={

@@ -461,12 +461,6 @@ const DropDownBox = ({
         <div
           className="focus-element"
           // ***********
-          // onFocus={(e) => {
-          //   console.info("hello", placeholder);
-          //   if (!disabled) {
-          //     handleClick();
-          //   }
-          // }}
           style={{ outline: "none" }}
           tabIndex={showMenu ? "-1" : "0"}
           onKeyDown={(e) => {
