@@ -90,7 +90,11 @@ export const DropDownMenu = ({
 
   useEffect(() => {
     const handleGlobalClick = (event) => {
-      if (menuRef?.current && !menuRef?.current?.contains(event.target)) {
+      if (
+        menuRef?.current &&
+        !menuRef?.current?.contains(event.target) &&
+        !mainRef?.current?.contains(event.target)
+      ) {
         handleSetValues({ key: keys?.globalKey });
 
         setTimeout(() => {
