@@ -61,6 +61,7 @@
   border: 1px solid #a1a4b9;
   user-select: none;
   background-color: white;
+  overflow: hidden;
 }
 .direct:has(+ .focus-element:focus-visible) {
   /* ********************* */

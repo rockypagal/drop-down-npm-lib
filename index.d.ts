@@ -27,6 +27,9 @@ declare module "ru-react-dropdown-component" {
     /** To hide the scrollbar in menu */
     hideScrollbar?: boolean;
 
+    /** To enable multi select */
+    multiSelect?: boolean;
+
     /** Size of the dropdown (e.g., "small", "large", "mini") */
     size?: "small" | "medium" | "mini" | string | number;
 

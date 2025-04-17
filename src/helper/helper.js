@@ -20,3 +20,13 @@ export function isValidCSSUnit(size) {
 }
 
 export const trim = (str) => str.trim().replace(/\s+/g, " ");
+
+export const resetOptionsList = ({ options, setMenuOptions, delay = 250 }) => {
+  setTimeout(() => {
+    if (options?.length >= 100) {
+      setMenuOptions(options?.slice(0, 100));
+    } else {
+      setMenuOptions(options);
+    }
+  }, delay);
+};

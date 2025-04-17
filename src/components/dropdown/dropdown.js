@@ -12,7 +12,12 @@ import {
   dropdownTitleCSS,
   keys,
 } from "../../constant/constant";
-import { checkType, isValidCSSUnit, trim } from "../../helper/helper";
+import {
+  checkType,
+  isValidCSSUnit,
+  resetOptionsList,
+  trim,
+} from "../../helper/helper";
 import { createPortal } from "react-dom";
 const DropDownBox = ({
   title,
@@ -32,11 +37,11 @@ const DropDownBox = ({
   styles = {},
   hideScrollbar = false,
   loading = false,
+  multiSelect = false,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [addStyle, setAddStyle] = useState(false);
   const [menuOptions, setMenuOptions] = useState(options);
-
   const [dropDownValue, setDropDownValue] = useState(placeholder);
   const [dropDownValueTwo, setDropDownValueTwo] = useState("");
   const [historyIncomingValue, setHistoryIncomingValue] = useState("");
@@ -318,6 +323,12 @@ const DropDownBox = ({
             //     : " animateDropDownLabel"
             //   : "")
           }
+          onClick={() => {
+            if (!disabled && showMenu) {
+              handleClick();
+              resetOptionsList({ options, setMenuOptions });
+            }
+          }}
           style={{
             ...dropdownTitleCSS,
             ...(styles?.title &&
@@ -362,6 +373,7 @@ const DropDownBox = ({
           onClick={(e) => {
             if (!disabled) {
               handleClick();
+              resetOptionsList({ options, setMenuOptions });
             }
           }}
           style={{
@@ -464,8 +476,13 @@ const DropDownBox = ({
           style={{ outline: "none" }}
           tabIndex={showMenu ? "-1" : "0"}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && !showMenu) {
+            if (
+              (e.key === "Enter" && !showMenu) ||
+              (e.key === "Tab" && showMenu)
+            ) {
+              e.key === "Tab" && showMenu && e.preventDefault();
               handleClick();
+              // resetOptionsList({ options, setMenuOptions });
             }
           }}
         />

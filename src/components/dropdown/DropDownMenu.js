@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
-import { checkType, trim } from "../../helper/helper";
+import { checkType, resetOptionsList, trim } from "../../helper/helper";
 import { keys } from "../../constant/constant";
 
 export const DropDownMenu = ({
@@ -95,15 +95,19 @@ export const DropDownMenu = ({
         !menuRef?.current?.contains(event.target) &&
         !mainRef?.current?.contains(event.target)
       ) {
+        console.log("mainRef?.current: ", mainRef?.current);
         handleSetValues({ key: keys?.globalKey });
 
-        setTimeout(() => {
-          if (options?.length >= 100) {
-            setMenuOptions(options?.slice(0, 100));
-          } else {
-            setMenuOptions(options);
-          }
-        }, 250);
+        // setTimeout(() => {
+        //   if (options?.length >= 100) {
+        //     setMenuOptions(options?.slice(0, 100));
+        //   } else {
+        //     console.log("hello");
+        //     setMenuOptions(options);
+        //   }
+        // }, 250);
+
+        resetOptionsList({ options, setMenuOptions });
       }
     };
 
@@ -210,6 +214,7 @@ export const DropDownMenu = ({
       e.preventDefault();
       handleSetValues({ key: keys?.globalKey });
       mainRef.current.lastChild.lastChild.focus();
+      resetOptionsList({ options, setMenuOptions });
     } else if (e.key === "Enter") {
       e.preventDefault();
       handleSetValues(
@@ -293,6 +298,7 @@ export const DropDownMenu = ({
                     e.preventDefault();
                     handleSetValues({ key: keys?.globalKey });
                     mainRef.current.lastChild.lastChild.focus();
+                    resetOptionsList({ options, setMenuOptions });
                   } else if (e.key === "ArrowDown") {
                     e.preventDefault();
                     e.target.parentElement.nextElementSibling.focus();
