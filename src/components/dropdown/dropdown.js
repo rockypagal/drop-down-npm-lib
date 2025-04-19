@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import "./dropdown-style.css";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import { DropDownMenu } from "./DropDownMenu";
 import {
   cssSizeList,
@@ -47,12 +47,12 @@ const DropDownBox = ({
   const [addStyle, setAddStyle] = useState(false);
   const [menuOptions, setMenuOptions] = useState(options);
   const [dropDownValue, setDropDownValue] = useState(placeholder);
-  const [dropDownValueTwo, setDropDownValueTwo] = useState("");
+  const [dropDownValueTwo, setDropDownValueTwo] = useState(null);
 
   const [historyIncomingValue, setHistoryIncomingValue] = useState("");
   const [timerId, setTimerId] = useState(null);
   const mainRef = useRef(null);
-  let oldTargetedValue = useRef("");
+  let oldTargetedValue = useRef(keys?.changeObserverRefKey);
   let contextCollectionRef = useRef(null);
 
   const handleClick = () => {
@@ -108,7 +108,7 @@ const DropDownBox = ({
     if (beforeSelect && checkType(beforeSelect, "function")) {
       beforeSelectCheck = beforeSelect(value, detailsObj);
     }
-    if (beforeSelectCheck !== false && (label || value)) {
+    if (beforeSelectCheck !== false && (label || checkIsValidValue(value))) {
       setDropDownValue(label);
       setDropDownValueTwo(value);
     }
@@ -124,7 +124,7 @@ const DropDownBox = ({
         }
       }, 250);
     } else {
-      resetOptionsList({ options, setMenuOptions }, "test");
+      resetOptionsList({ options, setMenuOptions });
     }
 
     if (
@@ -153,7 +153,7 @@ const DropDownBox = ({
 
     if (placeholder) {
       if (dropDownValueTwo) {
-        setDropDownValueTwo("");
+        setDropDownValueTwo(null);
       }
 
       setDropDownValue(placeholder);
@@ -163,12 +163,16 @@ const DropDownBox = ({
   useEffect(() => {
     const resetButtonText = handleResetBtnText();
     const isReset =
-      dropDownValue === resetButtonText && dropDownValueTwo === "";
-    // const isDropDownValueValid = checkIsValidValue(dropDownValueTwo);
-    if (dropDownValueTwo || isReset) {
+      dropDownValue === resetButtonText && dropDownValueTwo === null;
+
+    const isDropDownValueValid =
+      contextCollectionRef?.current === null && dropDownValueTwo === null
+        ? false
+        : checkIsValidValue(dropDownValueTwo);
+    if (isDropDownValueValid || isReset) {
       if (!(onSelect || beforeSelect || afterSelect)) {
         handleLog({ logType: "error", message: errors?.onSelectRequired });
-      } else if ((onSelect && dropDownValueTwo) || (onSelect && isReset)) {
+      } else if ((onSelect && isDropDownValueValid) || (onSelect && isReset)) {
         onSelect(dropDownValueTwo, contextCollectionRef.current);
       }
 
@@ -233,6 +237,11 @@ const DropDownBox = ({
   }, [disabled, showMenu]);
 
   useEffect(() => {
+    if (oldTargetedValue.current === keys?.changeObserverRefKey) {
+      oldTargetedValue.current = "";
+      return;
+    }
+
     const { target, handler } = changeObserver;
 
     if (checkType(handler, "function")) {
@@ -433,7 +442,7 @@ const DropDownBox = ({
                 styles?.placeholder),
             }}
           >
-            {dropDownValue === handleResetBtnText() && dropDownValueTwo === ""
+            {dropDownValue === handleResetBtnText() && dropDownValueTwo === null
               ? "\u00A0"
               : dropDownValue || "\u00A0"}
           </div>
@@ -534,4 +543,4 @@ const DropDownBox = ({
   );
 };
 
-export default DropDownBox;
+export default memo(DropDownBox);

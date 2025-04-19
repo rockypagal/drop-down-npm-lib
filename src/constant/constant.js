@@ -1,11 +1,11 @@
 export const keys = {
   resetKey: "Reset",
   globalKey: "globalClick",
-  globalResetKey: "GlobalReset",
-  changeObserverKey: "changeObserver",
-  incomingValueKey: "incomingValue",
-  inputNameKey: "mpnxmaxQGA-DropDownBox-search-gNcFybupRk",
   triggeredByKey: "onSelect",
+  globalResetKey: "GlobalReset",
+  incomingValueKey: "incomingValue",
+  changeObserverKey: "changeObserver",
+  changeObserverRefKey: "mpnxmaxQGA-DropDownBox-Ref-gNcFybupRk",
 };
 export const cssSizeUnits = [
   "px", // Pixels
@@ -64,5 +64,5 @@ export const errors = {
   onSelectRequired:
     "Dropdown component requires a callback function to handle value changes. Please provide a valid 'onSelect','beforeSelect' or 'afterSelect' prop.",
   provideValidValues:
-    'Please provide valid dropdown values. This dropdown does not accept undefined, null, and empty strings ("").',
+    "Please provide valid dropdown values. This dropdown does not accept undefined and null.",
 };
