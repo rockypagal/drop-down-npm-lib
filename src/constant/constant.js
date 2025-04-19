@@ -40,6 +40,7 @@ export const direct = {
   border: "1px solid #a1a4b9",
   userSelect: "none",
   backgroundColor: "white",
+  overflow: "hidden",
 };
 
 export const defaultValueCSS = {
@@ -58,4 +59,10 @@ export const dropdownTitleCSS = {
   padding: "0.5rem 0",
   fontWeight: "500",
   background: "transparent",
+};
+export const errors = {
+  onSelectRequired:
+    "Dropdown component requires a callback function to handle value changes. Please provide a valid 'onSelect','beforeSelect' or 'afterSelect' prop.",
+  provideValidValues:
+    'Please provide valid dropdown values. This dropdown does not accept undefined, null, and empty strings ("").',
 };

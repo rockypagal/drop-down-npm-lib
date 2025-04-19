@@ -1,5 +1,10 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
-import { checkType, resetOptionsList, trim } from "../../helper/helper";
+import {
+  checkType,
+  focusTheMain,
+  resetOptionsList,
+  trim,
+} from "../../helper/helper";
 import { keys } from "../../constant/constant";
 
 export const DropDownMenu = ({
@@ -18,7 +23,7 @@ export const DropDownMenu = ({
   inputSearchStyle,
   selectedOptionItemStyle,
   mainRef,
-  animateTitle,
+  dynamicPosition,
   handleSetValues,
   loading,
   scrollbarClass,
@@ -95,19 +100,17 @@ export const DropDownMenu = ({
         !menuRef?.current?.contains(event.target) &&
         !mainRef?.current?.contains(event.target)
       ) {
-        console.log("mainRef?.current: ", mainRef?.current);
         handleSetValues({ key: keys?.globalKey });
 
         // setTimeout(() => {
         //   if (options?.length >= 100) {
         //     setMenuOptions(options?.slice(0, 100));
         //   } else {
-        //     console.log("hello");
+        //
         //     setMenuOptions(options);
         //   }
         // }, 250);
-
-        resetOptionsList({ options, setMenuOptions });
+        resetOptionsList({ options, setMenuOptions },'global reset');
       }
     };
 
@@ -156,7 +159,7 @@ export const DropDownMenu = ({
     mainRef.current.getBoundingClientRect().left,
     menuRef?.current?.getBoundingClientRect()?.height,
   ]);
-
+  useEffect(() => {});
   useEffect(() => {
     if (showMenu) {
       setGlobalClick(true);
@@ -213,7 +216,7 @@ export const DropDownMenu = ({
     if (e.key === "Tab") {
       e.preventDefault();
       handleSetValues({ key: keys?.globalKey });
-      mainRef.current.lastChild.lastChild.focus();
+      focusTheMain(mainRef);
       resetOptionsList({ options, setMenuOptions });
     } else if (e.key === "Enter") {
       e.preventDefault();
@@ -223,7 +226,7 @@ export const DropDownMenu = ({
         options?.length,
         search?.query && search?.touched
       );
-      mainRef.current.lastChild.lastChild.focus();
+      focusTheMain(mainRef);
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
       if (index < menuOptions?.length - 1) {
@@ -297,7 +300,7 @@ export const DropDownMenu = ({
                   if (e.key === "Tab" && showMenu) {
                     e.preventDefault();
                     handleSetValues({ key: keys?.globalKey });
-                    mainRef.current.lastChild.lastChild.focus();
+                    focusTheMain(mainRef);
                     resetOptionsList({ options, setMenuOptions });
                   } else if (e.key === "ArrowDown") {
                     e.preventDefault();
@@ -319,12 +322,14 @@ export const DropDownMenu = ({
                   ifFalse: "",
                 }
               )}`}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation();
                 handleSetValues({
                   label: handleResetBtnText(),
                   value: "",
                   key: keys?.resetKey,
                 });
+                focusTheMain(mainRef);
               }}
               style={{
                 ...(optionItemStyle &&
@@ -340,7 +345,7 @@ export const DropDownMenu = ({
                     value: "",
                     key: keys?.resetKey,
                   });
-                  mainRef.current.lastChild.lastChild.focus();
+                  focusTheMain(mainRef);
                 } else if (e.key === "ArrowDown") {
                   e.preventDefault();
                   if (menuOptions?.length > 0) {
@@ -392,7 +397,7 @@ export const DropDownMenu = ({
                     search?.query && search?.touched
                   );
                   // *******
-                  mainRef.current.lastChild.lastChild.focus();
+                  focusTheMain(mainRef);
                 }}
                 style={{
                   ...(optionItemStyle &&

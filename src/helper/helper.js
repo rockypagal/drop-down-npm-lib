@@ -1,4 +1,4 @@
-import { cssSizeUnits } from "../constant/constant";
+import { cssSizeUnits, errors } from "../constant/constant";
 
 export const checkType = (value, type, returnCustom = null) => {
   if (returnCustom) {
@@ -21,7 +21,11 @@ export function isValidCSSUnit(size) {
 
 export const trim = (str) => str.trim().replace(/\s+/g, " ");
 
-export const resetOptionsList = ({ options, setMenuOptions, delay = 250 }) => {
+export const resetOptionsList = (
+  { options, setMenuOptions, delay = 250 },
+  test
+) => {
+  console.log(test);
   setTimeout(() => {
     if (options?.length >= 100) {
       setMenuOptions(options?.slice(0, 100));
@@ -29,4 +33,21 @@ export const resetOptionsList = ({ options, setMenuOptions, delay = 250 }) => {
       setMenuOptions(options);
     }
   }, delay);
+};
+
+export const focusTheMain = (mainRef) => {
+  mainRef.current.lastChild.lastChild.focus();
+};
+
+export const checkIsValidValue = (value) => {
+  if (value !== undefined && value !== null) {
+    return true;
+  } else {
+    handleLog({ logType: "error", message: errors?.provideValidValues });
+    return false;
+  }
+};
+
+export const handleLog = ({ logType, message }) => {
+  console[logType](message);
 };

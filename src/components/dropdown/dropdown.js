@@ -10,10 +10,14 @@ import {
   dropdownMainCSS,
   dropdownSelector,
   dropdownTitleCSS,
+  errors,
   keys,
 } from "../../constant/constant";
 import {
+  checkIsValidValue,
   checkType,
+  focusTheMain,
+  handleLog,
   isValidCSSUnit,
   resetOptionsList,
   trim,
@@ -44,6 +48,7 @@ const DropDownBox = ({
   const [menuOptions, setMenuOptions] = useState(options);
   const [dropDownValue, setDropDownValue] = useState(placeholder);
   const [dropDownValueTwo, setDropDownValueTwo] = useState("");
+
   const [historyIncomingValue, setHistoryIncomingValue] = useState("");
   const [timerId, setTimerId] = useState(null);
   const mainRef = useRef(null);
@@ -119,7 +124,7 @@ const DropDownBox = ({
         }
       }, 250);
     } else {
-      setMenuOptions(options);
+      resetOptionsList({ options, setMenuOptions }, "test");
     }
 
     if (
@@ -159,12 +164,10 @@ const DropDownBox = ({
     const resetButtonText = handleResetBtnText();
     const isReset =
       dropDownValue === resetButtonText && dropDownValueTwo === "";
-
+    // const isDropDownValueValid = checkIsValidValue(dropDownValueTwo);
     if (dropDownValueTwo || isReset) {
-      if (!onSelect) {
-        console.error(
-          "Dropdown component requires a callback function to handle value changes. Please provide a valid 'onSelect' prop."
-        );
+      if (!(onSelect || beforeSelect || afterSelect)) {
+        handleLog({ logType: "error", message: errors?.onSelectRequired });
       } else if ((onSelect && dropDownValueTwo) || (onSelect && isReset)) {
         onSelect(dropDownValueTwo, contextCollectionRef.current);
       }
@@ -268,7 +271,12 @@ const DropDownBox = ({
 
       oldTargetedValue.current = target;
     }
-  }, [changeObserver?.target]);
+  }, [
+    ...(Array.isArray(changeObserver?.target)
+      ? changeObserver.target
+      : [changeObserver?.target]),
+  ]);
+
   return (
     <div
       className={`drop-down-main ${
@@ -326,7 +334,7 @@ const DropDownBox = ({
           onClick={() => {
             if (!disabled && showMenu) {
               handleClick();
-              resetOptionsList({ options, setMenuOptions });
+              // resetOptionsList({ options, setMenuOptions });
             }
           }}
           style={{
@@ -373,7 +381,10 @@ const DropDownBox = ({
           onClick={(e) => {
             if (!disabled) {
               handleClick();
-              resetOptionsList({ options, setMenuOptions });
+              // resetOptionsList({ options, setMenuOptions });
+              if (loading && !showMenu) {
+                focusTheMain(mainRef);
+              }
             }
           }}
           style={{
@@ -472,7 +483,6 @@ const DropDownBox = ({
         </div>
         <div
           className="focus-element"
-          // ***********
           style={{ outline: "none" }}
           tabIndex={showMenu ? "-1" : "0"}
           onKeyDown={(e) => {
