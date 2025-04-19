@@ -23,7 +23,6 @@ export const DropDownMenu = ({
   inputSearchStyle,
   selectedOptionItemStyle,
   mainRef,
-  dynamicPosition,
   handleSetValues,
   loading,
   scrollbarClass,
@@ -110,7 +109,7 @@ export const DropDownMenu = ({
         //     setMenuOptions(options);
         //   }
         // }, 250);
-        resetOptionsList({ options, setMenuOptions },'global reset');
+        resetOptionsList({ options, setMenuOptions });
       }
     };
 
@@ -159,7 +158,6 @@ export const DropDownMenu = ({
     mainRef.current.getBoundingClientRect().left,
     menuRef?.current?.getBoundingClientRect()?.height,
   ]);
-  useEffect(() => {});
   useEffect(() => {
     if (showMenu) {
       setGlobalClick(true);
