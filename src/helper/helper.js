@@ -47,3 +47,7 @@ export const checkIsValidValue = (value) => {
 export const handleLog = ({ logType, message }) => {
   console[logType](message);
 };
+
+export const filterLabelAndValues = (arr = [], index, item) => {
+  return arr?.filter((label, i) => i !== index && label !== item);
+};

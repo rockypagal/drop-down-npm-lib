@@ -410,3 +410,10 @@
 }
 
 /* --- drop down box css end --- */
+/* --- multi drop down css start --- */
+
+.direct .remove:hover {
+  fill: red;
+}
+
+/* --- multi drop down css end --- */

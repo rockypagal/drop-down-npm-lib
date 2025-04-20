@@ -26,6 +26,8 @@ export const DropDownMenu = ({
   handleSetValues,
   loading,
   scrollbarClass,
+  multiSelect,
+  multiSelectLimit,
 }) => {
   const [search, setSearch] = useState({ query: "", touched: false });
   const [menuPosition, setMenuPosition] = useState({});
@@ -388,6 +390,16 @@ export const DropDownMenu = ({
                       : ""
                   }`)}
                 onClick={() => {
+                  if (
+                    multiSelect &&
+                    (multiSelectLimit || multiSelectLimit === 0) &&
+                    checkType(Number(multiSelectLimit), "number") &&
+                    (Array?.isArray(dropDownValueTwo)
+                      ? dropDownValueTwo?.length >= multiSelectLimit
+                      : false)
+                  ) {
+                    return;
+                  }
                   handleSetValues(
                     row,
                     index,

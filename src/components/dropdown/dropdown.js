@@ -16,6 +16,7 @@ import {
 import {
   checkIsValidValue,
   checkType,
+  filterLabelAndValues,
   focusTheMain,
   handleLog,
   isValidCSSUnit,
@@ -23,6 +24,7 @@ import {
   trim,
 } from "../../helper/helper";
 import { createPortal } from "react-dom";
+import { MultiSelect } from "./MultiSelect";
 const DropDownBox = ({
   title,
   animateTitle,
@@ -42,6 +44,9 @@ const DropDownBox = ({
   hideScrollbar = false,
   loading = false,
   multiSelect = false,
+  showMultiCloseBtn = true,
+  multiSelectLimit,
+  closeMenuOnMultiSelect = true,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [addStyle, setAddStyle] = useState(false);
@@ -109,8 +114,34 @@ const DropDownBox = ({
       beforeSelectCheck = beforeSelect(value, detailsObj);
     }
     if (beforeSelectCheck !== false && (label || checkIsValidValue(value))) {
-      setDropDownValue(label);
-      setDropDownValueTwo(value);
+      // setDropDownValue(label);
+      setDropDownValue((oldValue) => {
+        let newValue;
+
+        if (multiSelect) {
+          newValue = Array.isArray(oldValue) ? [...oldValue, label] : [label];
+        } else {
+          newValue = label;
+        }
+        return newValue;
+      });
+
+      setDropDownValueTwo((oldValue) => {
+        let newValue;
+
+        if (multiSelect) {
+          newValue = Array.isArray(oldValue) ? [...oldValue, value] : [value];
+        } else {
+          newValue = value;
+        }
+        return newValue;
+      });
+
+      //* do this but not here
+      // if (multiSelect) {
+      //   const newMenu = menuOptions?.filter((_, i) => i !== index);
+      //   setMenuOptions(newMenu);
+      // }
     }
 
     contextCollectionRef.current = detailsObj;
@@ -134,9 +165,18 @@ const DropDownBox = ({
         keys?.incomingValueKey,
       ].includes(key)
     )
-      handleClick();
+      if (multiSelect && !closeMenuOnMultiSelect) {
+        return;
+      }
+
+    handleClick();
   }
 
+  // useEffect(() => {
+  //   if (multiSelect) {
+  //     setDropDownValueTwo([]);
+  //   }
+  // }, [multiSelect]);
   useEffect(() => {
     return () => {
       if (timerId) {
@@ -442,9 +482,25 @@ const DropDownBox = ({
                 styles?.placeholder),
             }}
           >
-            {dropDownValue === handleResetBtnText() && dropDownValueTwo === null
-              ? "\u00A0"
-              : dropDownValue || "\u00A0"}
+            {dropDownValue === handleResetBtnText() &&
+            dropDownValueTwo === null ? (
+              "\u00A0"
+            ) : multiSelect ? (
+              Array.isArray(dropDownValue) ? (
+                <MultiSelect
+                  dropDownValue={dropDownValue}
+                  dropDownValueTwo={dropDownValueTwo}
+                  setDropDownValue={setDropDownValue}
+                  setDropDownValueTwo={setDropDownValueTwo}
+                  showMultiCloseBtn={showMultiCloseBtn}
+                  multiSelectLimit={multiSelectLimit}
+                />
+              ) : (
+                "\u00A0"
+              )
+            ) : (
+              dropDownValue || "\u00A0"
+            )}
           </div>
           {loading ? (
             <div className="dropdown-direct-loading">
@@ -526,6 +582,8 @@ const DropDownBox = ({
               animateTitle={animateTitle}
               handleSetValues={handleSetValues}
               loading={loading}
+              multiSelect={multiSelect}
+              multiSelectLimit={multiSelectLimit}
               scrollbarClass={
                 disabled
                   ? ""
