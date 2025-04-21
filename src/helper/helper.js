@@ -21,7 +21,11 @@ export function isValidCSSUnit(size) {
 
 export const trim = (str) => str.trim().replace(/\s+/g, " ");
 
-export const resetOptionsList = ({ options, setMenuOptions, delay = 250 }) => {
+export const resetOptionsList = (
+  { options, setMenuOptions, delay = 250 },
+  tester
+) => {
+  tester && console.log("tester: ", tester);
   setTimeout(() => {
     if (options?.length >= 100) {
       setMenuOptions(options?.slice(0, 100));

@@ -140,10 +140,6 @@ const DropDownBox = ({
       });
 
       //* do this but not here
-      // if (multiSelect) {
-      //   const newMenu = menuOptions?.filter((_, i) => i !== index);
-      //   setMenuOptions(newMenu);
-      // }
     }
 
     contextCollectionRef.current = detailsObj;
@@ -157,7 +153,12 @@ const DropDownBox = ({
         }
       }, 250);
     } else {
-      resetOptionsList({ options, setMenuOptions });
+      if (multiSelect) {
+        const newMenu = menuOptions?.filter((_, i) => i !== index);
+        setMenuOptions(newMenu);
+      } else {
+        resetOptionsList({ options, setMenuOptions }, "From handleSetValue");
+      }
     }
 
     if (
