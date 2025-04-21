@@ -42,6 +42,7 @@ const DropDownBox = ({
   hideScrollbar = false,
   loading = false,
   multiSelect = false,
+  noDataMessage = "No Data Found",
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [addStyle, setAddStyle] = useState(false);
@@ -163,7 +164,7 @@ const DropDownBox = ({
   useEffect(() => {
     const resetButtonText = handleResetBtnText();
     const isReset =
-      dropDownValue === resetButtonText && dropDownValueTwo === null;
+      dropDownValue === resetButtonText && dropDownValueTwo === "";
 
     const isDropDownValueValid =
       contextCollectionRef?.current === null && dropDownValueTwo === null
@@ -390,7 +391,7 @@ const DropDownBox = ({
           onClick={(e) => {
             if (!disabled) {
               handleClick();
-              // resetOptionsList({ options, setMenuOptions });
+              resetOptionsList({ options, setMenuOptions });
               if (loading && !showMenu) {
                 focusTheMain(mainRef);
               }
@@ -526,6 +527,7 @@ const DropDownBox = ({
               animateTitle={animateTitle}
               handleSetValues={handleSetValues}
               loading={loading}
+              noDataMessage={noDataMessage}
               scrollbarClass={
                 disabled
                   ? ""

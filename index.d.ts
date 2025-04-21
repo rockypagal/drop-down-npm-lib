@@ -39,6 +39,7 @@ declare module "ru-react-dropdown-component" {
       | {
           delay?: number | string;
           onSearch?: (value: any, options: DropDownOption[]) => void;
+          placeholder?: string;
         };
 
     /** Function to set the selected value, e.g., useState or Formik setFieldValue */
