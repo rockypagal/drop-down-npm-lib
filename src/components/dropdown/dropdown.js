@@ -92,6 +92,7 @@ const DropDownBox = ({
   function handleSetValues(row = {}, index = null, optionsLength, isSearched) {
     const { label, value, key } = row;
 
+    console.info("key: ", key);
     if (row?.key) delete row?.key;
 
     if (key === keys?.globalKey && showMenu) {
@@ -414,6 +415,7 @@ const DropDownBox = ({
         style={{ ...dropdownSelector }}
       >
         <div
+          tabindex="0"
           className={trim(`direct ${
             disabled ? "disabledDropBox" : ""
           } ${checkType(styles?.selectBox, "string", {

@@ -181,7 +181,9 @@
   background: #fff;
   border: 1px solid #d2d6da;
 }
-
+.input-field input.drop-down-search-input:focus {
+  outline: 2px solid #7abdff;
+}
 @keyframes show_component-common-animation {
   0% {
     opacity: 0;

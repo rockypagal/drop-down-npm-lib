@@ -36,7 +36,7 @@ export const DropDownMenu = ({
     searchComplete: false,
   });
   const [menuPosition, setMenuPosition] = useState({});
-  console.log("search: ", search);
+  
 
   const inputRef = useRef(null);
   let lastLabelRef = useRef(null);
@@ -253,6 +253,18 @@ export const DropDownMenu = ({
       inputRef?.current?.focus();
     }
   };
+  // useEffect(() => {
+  //   const handleKeydown = (e) => {
+  //     if (e?.key === "Tab") {
+  //       handleSetValues({ key: keys?.globalKey });
+  //     }
+  //   };
+
+  //   document.addEventListener("keydown", handleKeydown);
+  //   return () => {
+  //     window.removeEventListener("keydown", handleKeydown);
+  //   };
+  // }, []);
 
   return (
     <>
@@ -303,6 +315,8 @@ export const DropDownMenu = ({
                 type="text"
                 placeholder={searchBar?.placeholder ?? "search here..."}
                 name="search"
+                // placeholder="search here..."
+                // name={keys?.inputNameKey}
                 value={search?.query}
                 onChange={handleSearch}
                 maxLength={80}
