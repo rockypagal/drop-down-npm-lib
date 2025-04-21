@@ -295,6 +295,10 @@
 .drop-down-menu .drop-down-item:hover {
   background-color: #dbedff;
 }
+
+.drop-down-menu .drop-down-item.search-active {
+  background-color: #dbedff;
+}
 .drop-down-menu .drop-down-item:focus-visible {
   /* ********************* */
   background-color: #dbedff;

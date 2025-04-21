@@ -28,9 +28,15 @@ export const DropDownMenu = ({
   scrollbarClass,
   multiSelect,
   multiSelectLimit,
+  noDataMessage,
 }) => {
-  const [search, setSearch] = useState({ query: "", touched: false });
+  const [search, setSearch] = useState({
+    query: "",
+    touched: false,
+    searchComplete: false,
+  });
   const [menuPosition, setMenuPosition] = useState({});
+  console.log("search: ", search);
 
   const inputRef = useRef(null);
   let lastLabelRef = useRef(null);
@@ -54,6 +60,9 @@ export const DropDownMenu = ({
         searchBar?.onSearch(search?.query, options);
         return;
       }
+
+      setSearch({ ...search, searchComplete: false });
+
       id = setTimeout(
         () => {
           if (!search?.query) {
@@ -77,6 +86,7 @@ export const DropDownMenu = ({
             }
           });
           setMenuOptions(arr);
+          setSearch({ ...search, searchComplete: true });
         },
 
         (searchBar?.delay || searchBar?.delay === 0) &&
@@ -234,7 +244,7 @@ export const DropDownMenu = ({
       }
     } else if (
       e.key === "ArrowUp" &&
-      (index > 0 || (resetButton && dropDownValueTwo))
+      (index > 0 || (resetButton && dropDownValueTwo && !search.query))
     ) {
       e.preventDefault();
       e.target.previousElementSibling.focus();
@@ -291,7 +301,7 @@ export const DropDownMenu = ({
                 ref={inputRef}
                 autoFocus // ***********
                 type="text"
-                placeholder="search here..."
+                placeholder={searchBar?.placeholder ?? "search here..."}
                 name="search"
                 value={search?.query}
                 onChange={handleSearch}
@@ -305,7 +315,29 @@ export const DropDownMenu = ({
                   } else if (e.key === "ArrowDown") {
                     e.preventDefault();
                     e.target.parentElement.nextElementSibling.focus();
+                  } else if (
+                    e.key === "Enter" &&
+                    menuOptions?.length > 0 &&
+                    search.query &&
+                    search.touched &&
+                    search?.searchComplete
+                  ) {
+                    const row = menuOptions[0];
+                    handleSetValues(
+                      row,
+                      0,
+                      options?.length,
+                      search?.query && search?.touched
+                    );
+                    // *******
+                    focusTheMain(mainRef);
                   }
+                }}
+                onFocus={() => {
+                  setSearch({ ...search, activeFocus: true });
+                }}
+                onBlur={() => {
+                  setSearch({ ...search, activeFocus: false });
                 }}
                 autoComplete="off"
               />
@@ -321,7 +353,7 @@ export const DropDownMenu = ({
                   ifTrue: optionItemStyle,
                   ifFalse: "",
                 }
-              )}`}
+              )} `}
               onClick={(e) => {
                 e.stopPropagation();
                 handleSetValues({
@@ -388,7 +420,17 @@ export const DropDownMenu = ({
                           ifFalse: " selectedDropBox",
                         })
                       : ""
-                  }`)}
+                  }
+                  ${
+                    index === 0 &&
+                    search.query &&
+                    search.searchComplete &&
+                    document.activeElement === inputRef.current
+                      ? " search-active "
+                      : ""
+                  }
+                  
+                  `)}
                 onClick={() => {
                   if (
                     multiSelect &&
@@ -448,7 +490,7 @@ export const DropDownMenu = ({
                   optionItemStyle),
               }}
             >
-              <span>No Data Found</span>
+              <span>{noDataMessage}</span>
             </div>
           )}
         </div>
