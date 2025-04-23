@@ -49,7 +49,6 @@ const DropDownBox = ({
   const [menuOptions, setMenuOptions] = useState(options);
   const [dropDownValue, setDropDownValue] = useState(placeholder);
   const [dropDownValueTwo, setDropDownValueTwo] = useState(null);
-
   const [historyIncomingValue, setHistoryIncomingValue] = useState("");
   const [timerId, setTimerId] = useState(null);
   const mainRef = useRef(null);
@@ -286,7 +285,6 @@ const DropDownBox = ({
       ? changeObserver.target
       : [changeObserver?.target]),
   ]);
-
   return (
     <div
       className={`drop-down-main ${
@@ -323,7 +321,7 @@ const DropDownBox = ({
           className={
             trim(`drop-down-title  ${
               animateTitle
-                ? dropDownValueTwo || showMenu
+                ? checkIsValidValue(dropDownValueTwo) || showMenu
                   ? " animateDropDownLabel animateDropDownLabelUp"
                   : " animateDropDownLabel"
                 : ""
@@ -348,7 +346,10 @@ const DropDownBox = ({
             }
           }}
           style={{
-            ...dropdownTitleCSS,
+            ...{
+              dropdownTitleCSS,
+              background: animateTitle ? "white" : "transparent",
+            },
             ...(styles?.title &&
               checkType(styles?.title, "object") &&
               styles?.title),
@@ -528,6 +529,7 @@ const DropDownBox = ({
               handleSetValues={handleSetValues}
               loading={loading}
               noDataMessage={noDataMessage}
+              titlePosition={title && !animateTitle}
               scrollbarClass={
                 disabled
                   ? ""

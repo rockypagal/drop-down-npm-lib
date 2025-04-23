@@ -58,7 +58,7 @@ export const dropArrowCSS = {
 export const dropdownTitleCSS = {
   padding: "0.5rem 0",
   fontWeight: "500",
-  background: "transparent",
+  // background: "white",
 };
 export const errors = {
   onSelectRequired:

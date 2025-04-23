@@ -33,6 +33,9 @@ declare module "ru-react-dropdown-component" {
     /** Size of the dropdown (e.g., "small", "large", "mini") */
     size?: "small" | "medium" | "mini" | string | number;
 
+    /** To show custom not data found message on search */
+    noDataMessage?: string;
+
     /** Enables the search bar within the dropdown */
     showSearch?:
       | boolean
