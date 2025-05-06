@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import "./dropdown-style.css";
 import React, { memo, useEffect, useMemo, useRef, useState } from "react";
-import { DropDownMenu } from "./DropDownMenu";
+import { createPortal } from "react-dom";
 import {
   cssSizeList,
   defaultValueCSS,
@@ -18,11 +17,13 @@ import {
   checkType,
   focusTheMain,
   handleLog,
+  handleSetValidValue,
   isValidCSSUnit,
   resetOptionsList,
   trim,
 } from "../../helper/helper";
-import { createPortal } from "react-dom";
+import "./dropdown-style.css";
+import { DropDownMenu } from "./DropDownMenu";
 const DropDownBox = ({
   title,
   animateTitle,
@@ -48,7 +49,7 @@ const DropDownBox = ({
   const [addStyle, setAddStyle] = useState(false);
   const [menuOptions, setMenuOptions] = useState(options);
   const [dropDownValue, setDropDownValue] = useState(placeholder);
-  const [dropDownValueTwo, setDropDownValueTwo] = useState(null);
+  const [dropDownValueTwo, setDropDownValueTwo] = useState("");
   const [historyIncomingValue, setHistoryIncomingValue] = useState("");
   const [timerId, setTimerId] = useState(null);
   const mainRef = useRef(null);
@@ -92,9 +93,10 @@ const DropDownBox = ({
       handleClick();
       return;
     }
+    const { isValid, validValue } = checkIsValidValue(value, key);
     let beforeSelectCheck;
     let detailsObj = {
-      oldValue: dropDownValueTwo,
+      oldValue: handleSetValidValue(dropDownValueTwo),
       index,
       row: {
         ...row,
@@ -108,12 +110,15 @@ const DropDownBox = ({
     if (beforeSelect && checkType(beforeSelect, "function")) {
       beforeSelectCheck = beforeSelect(value, detailsObj);
     }
-    if (beforeSelectCheck !== false && (label || checkIsValidValue(value))) {
+    if (beforeSelectCheck !== false && (label || value)) {
       setDropDownValue(label);
-      setDropDownValueTwo(value);
+      setDropDownValueTwo(validValue);
     }
 
-    contextCollectionRef.current = detailsObj;
+    contextCollectionRef.current = {
+      ...detailsObj,
+      validSelectedValue: { isValid, validValue },
+    };
 
     if (isSearched) {
       setTimeout(() => {
@@ -153,7 +158,7 @@ const DropDownBox = ({
 
     if (placeholder) {
       if (dropDownValueTwo) {
-        setDropDownValueTwo(null);
+        setDropDownValueTwo("");
       }
 
       setDropDownValue(placeholder);
@@ -165,25 +170,34 @@ const DropDownBox = ({
     const isReset =
       dropDownValue === resetButtonText && dropDownValueTwo === "";
 
-    const isDropDownValueValid =
-      contextCollectionRef?.current === null && dropDownValueTwo === null
-        ? false
-        : checkIsValidValue(dropDownValueTwo);
-    if (isDropDownValueValid || isReset) {
+    let validSelectedValue;
+    if (contextCollectionRef.current) {
+      validSelectedValue = contextCollectionRef.current.validSelectedValue;
+      delete contextCollectionRef.current.validSelectedValue;
+    }
+
+    if (dropDownValueTwo || isReset) {
       if (!(onSelect || beforeSelect || afterSelect)) {
         handleLog({ logType: "error", message: errors?.onSelectRequired });
-      } else if ((onSelect && isDropDownValueValid) || (onSelect && isReset)) {
-        onSelect(dropDownValueTwo, contextCollectionRef.current);
+      } else if ((onSelect && dropDownValueTwo) || (onSelect && isReset)) {
+        onSelect(
+          validSelectedValue?.isValid
+            ? dropDownValueTwo
+            : handleSetValidValue(dropDownValueTwo),
+          contextCollectionRef.current
+        );
       }
 
       if (afterSelect && checkType(afterSelect, "function")) {
-        afterSelect(dropDownValueTwo, contextCollectionRef.current);
+        afterSelect(
+          validSelectedValue?.isValid
+            ? dropDownValueTwo
+            : handleSetValidValue(dropDownValueTwo),
+          contextCollectionRef.current
+        );
       }
 
       if (isReset) {
-        //  else if (setter || (setter && isReset)) {
-        //   setter(dropDownValueTwo);
-        // }
         setDropDownValue(placeholder || "");
       }
     }
@@ -321,7 +335,7 @@ const DropDownBox = ({
           className={
             trim(`drop-down-title  ${
               animateTitle
-                ? checkIsValidValue(dropDownValueTwo) || showMenu
+                ? dropDownValueTwo || showMenu
                   ? " animateDropDownLabel animateDropDownLabelUp"
                   : " animateDropDownLabel"
                 : ""
@@ -472,11 +486,6 @@ const DropDownBox = ({
               className={`drop-arrow ${addStyle ? "up-arrow" : ""} ${
                 checkType(styles?.arrow, "string") ? styles?.arrow : ""
               }`}
-              // style={
-              //   styles?.selectedValue && dropDownValue === placeholder
-              //     ? styles?.selectedValue
-              //     : {}
-              // }
               style={{
                 ...dropArrowCSS,
                 ...(checkType(styles?.arrow, "object") ? styles?.arrow : {}),

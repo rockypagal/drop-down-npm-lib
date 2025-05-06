@@ -66,3 +66,20 @@ export const errors = {
   provideValidValues:
     "Please provide valid dropdown values. This dropdown does not accept undefined and null.",
 };
+
+export const falsyValuesObj = {
+  null: "null",
+  false: "false",
+  0: "0",
+  undefined: "undefined",
+  "": " ",
+  NaN: "NaN",
+};
+export const truthyValuesObj = {
+  null: null,
+  false: false,
+  0: 0,
+  undefined: undefined,
+  " ": "",
+  NaN: NaN,
+};

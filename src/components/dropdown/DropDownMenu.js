@@ -40,7 +40,7 @@ export const DropDownMenu = ({
   const inputRef = useRef(null);
   let lastLabelRef = useRef(null);
   const handleSearch = (e) => {
-    setSearch({ query: e.target.value, touched: true });
+    setSearch({ ...search, query: e.target.value, touched: true });
   };
 
   const getSearchOption = (option) => {
@@ -231,7 +231,9 @@ export const DropDownMenu = ({
   }, [options, menuOptions, setMenuOptions]);
 
   const handleKeyDown = (e, index, row) => {
-    e.preventDefault();
+    if (["Tab", "Enter", "ArrowDown", "ArrowUp"].includes(e.key)) {
+      e.preventDefault();
+    }
     if (e.key === "Tab") {
       handleSetValues({ key: keys?.globalKey });
       focusTheMain(mainRef);

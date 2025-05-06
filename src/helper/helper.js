@@ -1,4 +1,9 @@
-import { cssSizeUnits, errors } from "../constant/constant";
+import {
+  cssSizeUnits,
+  falsyValuesObj,
+  keys,
+  truthyValuesObj,
+} from "../constant/constant";
 
 export const checkType = (value, type, returnCustom = null) => {
   if (returnCustom) {
@@ -35,14 +40,28 @@ export const focusTheMain = (mainRef) => {
   mainRef.current.lastChild.lastChild.focus();
 };
 
-export const checkIsValidValue = (value) => {
-  if (value !== undefined && value !== null) {
-    return true;
-  } else {
-    handleLog({ logType: "error", message: errors?.provideValidValues });
-    return false;
+export const checkIsValidValue = (value, key) => {
+  if (key && (key === keys?.resetKey || key === keys?.globalResetKey)) {
+    return { isValid: true, validValue: value };
+  } else if ([null, false, undefined, "", 0, NaN].includes(value)) {
+    return { isValid: false, validValue: falsyValuesObj[value] };
   }
+  return { isValid: true, validValue: value };
 };
+
+export const handleSetValidValue = (value) => {
+  return Object.values(falsyValuesObj).includes(value)
+    ? truthyValuesObj[value]
+    : value;
+};
+// export const checkIsValidValue = (value) => {
+//   if (value !== undefined && value !== null) {
+//     return true;
+//   } else {
+//     handleLog({ logType: "error", message: errors?.provideValidValues });
+//     return false;
+//   }
+// };
 
 export const handleLog = ({ logType, message }) => {
   console[logType](message);
