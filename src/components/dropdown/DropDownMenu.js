@@ -29,19 +29,20 @@ export const DropDownMenu = ({
   multiSelect,
   multiSelectLimit,
   noDataMessage,
+  titlePosition,
 }) => {
   const [search, setSearch] = useState({
     query: "",
     touched: false,
     searchComplete: false,
+    activeFocus: false,
   });
   const [menuPosition, setMenuPosition] = useState({});
-  
 
   const inputRef = useRef(null);
   let lastLabelRef = useRef(null);
   const handleSearch = (e) => {
-    setSearch({ query: e.target.value, touched: true });
+    setSearch({ ...search, query: e.target.value, touched: true });
   };
 
   const getSearchOption = (option) => {
@@ -56,12 +57,11 @@ export const DropDownMenu = ({
   useEffect(() => {
     let id;
     if (searchBar && search?.touched) {
+      setSearch({ ...search, searchComplete: false });
       if (searchBar?.onSearch && checkType(searchBar?.onSearch, "function")) {
         searchBar?.onSearch(search?.query, options);
         return;
       }
-
-      setSearch({ ...search, searchComplete: false });
 
       id = setTimeout(
         () => {
@@ -148,14 +148,15 @@ export const DropDownMenu = ({
         //   menuHeight,
 
         top: `${
-          viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) <
-          menuHeight
+          viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) < 184
             ? mainSectionBRC?.bottom -
               menuHeight -
               mainSectionBRC?.height -
               3 +
-              mainRef.current?.firstChild?.getBoundingClientRect()?.height +
-              scrollY
+              scrollY +
+              (titlePosition
+                ? mainRef.current?.firstChild?.getBoundingClientRect()?.height
+                : 0)
             : mainSectionBRC?.bottom + 3 + scrollY
         }px`,
         left: `${mainSectionBRC?.left}px`,
@@ -164,12 +165,21 @@ export const DropDownMenu = ({
     };
     calculatePosition();
     window.addEventListener("resize", calculatePosition);
-
-    return () => window.removeEventListener("resize", calculatePosition);
+    window.addEventListener("scroll", calculatePosition);
+    const resizeObserver = new ResizeObserver(calculatePosition);
+    resizeObserver.observe(document.getElementById("drop_$_down_$_menu"));
+    return () => {
+      window.removeEventListener("resize", calculatePosition);
+      window.removeEventListener("scroll", calculatePosition);
+      resizeObserver.disconnect();
+    };
   }, [
     mainRef.current.getBoundingClientRect().left,
-    menuRef?.current?.getBoundingClientRect()?.height,
+    mainRef.current.getBoundingClientRect().bottom,
+    search.searchComplete,
+    menuOptions?.length,
   ]);
+
   useEffect(() => {
     if (showMenu) {
       setGlobalClick(true);
@@ -223,13 +233,14 @@ export const DropDownMenu = ({
   }, [options, menuOptions, setMenuOptions]);
 
   const handleKeyDown = (e, index, row) => {
-    if (e.key === "Tab") {
+    if (["Tab", "Enter", "ArrowDown", "ArrowUp"].includes(e.key)) {
       e.preventDefault();
+    }
+    if (e.key === "Tab") {
       handleSetValues({ key: keys?.globalKey });
       focusTheMain(mainRef);
       resetOptionsList({ options, setMenuOptions });
     } else if (e.key === "Enter") {
-      e.preventDefault();
       handleSetValues(
         row,
         index, // ***********
@@ -238,7 +249,6 @@ export const DropDownMenu = ({
       );
       focusTheMain(mainRef);
     } else if (e.key === "ArrowDown") {
-      e.preventDefault();
       if (index < menuOptions?.length - 1) {
         e.target.nextElementSibling.focus();
       }
@@ -246,7 +256,6 @@ export const DropDownMenu = ({
       e.key === "ArrowUp" &&
       (index > 0 || (resetButton && dropDownValueTwo && !search.query))
     ) {
-      e.preventDefault();
       e.target.previousElementSibling.focus();
     } else if (search) {
       // setSearch({ query: e.key, touched: true });

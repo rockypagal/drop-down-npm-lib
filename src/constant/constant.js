@@ -59,11 +59,28 @@ export const dropArrowCSS = {
 export const dropdownTitleCSS = {
   padding: "0.5rem 0",
   fontWeight: "500",
-  background: "transparent",
+  // background: "white",
 };
 export const errors = {
   onSelectRequired:
     "Dropdown component requires a callback function to handle value changes. Please provide a valid 'onSelect','beforeSelect' or 'afterSelect' prop.",
   provideValidValues:
     "Please provide valid dropdown values. This dropdown does not accept undefined and null.",
+};
+
+export const falsyValuesObj = {
+  null: "null",
+  false: "false",
+  0: "0",
+  undefined: "undefined",
+  "": " ",
+  NaN: "NaN",
+};
+export const truthyValuesObj = {
+  null: null,
+  false: false,
+  0: 0,
+  undefined: undefined,
+  " ": "",
+  NaN: NaN,
 };
