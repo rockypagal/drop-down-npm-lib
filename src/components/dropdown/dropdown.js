@@ -250,6 +250,11 @@ const DropDownBox = ({
     return () => clearTimeout(id);
   }, [disabled, showMenu]);
 
+  const target = useMemo(
+    () => changeObserver?.target,
+    [changeObserver?.target]
+  );
+
   useEffect(() => {
     if (oldTargetedValue.current === keys?.changeObserverRefKey) {
       oldTargetedValue.current = "";
@@ -260,7 +265,11 @@ const DropDownBox = ({
 
     if (checkType(handler, "function")) {
       const setter = (value) => {
-        if (value === "" || value === handleResetBtnText()) {
+        if (
+          (value === handleResetBtnText() || value === "") &&
+          dropDownValueTwo !== "" &&
+          dropDownValue !== placeholder
+        ) {
           handleSetValues({
             label: handleResetBtnText(),
             value: "",
@@ -271,7 +280,7 @@ const DropDownBox = ({
 
         let result = { label: value ? value : placeholder, value: value };
         let index = null;
-        if (value) {
+        if (value !== undefined) {
           result = options?.find((item, i) => {
             if (item?.value === value) {
               index = i;
@@ -294,11 +303,8 @@ const DropDownBox = ({
 
       oldTargetedValue.current = target;
     }
-  }, [
-    ...(Array.isArray(changeObserver?.target)
-      ? changeObserver.target
-      : [changeObserver?.target]),
-  ]);
+  }, [...(Array.isArray(target) ? target : [target])]);
+
   return (
     <div
       className={`drop-down-main ${
@@ -458,7 +464,7 @@ const DropDownBox = ({
                 styles?.placeholder),
             }}
           >
-            {dropDownValue === handleResetBtnText() && dropDownValueTwo === null
+            {dropDownValue === handleResetBtnText() && dropDownValueTwo === ""
               ? "\u00A0"
               : dropDownValue || "\u00A0"}
           </div>
