@@ -356,60 +356,60 @@ export const DropDownMenu = ({
           !loading &&
           !search?.query &&
           menuPosition?.top ? (
-              <div
-                className={`drop-down-item ${checkType(
-                  optionItemStyle,
-                  "string",
-                  {
-                    ifTrue: optionItemStyle,
-                    ifFalse: "",
-                  }
-                )} `}
-                onClick={(e) => {
-                  e.stopPropagation();
+            <div
+              className={`drop-down-item ${checkType(
+                optionItemStyle,
+                "string",
+                {
+                  ifTrue: optionItemStyle,
+                  ifFalse: "",
+                }
+              )} `}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSetValues({
+                  label: handleResetBtnText(),
+                  value: "",
+                  key: keys?.resetKey,
+                });
+                focusTheMain(mainRef);
+              }}
+              style={{
+                ...(optionItemStyle &&
+                  checkType(optionItemStyle, "object") &&
+                  optionItemStyle),
+              }}
+              tabIndex={0} // ***********
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
                   handleSetValues({
                     label: handleResetBtnText(),
                     value: "",
                     key: keys?.resetKey,
                   });
                   focusTheMain(mainRef);
-                }}
-                style={{
-                  ...(optionItemStyle &&
-                    checkType(optionItemStyle, "object") &&
-                    optionItemStyle),
-                }}
-                tabIndex={0} // ***********
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleSetValues({
-                      label: handleResetBtnText(),
-                      value: "",
-                      key: keys?.resetKey,
-                    });
-                    focusTheMain(mainRef);
-                  } else if (e.key === "ArrowDown") {
-                    e.preventDefault();
-                    if (menuOptions?.length > 0) {
-                      e.target.nextElementSibling.focus();
-                    }
-                  } else if (e.key !== "Tab" && search) {
-                    // setSearch({ query: e.key, touched: true });
-                    inputRef?.current?.focus();
+                } else if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  if (menuOptions?.length > 0) {
+                    e.target.nextElementSibling.focus();
                   }
-                }}
-                // onKeyDown={handleKeyDown}
-              >
-                <span>{handleResetBtnText()}</span>
-              </div>
+                } else if (e.key !== "Tab" && search) {
+                  // setSearch({ query: e.key, touched: true });
+                  inputRef?.current?.focus();
+                }
+              }}
+              // onKeyDown={handleKeyDown}
+            >
+              <span>{handleResetBtnText()}</span>
+            </div>
           ) : null}
 
           {loading ? (
             <div className="drop-down-item">Loading...</div>
           ) : menuPosition?.top && menuOptions?.length > 0 ? (
             menuOptions?.map((row, index) => (
-              <FocusElement key={index} index={index}>
+              <FocusElement key={`${row.value}` + index} index={index}>
                 <div
                   // className={
                   //   "drop-down-item" +
