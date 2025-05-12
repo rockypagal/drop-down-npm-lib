@@ -134,7 +134,7 @@ const DropDownBox = ({
         if (multiSelect) {
           newValue = Array.isArray(oldValue) ? [...oldValue, value] : [value];
         } else {
-          newValue = value;
+          newValue = validValue;
         }
         return newValue;
       });
