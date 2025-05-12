@@ -299,7 +299,7 @@
 .drop-down-menu .drop-down-item.search-active {
   background-color: #dbedff;
 }
-.drop-down-menu .drop-down-item:focus-visible {
+.drop-down-menu .drop-down-item:focus {
   /* ********************* */
   background-color: #dbedff;
   outline: 1px solid dodgerblue;

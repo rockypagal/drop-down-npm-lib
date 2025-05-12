@@ -183,8 +183,8 @@ export const DropDownMenu = ({
       setGlobalClick(true);
     }
     //*******
-    const menuElement = document.getElementById("drop_$_down_$_menu");
-    menuElement.firstChild.focus();
+    // const menuElement = document.getElementById("drop_$_down_$_menu");
+    // menuElement.firstChild.focus();
   }, []);
 
   const handleLastLabel = (index, length) => {
@@ -289,7 +289,7 @@ export const DropDownMenu = ({
             // ),
           }}
         >
-          {searchBar ? (
+          {searchBar && menuPosition?.top ? (
             <div className="drop-down-search-bar">
               <input
                 className={`drop-down-search-input ${checkType(
@@ -351,75 +351,79 @@ export const DropDownMenu = ({
             </div>
           ) : null}
 
-          {resetButton && dropDownValueTwo && !loading && !search?.query ? (
-            <div
-              className={`drop-down-item ${checkType(
-                optionItemStyle,
-                "string",
-                {
-                  ifTrue: optionItemStyle,
-                  ifFalse: "",
-                }
-              )} `}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSetValues({
-                  label: handleResetBtnText(),
-                  value: "",
-                  key: keys?.resetKey,
-                });
-                focusTheMain(mainRef);
-              }}
-              style={{
-                ...(optionItemStyle &&
-                  checkType(optionItemStyle, "object") &&
-                  optionItemStyle),
-              }}
-              tabIndex={0} // ***********
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleSetValues({
-                    label: handleResetBtnText(),
-                    value: "",
-                    key: keys?.resetKey,
-                  });
-                  focusTheMain(mainRef);
-                } else if (e.key === "ArrowDown") {
-                  e.preventDefault();
-                  if (menuOptions?.length > 0) {
-                    e.target.nextElementSibling.focus();
-                  }
-                } else if (e.key !== "Tab" && search) {
-                  // setSearch({ query: e.key, touched: true });
-                  inputRef?.current?.focus();
-                }
-              }}
-              // onKeyDown={handleKeyDown}
-            >
-              <span>{handleResetBtnText()}</span>
-            </div>
-          ) : null}
-
-          {loading ? (
-            <div className="drop-down-item">Loading...</div>
-          ) : menuOptions?.length > 0 ? (
-            menuOptions?.map((row, index) => (
+          {resetButton &&
+          dropDownValueTwo &&
+          !loading &&
+          !search?.query &&
+          menuPosition?.top ? (
               <div
-                key={index}
-                // className={
-                //   "drop-down-item" +
-                //   (dropDownValueTwo === row?.value ? " selectedDropBox" : "")
-                // }
-
-                className={trim(`drop-down-item ${checkType(
+                className={`drop-down-item ${checkType(
                   optionItemStyle,
                   "string",
                   {
                     ifTrue: optionItemStyle,
                     ifFalse: "",
                   }
-                )}
+                )} `}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSetValues({
+                    label: handleResetBtnText(),
+                    value: "",
+                    key: keys?.resetKey,
+                  });
+                  focusTheMain(mainRef);
+                }}
+                style={{
+                  ...(optionItemStyle &&
+                    checkType(optionItemStyle, "object") &&
+                    optionItemStyle),
+                }}
+                tabIndex={0} // ***********
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleSetValues({
+                      label: handleResetBtnText(),
+                      value: "",
+                      key: keys?.resetKey,
+                    });
+                    focusTheMain(mainRef);
+                  } else if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    if (menuOptions?.length > 0) {
+                      e.target.nextElementSibling.focus();
+                    }
+                  } else if (e.key !== "Tab" && search) {
+                    // setSearch({ query: e.key, touched: true });
+                    inputRef?.current?.focus();
+                  }
+                }}
+                // onKeyDown={handleKeyDown}
+              >
+                <span>{handleResetBtnText()}</span>
+              </div>
+          ) : null}
+
+          {loading ? (
+            <div className="drop-down-item">Loading...</div>
+          ) : menuPosition?.top && menuOptions?.length > 0 ? (
+            menuOptions?.map((row, index) => (
+              <FocusElement key={index} index={index}>
+                <div
+                  // className={
+                  //   "drop-down-item" +
+                  //   (dropDownValueTwo === row?.value ? " selectedDropBox" : "")
+                  // }
+
+                  className={trim(`drop-down-item ${checkType(
+                    optionItemStyle,
+                    "string",
+                    {
+                      ifTrue: optionItemStyle,
+                      ifFalse: "",
+                    }
+                  )}
                   ${
                     dropDownValueTwo === row?.value
                       ? checkType(selectedOptionItemStyle, "string", {
@@ -438,38 +442,39 @@ export const DropDownMenu = ({
                   }
                   
                   `)}
-                onClick={() => {
-                  handleSetValues(
-                    row,
-                    index,
-                    options?.length,
-                    search?.query && search?.touched
-                  );
-                  // *******
-                  focusTheMain(mainRef);
-                }}
-                style={{
-                  ...(optionItemStyle &&
-                    checkType(optionItemStyle, "object") &&
-                    optionItemStyle),
-                  ...(selectedOptionItemStyle &&
-                    dropDownValueTwo === row?.value &&
-                    checkType(selectedOptionItemStyle, "object") &&
-                    selectedOptionItemStyle),
-                }}
-                tabIndex={0} // ***********
-                onKeyDown={(e) => handleKeyDown(e, index, row)}
-              >
-                <span
-                  ref={
-                    menuOptions?.length >= 100
-                      ? handleLastLabel(index, menuOptions?.length)
-                      : null
-                  }
+                  onClick={() => {
+                    handleSetValues(
+                      row,
+                      index,
+                      options?.length,
+                      search?.query && search?.touched
+                    );
+                    // *******
+                    focusTheMain(mainRef);
+                  }}
+                  style={{
+                    ...(optionItemStyle &&
+                      checkType(optionItemStyle, "object") &&
+                      optionItemStyle),
+                    ...(selectedOptionItemStyle &&
+                      dropDownValueTwo === row?.value &&
+                      checkType(selectedOptionItemStyle, "object") &&
+                      selectedOptionItemStyle),
+                  }}
+                  tabIndex={0} // ***********
+                  onKeyDown={(e) => handleKeyDown(e, index, row)}
                 >
-                  {row?.label}
-                </span>
-              </div>
+                  <span
+                    ref={
+                      menuOptions?.length >= 100
+                        ? handleLastLabel(index, menuOptions?.length)
+                        : null
+                    }
+                  >
+                    {row?.label}
+                  </span>
+                </div>
+              </FocusElement>
             ))
           ) : (
             <div
@@ -494,4 +499,13 @@ export const DropDownMenu = ({
       ) : null}
     </>
   );
+};
+const FocusElement = ({ children, index }) => {
+  useEffect(() => {
+    if (index === 0) {
+      const menuElement = document.getElementById("drop_$_down_$_menu");
+      menuElement.firstChild.focus();
+    }
+  }, []);
+  return <>{children}</>;
 };
