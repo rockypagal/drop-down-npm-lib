@@ -28,15 +28,16 @@ export const DropDownMenu = ({
   scrollbarClass,
   noDataMessage,
   titlePosition,
+  onOpen,
 }) => {
   const [search, setSearch] = useState({
     query: "",
     touched: false,
     searchComplete: false,
     activeFocus: false,
+    totalSearchedResult: [],
   });
   const [menuPosition, setMenuPosition] = useState({});
-
   const inputRef = useRef(null);
   let lastLabelRef = useRef(null);
   const handleSearch = (e) => {
@@ -52,10 +53,11 @@ export const DropDownMenu = ({
       .replaceAll(" ", "")
       ?.toLowerCase();
   };
+
   useEffect(() => {
     let id;
     if (searchBar && search?.touched) {
-      setSearch({ ...search, searchComplete: false });
+      setSearch({ ...search, searchComplete: false, totalSearchedResult: [] });
       if (searchBar?.onSearch && checkType(searchBar?.onSearch, "function")) {
         searchBar?.onSearch(search?.query, options);
         return;
@@ -64,7 +66,7 @@ export const DropDownMenu = ({
       id = setTimeout(
         () => {
           if (!search?.query) {
-            if (menuOptions.length !== 100 && options?.length > 100) {
+            if (options?.length > 100) {
               setMenuOptions(options.slice(0, 100));
             } else if (options?.length <= 100) {
               setMenuOptions(options);
@@ -83,8 +85,12 @@ export const DropDownMenu = ({
               return getSearchOption(item)?.includes(newSearchQuery);
             }
           });
-          setMenuOptions(arr);
-          setSearch({ ...search, searchComplete: true });
+          setMenuOptions(arr?.length > 100 ? arr?.slice(0, 100) : arr);
+          setSearch({
+            ...search,
+            searchComplete: true,
+            totalSearchedResult: arr?.length > 100 ? arr : [],
+          });
         },
 
         (searchBar?.delay || searchBar?.delay === 0) &&
@@ -146,7 +152,8 @@ export const DropDownMenu = ({
         //   menuHeight,
 
         top: `${
-          viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) < 184
+          viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) <
+          menuElement?.getBoundingClientRect().height
             ? mainSectionBRC?.bottom -
               menuHeight -
               mainSectionBRC?.height -
@@ -182,6 +189,11 @@ export const DropDownMenu = ({
     if (showMenu) {
       setGlobalClick(true);
     }
+
+    // Handle onOpen callback function
+    if (onOpen && checkType(onOpen, "function")) {
+      onOpen();
+    }
     //*******
     // const menuElement = document.getElementById("drop_$_down_$_menu");
     // menuElement.firstChild.focus();
@@ -207,7 +219,12 @@ export const DropDownMenu = ({
           if (!label.isIntersecting) return;
 
           // Add more options when the last label is visible
-          setMenuOptions((prev) => options?.slice(0, prev.length + 100));
+          setMenuOptions((prev) => {
+            if (search?.query) {
+              return search.totalSearchedResult?.slice(0, prev.length + 100);
+            }
+            return options?.slice(0, prev.length + 100);
+          });
 
           // Unobserve the current element after it triggers
           observerRef.current?.unobserve(label.target);
