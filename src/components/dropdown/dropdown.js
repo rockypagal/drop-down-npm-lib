@@ -49,6 +49,7 @@ const DropDownBox = ({
   multiSelectLimit,
   closeMenuOnMultiSelect = true,
   noDataMessage = "No Data Found",
+  onOpen,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [addStyle, setAddStyle] = useState(false);
@@ -605,6 +606,7 @@ const DropDownBox = ({
               multiSelectLimit={multiSelectLimit}
               noDataMessage={noDataMessage}
               titlePosition={title && !animateTitle}
+              onOpen={onOpen}
               scrollbarClass={
                 disabled
                   ? ""

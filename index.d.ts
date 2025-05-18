@@ -60,6 +60,9 @@ declare module "ru-react-dropdown-component" {
     /** Enables or customizes the reset button */
     resetButton?: boolean | (string & { length: Exclude<number, 0> });
 
+    /** Callback triggered when a menu is opened */
+    onOpen?: () => void;
+
     /** Callback triggered when a value is selected */
     onSelect?: (
       value: any,
