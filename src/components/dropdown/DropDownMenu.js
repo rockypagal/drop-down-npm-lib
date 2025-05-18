@@ -185,8 +185,8 @@ export const DropDownMenu = ({
       setGlobalClick(true);
     }
     //*******
-    const menuElement = document.getElementById("drop_$_down_$_menu");
-    menuElement.firstChild.focus();
+    // const menuElement = document.getElementById("drop_$_down_$_menu");
+    // menuElement.firstChild.focus();
   }, []);
 
   const handleLastLabel = (index, length) => {
@@ -303,7 +303,7 @@ export const DropDownMenu = ({
             // ),
           }}
         >
-          {searchBar ? (
+          {searchBar && menuPosition?.top ? (
             <div className="drop-down-search-bar">
               <input
                 className={`drop-down-search-input ${checkType(
@@ -367,7 +367,11 @@ export const DropDownMenu = ({
             </div>
           ) : null}
 
-          {resetButton && dropDownValueTwo && !loading && !search?.query ? (
+          {resetButton &&
+          dropDownValueTwo &&
+          !loading &&
+          !search?.query &&
+          menuPosition?.top ? (
             <div
               className={`drop-down-item ${checkType(
                 optionItemStyle,
@@ -419,23 +423,23 @@ export const DropDownMenu = ({
 
           {loading ? (
             <div className="drop-down-item">Loading...</div>
-          ) : menuOptions?.length > 0 ? (
+          ) : menuPosition?.top && menuOptions?.length > 0 ? (
             menuOptions?.map((row, index) => (
-              <div
-                key={index}
-                // className={
-                //   "drop-down-item" +
-                //   (dropDownValueTwo === row?.value ? " selectedDropBox" : "")
-                // }
+              <FocusElement key={index} index={index}>
+                <div
+                  // className={
+                  //   "drop-down-item" +
+                  //   (dropDownValueTwo === row?.value ? " selectedDropBox" : "")
+                  // }
 
-                className={trim(`drop-down-item ${checkType(
-                  optionItemStyle,
-                  "string",
-                  {
-                    ifTrue: optionItemStyle,
-                    ifFalse: "",
-                  }
-                )}
+                  className={trim(`drop-down-item ${checkType(
+                    optionItemStyle,
+                    "string",
+                    {
+                      ifTrue: optionItemStyle,
+                      ifFalse: "",
+                    }
+                  )}
                   ${
                     dropDownValueTwo === row?.value
                       ? checkType(selectedOptionItemStyle, "string", {
@@ -454,48 +458,49 @@ export const DropDownMenu = ({
                   }
                   
                   `)}
-                onClick={() => {
-                  if (
-                    multiSelect &&
-                    (multiSelectLimit || multiSelectLimit === 0) &&
-                    checkType(Number(multiSelectLimit), "number") &&
-                    (Array?.isArray(dropDownValueTwo)
-                      ? dropDownValueTwo?.length >= multiSelectLimit
-                      : false)
-                  ) {
-                    return;
-                  }
-                  handleSetValues(
-                    row,
-                    index,
-                    options?.length,
-                    search?.query && search?.touched
-                  );
-                  // *******
-                  focusTheMain(mainRef);
-                }}
-                style={{
-                  ...(optionItemStyle &&
-                    checkType(optionItemStyle, "object") &&
-                    optionItemStyle),
-                  ...(selectedOptionItemStyle &&
-                    dropDownValueTwo === row?.value &&
-                    checkType(selectedOptionItemStyle, "object") &&
-                    selectedOptionItemStyle),
-                }}
-                tabIndex={0} // ***********
-                onKeyDown={(e) => handleKeyDown(e, index, row)}
-              >
-                <span
-                  ref={
-                    menuOptions?.length >= 100
-                      ? handleLastLabel(index, menuOptions?.length)
-                      : null
-                  }
+                  onClick={() => {
+                    if (
+                      multiSelect &&
+                      (multiSelectLimit || multiSelectLimit === 0) &&
+                      checkType(Number(multiSelectLimit), "number") &&
+                      (Array?.isArray(dropDownValueTwo)
+                        ? dropDownValueTwo?.length >= multiSelectLimit
+                        : false)
+                    ) {
+                      return;
+                    }
+                    handleSetValues(
+                      row,
+                      index,
+                      options?.length,
+                      search?.query && search?.touched
+                    );
+                    // *******
+                    focusTheMain(mainRef);
+                  }}
+                  style={{
+                    ...(optionItemStyle &&
+                      checkType(optionItemStyle, "object") &&
+                      optionItemStyle),
+                    ...(selectedOptionItemStyle &&
+                      dropDownValueTwo === row?.value &&
+                      checkType(selectedOptionItemStyle, "object") &&
+                      selectedOptionItemStyle),
+                  }}
+                  tabIndex={0} // ***********
+                  onKeyDown={(e) => handleKeyDown(e, index, row)}
                 >
-                  {row?.label}
-                </span>
-              </div>
+                  <span
+                    ref={
+                      menuOptions?.length >= 100
+                        ? handleLastLabel(index, menuOptions?.length)
+                        : null
+                    }
+                  >
+                    {row?.label}
+                  </span>
+                </div>
+              </FocusElement>
             ))
           ) : (
             <div
@@ -520,4 +525,13 @@ export const DropDownMenu = ({
       ) : null}
     </>
   );
+};
+const FocusElement = ({ children, index }) => {
+  useEffect(() => {
+    if (index === 0) {
+      const menuElement = document.getElementById("drop_$_down_$_menu");
+      menuElement.firstChild.focus();
+    }
+  }, []);
+  return <>{children}</>;
 };
