@@ -40,8 +40,12 @@ export const DropDownMenu = ({
   const [menuPosition, setMenuPosition] = useState({});
   const inputRef = useRef(null);
   let lastLabelRef = useRef(null);
+  const menuRef = useRef();
   const handleSearch = (e) => {
     setSearch({ ...search, query: e.target.value, touched: true });
+    if (menuRef.current.scrollTop > 0) {
+      menuRef.current.scrollTop = 0;
+    }
   };
 
   const getSearchOption = (option) => {
@@ -105,8 +109,6 @@ export const DropDownMenu = ({
   }, [search?.query]);
 
   const [globalClick, setGlobalClick] = useState(false);
-
-  const menuRef = useRef();
 
   useEffect(() => {
     const handleGlobalClick = (event) => {
@@ -272,7 +274,7 @@ export const DropDownMenu = ({
       (index > 0 || (resetButton && dropDownValueTwo && !search.query))
     ) {
       e.target.previousElementSibling.focus();
-    } else if (search) {
+    } else if (searchBar) {
       // setSearch({ query: e.key, touched: true });
       inputRef?.current?.focus();
     }
@@ -286,8 +288,7 @@ export const DropDownMenu = ({
         <div
           className={trim(`drop-down-menu ${scrollbarClass} ${
             addStyle ? "" : " hide_drop-down-menu "
-          } ${searchBar ? " search-height-adjust " : ""} 
-          ${checkType(optionsContainer, "string", {
+          }${checkType(optionsContainer, "string", {
             ifTrue: optionsContainer,
             ifFalse: "",
           })}

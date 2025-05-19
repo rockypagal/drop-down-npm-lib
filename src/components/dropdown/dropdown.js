@@ -388,8 +388,8 @@ const DropDownBox = ({
           (disabled
             ? ""
             : !hideScrollbar &&
-              (menuOptions?.length > 4 ||
-                (showSearch && menuOptions?.length > 3))
+              (menuOptions?.length > 8 ||
+                (showSearch && menuOptions?.length > 7))
             ? " show-drop-scroll"
             : " hide-drop-scroll")
         }
@@ -551,8 +551,8 @@ const DropDownBox = ({
                 disabled
                   ? ""
                   : !hideScrollbar &&
-                    (menuOptions?.length > 4 ||
-                      (showSearch && menuOptions?.length > 3))
+                    (menuOptions?.length > 8 ||
+                      (showSearch && menuOptions?.length > 7))
                   ? " show-drop-scroll"
                   : " hide-drop-scroll"
               }
