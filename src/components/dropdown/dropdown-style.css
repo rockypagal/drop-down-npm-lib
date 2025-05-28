@@ -3,6 +3,7 @@
 .drop-down-main {
   /* margin-bottom: 1rem; */
   position: relative;
+  height: fit-content;
 }
 
 .drop-down-main-small {

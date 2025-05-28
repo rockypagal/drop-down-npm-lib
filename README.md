@@ -19,12 +19,12 @@ const MyComponent = ({ country }) => {
   const [selectedValue, setSelectedValue] = useState("");
   const options = [
     { label: "Option 1", value: "option1" },
-   {
-    label: "Option 2", value: "option2",
-    // Additional searchable values for this option
-    searchOptions: ["xyz@email.com", "123-456-789"]
-   }
-
+    {
+      label: "Option 2",
+      value: "option2",
+      // Additional searchable values for this option
+      searchOptions: ["xyz@email.com", "123-456-789"],
+    },
   ];
 
   return (
@@ -35,14 +35,14 @@ const MyComponent = ({ country }) => {
       placeholder="Choose..."
       size="medium"
       showSearch={true}
-      onSelect=={(value, context) => {
+      onSelect={(value, context) => {
         console.log(value, context);
       }}
       beforeSelect={(value, context) => {
         console.log(value, context);
       }}
-      afterSelect={(value,context) => {
-        console.log(value,context);
+      afterSelect={(value, context) => {
+        console.log(value, context);
       }}
       changeObserver={{
         target: country,
@@ -71,6 +71,7 @@ export default MyComponent;
 
 ## Props
 
+<!--
 ### `options`
 
 - **Type:** `Array<{ label: string, value: string }>`
@@ -200,7 +201,7 @@ export default MyComponent;
         - `oldTargetedValue`: Previous `target` value.
         - `dropdownValue`: Current dropdown value.
 
-### List of All Props
+### List of All Props -->
 
 1. `title`
 2. `animateTitle`
@@ -234,6 +235,6 @@ export default MyComponent;
 - `optionItem`
 - `searchInput`
 
----
+<!-- ---
 
-This documentation covers the main aspects of the `DropDownBox` component, including prop types, behaviors, and usage examples. Adjust as needed for your project's specific requirements.
+This documentation covers the main aspects of the `DropDownBox` component, including prop types, behaviors, and usage examples. Adjust as needed for your project's specific requirements. -->

@@ -29,7 +29,7 @@ const DropDownBox = ({
   animateTitle,
   options,
   placeholder,
-  size,
+  width: size,
   showSearch,
   disabled = false,
   incomingValue,
@@ -565,3 +565,4 @@ const DropDownBox = ({
 };
 
 export default memo(DropDownBox);
+DropDownBox.displayName = "DropDownBox by ru";

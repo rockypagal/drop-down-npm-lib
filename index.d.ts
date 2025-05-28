@@ -31,7 +31,7 @@ declare module "ru-react-dropdown-component" {
     multiSelect?: boolean;
 
     /** Size of the dropdown (e.g., "small", "large", "mini") */
-    size?: "small" | "medium" | "mini" | string | number;
+    width?: "small" | "medium" | "mini" | string | number;
 
     /** To show custom not data found message on search */
     noDataMessage?: string;

@@ -20,6 +20,7 @@ export const cssSizeList = ["small", "medium", "mini"];
 
 export const dropdownMainCSS = {
   position: "relative",
+  height: "fit-content",
 };
 
 export const dropdownSelector = {

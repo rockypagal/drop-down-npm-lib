@@ -43,9 +43,6 @@ export const DropDownMenu = ({
   const menuRef = useRef();
   const handleSearch = (e) => {
     setSearch({ ...search, query: e.target.value, touched: true });
-    if (menuRef.current.scrollTop > 0) {
-      menuRef.current.scrollTop = 0;
-    }
   };
 
   const getSearchOption = (option) => {
@@ -360,6 +357,9 @@ export const DropDownMenu = ({
                 }}
                 onFocus={() => {
                   setSearch({ ...search, activeFocus: true });
+                  if (menuRef.current.scrollTop > 0) {
+                    menuRef.current.scrollTop = 0;
+                  }
                 }}
                 onBlur={() => {
                   setSearch({ ...search, activeFocus: false });
