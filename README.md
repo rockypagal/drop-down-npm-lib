@@ -4,7 +4,7 @@ The `ru-react-dropdown-component` library provides the DropDownBox component, a 
 
 ## Demo and DOCS
 
-[ru-react-dropdown-component.vercel.app](https://ru-react-dropdown-component.vercel.app)
+[👉 ru-react-dropdown-component.vercel.app](https://👉ru-react-dropdown-component.vercel.app)
 
 ## Usage Example
 
