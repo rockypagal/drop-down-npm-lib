@@ -4,7 +4,7 @@ The `ru-react-dropdown-component` library provides the DropDownBox component, a 
 
 ## Demo and DOCS 👇
 
-[👉ru-react-dropdown-component.vercel.app](https://ru-react-dropdown-component.vercel.app)
+[👉 ru-react-dropdown-component.vercel.app](https://ru-react-dropdown-component.vercel.app)
 
 ## Usage Example
 
@@ -75,23 +75,29 @@ export default MyComponent;
 2. `animateTitle`
 3. `options`
 4. `placeholder`
-5. `size`
-6. `showSearch`
-7. `customArrow`
-8. `disabled`
-9. `loading`
-10. `hideScrollbar`
-11. `incomingValue`
-12. `resetButton`
-13. `onSelect`
-14. `beforeSelect`
-15. `afterSelect`
-16. `changeObserver`
+5. `width`
+6. `customArrow`
+7. `disabled`
+8. `loading`
+9. `hideScrollbar`
+10. `incomingValue`
+11. `resetButton`
+12. `onSelect`
+13. `beforeSelect`
+14. `afterSelect`
+15. `onOpen`
+16. `showSearch`
+
+- `delay`
+- `onSearch`
+- `placeholder`
+
+17. `changeObserver`
 
 - `target`
 - `handler`
 
-17. `styles`
+18. `styles`
 
 - `selectBox`
 - `selectedValue`
