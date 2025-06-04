@@ -29,6 +29,7 @@ export const DropDownMenu = ({
   noDataMessage,
   titlePosition,
   onOpen,
+  scrollListenerTarget,
 }) => {
   const [search, setSearch] = useState({
     query: "",
@@ -138,7 +139,7 @@ export const DropDownMenu = ({
   useLayoutEffect(() => {
     const calculatePosition = () => {
       const viewportHeight = window.innerHeight;
-      const mainSectionBRC = mainRef.current.getBoundingClientRect();
+      const mainSectionBRC = mainRef.current?.getBoundingClientRect();
       const scrollY = window.scrollY;
       const menuElement = document.getElementById("drop_$_down_$_menu");
 
@@ -151,7 +152,7 @@ export const DropDownMenu = ({
         //   menuHeight,
 
         top: `${
-          viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) <
+          viewportHeight - (mainSectionBRC?.height + mainSectionBRC?.top) <
           menuElement?.getBoundingClientRect().height
             ? mainSectionBRC?.bottom -
               menuHeight -
@@ -168,6 +169,31 @@ export const DropDownMenu = ({
       });
     };
     calculatePosition();
+
+    const scrollTargets = [];
+
+    if (scrollListenerTarget) {
+      const { id, className, ref } = scrollListenerTarget;
+
+      if (id) {
+        const el = document.querySelector(
+          id.trim().startsWith("#") ? id : "#" + id
+        );
+        el?.addEventListener("scroll", calculatePosition);
+        if (el) scrollTargets.push(el);
+      } else if (className) {
+        const el = document.querySelector(
+          className.trim().startsWith(".") ? className : "." + className
+        );
+
+        el?.addEventListener("scroll", calculatePosition);
+        if (el) scrollTargets.push(el);
+      } else if (ref.current) {
+        ref.current.addEventListener("scroll", calculatePosition);
+        scrollTargets.push(ref.current);
+      }
+    }
+
     window.addEventListener("resize", calculatePosition);
     window.addEventListener("scroll", calculatePosition);
     const resizeObserver = new ResizeObserver(calculatePosition);
@@ -175,6 +201,9 @@ export const DropDownMenu = ({
     return () => {
       window.removeEventListener("resize", calculatePosition);
       window.removeEventListener("scroll", calculatePosition);
+      scrollTargets.forEach((el) =>
+        el.removeEventListener("scroll", calculatePosition)
+      );
       resizeObserver.disconnect();
     };
   }, [
@@ -357,7 +386,7 @@ export const DropDownMenu = ({
                 }}
                 onFocus={() => {
                   setSearch({ ...search, activeFocus: true });
-                  if (menuRef.current.scrollTop > 0) {
+                  if (menuRef.current && menuRef.current.scrollTop > 0) {
                     menuRef.current.scrollTop = 0;
                   }
                 }}
@@ -399,7 +428,12 @@ export const DropDownMenu = ({
               }}
               tabIndex={0} // ***********
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
+                if (e.key === "Tab") {
+                  e.preventDefault();
+                  handleSetValues({ key: keys?.globalKey });
+                  focusTheMain(mainRef);
+                  resetOptionsList({ options, setMenuOptions });
+                } else if (e.key === "Enter") {
                   e.preventDefault();
                   handleSetValues({
                     label: handleResetBtnText(),

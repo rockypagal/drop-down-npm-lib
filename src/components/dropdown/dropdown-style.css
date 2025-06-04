@@ -298,8 +298,13 @@
 }
 .drop-down-menu .drop-down-item:focus {
   /* ********************* */
-  background-color: #dbedff;
-  outline: 1px solid dodgerblue;
+  background-color: #f3f6f9;
+  outline: none;
+}
+.drop-down-menu .drop-down-item.selectedDropBox:focus {
+  /* ********************* */
+  background-color: #f3f6f9;
+    outline: 1px solid dodgerblue;
 }
 
 .drop-down-menu .drop-down-item span {
@@ -307,8 +312,11 @@
 }
 
 .drop-down-menu .selectedDropBox {
-  background-color: #f3f6f9;
+  background-color: #dbedff;
+  outline: 1px solid dodgerblue;
 }
+
+
 
 .drop-down-menu .drop-down-search-bar {
   /* display: flex;

@@ -45,6 +45,7 @@ const DropDownBox = ({
   multiSelect = false,
   noDataMessage = "No Data Found",
   onOpen,
+  scrollListenerTarget,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [addStyle, setAddStyle] = useState(false);
@@ -294,6 +295,7 @@ const DropDownBox = ({
         if (result?.value === value) {
           handleSetValues({ ...result, key: keys?.changeObserverKey }, index);
         }
+        return { success: !!result, row: result || null, index };
       };
 
       handler(setter, {
@@ -547,6 +549,7 @@ const DropDownBox = ({
               noDataMessage={noDataMessage}
               titlePosition={title && !animateTitle}
               onOpen={onOpen}
+              scrollListenerTarget={scrollListenerTarget}
               scrollbarClass={
                 disabled
                   ? ""

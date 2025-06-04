@@ -97,7 +97,13 @@ export default MyComponent;
 - `target`
 - `handler`
 
-18. `styles`
+18. `scrollListenerTarget`
+
+- `id`
+- `className`
+- `ref`
+
+19. `styles`
 
 - `selectBox`
 - `selectedValue`

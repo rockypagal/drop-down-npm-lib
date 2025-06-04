@@ -54,6 +54,13 @@ declare module "ru-react-dropdown-component" {
     /** Shows the loading animation if set to true */
     loading?: boolean;
 
+    /** scrollablePatent adds eventListener to the parent of the Dropdown */
+    scrollListenerTarget?: {
+      id?: string;
+      className?: string;
+      ref?: React.RefObject<HTMLElement>;
+    };
+
     /** The incoming value to be set on render */
     incomingValue?: any;
 
@@ -61,7 +68,7 @@ declare module "ru-react-dropdown-component" {
     resetButton?: boolean | (string & { length: Exclude<number, 0> });
 
     /** Callback triggered when a menu is opened */
-    onOpen?: () => void; 
+    onOpen?: () => void;
 
     /** Callback triggered when a value is selected */
     onSelect?: (
