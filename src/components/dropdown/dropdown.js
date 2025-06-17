@@ -50,6 +50,7 @@ const DropDownBox = ({
   const [showMenu, setShowMenu] = useState(false);
   const [addStyle, setAddStyle] = useState(false);
   const [menuOptions, setMenuOptions] = useState(options);
+  console.log('menuOptions: ', menuOptions);
   const [dropDownValue, setDropDownValue] = useState(placeholder);
   const [dropDownValueTwo, setDropDownValueTwo] = useState("");
   const [historyIncomingValue, setHistoryIncomingValue] = useState("");
@@ -560,7 +561,7 @@ const DropDownBox = ({
                   : " hide-drop-scroll"
               }
             />,
-            document.body
+            mainRef.current
           )}
       </div>
     </div>

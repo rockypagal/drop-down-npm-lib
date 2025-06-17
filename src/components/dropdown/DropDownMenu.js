@@ -30,6 +30,7 @@ export const DropDownMenu = ({
   titlePosition,
   onOpen,
   scrollListenerTarget,
+  animateTitle,
 }) => {
   const [search, setSearch] = useState({
     query: "",
@@ -135,83 +136,103 @@ export const DropDownMenu = ({
     };
   }, [menuRef, menuOptions?.length]);
 
-  //* optimize this this
-  useLayoutEffect(() => {
+  useEffect(() => {
     const calculatePosition = () => {
       const viewportHeight = window.innerHeight;
-      const mainSectionBRC = mainRef.current?.getBoundingClientRect();
-      const scrollY = window.scrollY;
-      const menuElement = document.getElementById("drop_$_down_$_menu");
+      const mainSectionBRC = mainRef.current.getBoundingClientRect();
+      const menuHeight =
+        document.getElementById("drop_$_down_$_menu")?.getBoundingClientRect()
+          .height || 0;
 
-      const menuHeight = menuElement?.getBoundingClientRect().height || 0;
-      menuPosition; // temporary
-
-      setMenuPosition({
-        // openUp:
-        //   viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) <
-        //   menuHeight,
-
-        top: `${
-          viewportHeight - (mainSectionBRC?.height + mainSectionBRC?.top) <
-          menuElement?.getBoundingClientRect().height
-            ? mainSectionBRC?.bottom -
-              menuHeight -
-              mainSectionBRC?.height -
-              3 +
-              scrollY +
-              (titlePosition
-                ? mainRef.current?.firstChild?.getBoundingClientRect()?.height
-                : 0)
-            : mainSectionBRC?.bottom + 3 + scrollY
-        }px`,
-        left: `${mainSectionBRC?.left}px`,
-        width: `${mainSectionBRC?.width}px`,
-      });
-    };
-    calculatePosition();
-
-    const scrollTargets = [];
-
-    if (scrollListenerTarget) {
-      const { id, className, ref } = scrollListenerTarget;
-
-      if (id) {
-        const el = document.querySelector(
-          id.trim().startsWith("#") ? id : "#" + id
-        );
-        el?.addEventListener("scroll", calculatePosition);
-        if (el) scrollTargets.push(el);
-      } else if (className) {
-        const el = document.querySelector(
-          className.trim().startsWith(".") ? className : "." + className
-        );
-
-        el?.addEventListener("scroll", calculatePosition);
-        if (el) scrollTargets.push(el);
-      } else if (ref.current) {
-        ref.current.addEventListener("scroll", calculatePosition);
-        scrollTargets.push(ref.current);
-      }
-    }
-
-    window.addEventListener("resize", calculatePosition);
-    window.addEventListener("scroll", calculatePosition);
-    const resizeObserver = new ResizeObserver(calculatePosition);
-    resizeObserver.observe(document.getElementById("drop_$_down_$_menu"));
-    return () => {
-      window.removeEventListener("resize", calculatePosition);
-      window.removeEventListener("scroll", calculatePosition);
-      scrollTargets.forEach((el) =>
-        el.removeEventListener("scroll", calculatePosition)
+      setMenuPosition(
+        viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) <
+          menuHeight
       );
-      resizeObserver.disconnect();
     };
-  }, [
-    mainRef.current.getBoundingClientRect().left,
-    mainRef.current.getBoundingClientRect().bottom,
-    search.searchComplete,
-    menuOptions?.length,
-  ]);
+
+    calculatePosition();
+    window.addEventListener("resize", calculatePosition);
+
+    return () => window.removeEventListener("resize", calculatePosition);
+  }, []);
+
+  //* optimize this this
+  // useLayoutEffect(() => {
+  //   const calculatePosition = () => {
+  //     const viewportHeight = window.innerHeight;
+  //     const mainSectionBRC = mainRef.current?.getBoundingClientRect();
+  //     const scrollY = window.scrollY;
+  //     const menuElement = document.getElementById("drop_$_down_$_menu");
+
+  //     const menuHeight = menuElement?.getBoundingClientRect().height || 0;
+  //     menuPosition; // temporary
+
+  //     setMenuPosition({
+  //       // openUp:
+  //       //   viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) <
+  //       //   menuHeight,
+
+  //       top: `${
+  //         viewportHeight - (mainSectionBRC?.height + mainSectionBRC?.top) <
+  //         menuElement?.getBoundingClientRect().height
+  //           ? mainSectionBRC?.bottom -
+  //             menuHeight -
+  //             mainSectionBRC?.height -
+  //             3 +
+  //             scrollY +
+  //             (titlePosition
+  //               ? mainRef.current?.firstChild?.getBoundingClientRect()?.height
+  //               : 0)
+  //           : mainSectionBRC?.bottom + 3 + scrollY
+  //       }px`,
+  //       left: `${mainSectionBRC?.left}px`,
+  //       width: `${mainSectionBRC?.width}px`,
+  //     });
+  //   };
+  //   calculatePosition();
+
+  //   const scrollTargets = [];
+
+  //   if (scrollListenerTarget) {
+  //     const { id, className, ref } = scrollListenerTarget;
+
+  //     if (id) {
+  //       const el = document.querySelector(
+  //         id.trim().startsWith("#") ? id : "#" + id
+  //       );
+  //       el?.addEventListener("scroll", calculatePosition);
+  //       if (el) scrollTargets.push(el);
+  //     } else if (className) {
+  //       const el = document.querySelector(
+  //         className.trim().startsWith(".") ? className : "." + className
+  //       );
+
+  //       el?.addEventListener("scroll", calculatePosition);
+  //       if (el) scrollTargets.push(el);
+  //     } else if (ref.current) {
+  //       ref.current.addEventListener("scroll", calculatePosition);
+  //       scrollTargets.push(ref.current);
+  //     }
+  //   }
+
+  //   window.addEventListener("resize", calculatePosition);
+  //   window.addEventListener("scroll", calculatePosition);
+  //   const resizeObserver = new ResizeObserver(calculatePosition);
+  //   resizeObserver.observe(document.getElementById("drop_$_down_$_menu"));
+  //   return () => {
+  //     window.removeEventListener("resize", calculatePosition);
+  //     window.removeEventListener("scroll", calculatePosition);
+  //     scrollTargets.forEach((el) =>
+  //       el.removeEventListener("scroll", calculatePosition)
+  //     );
+  //     resizeObserver.disconnect();
+  //   };
+  // }, [
+  //   mainRef.current.getBoundingClientRect().left,
+  //   mainRef.current.getBoundingClientRect().bottom,
+  //   search.searchComplete,
+  //   menuOptions?.length,
+  // ]);
 
   useEffect(() => {
     if (showMenu) {
@@ -325,12 +346,11 @@ export const DropDownMenu = ({
             ...(optionsContainer &&
               checkType(optionsContainer, "object") &&
               optionsContainer),
-            ...menuPosition,
-            // ...(menuPosition && {
-            //   top: "auto",
-            //   bottom: `${animateTitle ? "115%" : "105%"}`, //*******
-            // }
-            // ),
+            // ...menuPosition,
+            ...(menuPosition && {
+              top: "auto",
+              bottom: `${animateTitle ? "115%" : "103%"}`, //*******
+            }),
           }}
         >
           {searchBar && menuPosition?.top ? (
@@ -459,7 +479,10 @@ export const DropDownMenu = ({
 
           {loading ? (
             <div className="drop-down-item">Loading...</div>
-          ) : menuPosition?.top && menuOptions?.length > 0 ? (
+          ) : checkType(menuPosition, "object", {
+              ifTrue: menuPosition?.top,
+              ifFalse: true,
+            }) && menuOptions?.length > 0 ? (
             menuOptions?.map((row, index) => (
               <FocusElement key={`${row.value}` + index} index={index}>
                 <div
