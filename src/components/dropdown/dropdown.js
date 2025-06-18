@@ -50,35 +50,44 @@ const DropDownBox = ({
   const [showMenu, setShowMenu] = useState(false);
   const [addStyle, setAddStyle] = useState(false);
   const [menuOptions, setMenuOptions] = useState(options);
-  console.log('menuOptions: ', menuOptions);
+  console.log("menuOptions: ", menuOptions);
   const [dropDownValue, setDropDownValue] = useState(placeholder);
   const [dropDownValueTwo, setDropDownValueTwo] = useState("");
   const [historyIncomingValue, setHistoryIncomingValue] = useState("");
-  const [timerId, setTimerId] = useState(null);
-  const mainRef = useRef(null);
+  const mainRef = React.useRef(null);
   let oldTargetedValue = useRef(keys?.changeObserverRefKey);
   let contextCollectionRef = useRef(null);
 
+  const timerId = useRef(null);
   const handleClick = () => {
-    setAddStyle(!addStyle);
+    setAddStyle((oldValue) => !oldValue);
     DropBoxVisibility();
   };
+
   function DropBoxVisibility() {
-    if (timerId) {
-      clearTimeout(timerId);
-      setTimerId(null);
+    if (timerId.current) {
+      clearTimeout(timerId.current);
+      // timerRef.current = null;
     }
     if (showMenu) {
       const styleTimer = setTimeout(() => {
         setShowMenu(false);
         // clearTimeout(styleTimer);
       }, 200);
-      setTimerId(styleTimer);
+      // setTimerId(styleTimer);
+
+      timerId.current = styleTimer;
     } else {
       setShowMenu(true);
     }
   }
-
+  useEffect(() => {
+    return () => {
+      if (timerId.current) {
+        clearTimeout(timerId.current);
+      }
+    };
+  }, [timerId.current]);
   // ? function to set reset button value
   const handleResetBtnText = () => {
     return checkType(resetButton, "string", {
@@ -144,14 +153,6 @@ const DropDownBox = ({
     )
       handleClick();
   }
-
-  useEffect(() => {
-    return () => {
-      if (timerId) {
-        clearTimeout(timerId);
-      }
-    };
-  }, [timerId]);
 
   useEffect(() => {
     if (dropDownValue && !placeholder) {
