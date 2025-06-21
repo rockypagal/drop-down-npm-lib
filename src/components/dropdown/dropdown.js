@@ -9,19 +9,19 @@ import {
   dropdownMainCSS,
   dropdownSelector,
   dropdownTitleCSS,
-  errors,
   keys,
 } from "../../constant/constant";
 import {
   checkIsValidValue,
   checkType,
   focusTheMain,
-  handleLog,
   handleSetValidValue,
   isValidCSSUnit,
   resetOptionsList,
   trim,
 } from "../../helper/helper";
+import { useChangeObserverHandler } from "../../hooks/DropdownSelector/changeObserverHook";
+import { useDropdownSelectionEffect } from "../../hooks/DropdownSelector/dropdownValueSelectHook";
 import "./dropdown-style.css";
 import { DropDownMenu } from "./DropDownMenu";
 const DropDownBox = ({
@@ -46,11 +46,13 @@ const DropDownBox = ({
   noDataMessage = "No Data Found",
   onOpen,
   scrollListenerTarget,
+  dynamicPositioning,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
+
   const [addStyle, setAddStyle] = useState(false);
   const [menuOptions, setMenuOptions] = useState(options);
-  console.log("menuOptions: ", menuOptions);
+
   const [dropDownValue, setDropDownValue] = useState(placeholder);
   const [dropDownValueTwo, setDropDownValueTwo] = useState("");
   const [historyIncomingValue, setHistoryIncomingValue] = useState("");
@@ -61,33 +63,34 @@ const DropDownBox = ({
   const timerId = useRef(null);
   const handleClick = () => {
     setAddStyle((oldValue) => !oldValue);
-    DropBoxVisibility();
+    // DropBoxVisibility();
   };
 
-  function DropBoxVisibility() {
+  function DropBoxVisibility() {}
+  useEffect(() => {
     if (timerId.current) {
       clearTimeout(timerId.current);
-      // timerRef.current = null;
+      timerId.current = null;
     }
-    if (showMenu) {
-      const styleTimer = setTimeout(() => {
-        setShowMenu(false);
-        // clearTimeout(styleTimer);
-      }, 200);
-      // setTimerId(styleTimer);
 
-      timerId.current = styleTimer;
-    } else {
+    if (addStyle) {
+      // Show immediately
       setShowMenu(true);
+    } else {
+      // Delay hiding
+      timerId.current = setTimeout(() => {
+        setShowMenu(false);
+      }, 200);
     }
-  }
-  useEffect(() => {
+
     return () => {
+      // Always clear any pending timeout on cleanup
       if (timerId.current) {
         clearTimeout(timerId.current);
+        timerId.current = null;
       }
     };
-  }, [timerId.current]);
+  }, [addStyle]);
   // ? function to set reset button value
   const handleResetBtnText = () => {
     return checkType(resetButton, "string", {
@@ -168,47 +171,20 @@ const DropDownBox = ({
       setDropDownValue(placeholder);
     }
   }, [placeholder]);
-  //? useEffect to handle the setValue to the onSelect
-  useEffect(() => {
-    const resetButtonText = handleResetBtnText();
-    const isReset =
-      dropDownValue === resetButtonText && dropDownValueTwo === "";
 
-    let validSelectedValue;
-    if (contextCollectionRef.current) {
-      validSelectedValue = contextCollectionRef.current.validSelectedValue;
-      delete contextCollectionRef.current.validSelectedValue;
-    }
+  //Custom Hook for DropDown Selection
 
-    if (dropDownValueTwo || isReset) {
-      if (!(onSelect || beforeSelect || afterSelect)) {
-        handleLog({ logType: "error", message: errors?.onSelectRequired });
-      } else if ((onSelect && dropDownValueTwo) || (onSelect && isReset)) {
-        onSelect(
-          validSelectedValue?.isValid
-            ? dropDownValueTwo
-            : handleSetValidValue(dropDownValueTwo),
-          contextCollectionRef.current
-        );
-      }
-
-      if (afterSelect && checkType(afterSelect, "function")) {
-        afterSelect(
-          validSelectedValue?.isValid
-            ? dropDownValueTwo
-            : handleSetValidValue(dropDownValueTwo),
-          contextCollectionRef.current
-        );
-      }
-
-      if (isReset) {
-        setDropDownValue(placeholder || "");
-      }
-    }
-    if (contextCollectionRef.current) {
-      contextCollectionRef.current = null;
-    }
-  }, [dropDownValueTwo]);
+  useDropdownSelectionEffect({
+    dropDownValue,
+    dropDownValueTwo,
+    placeholder,
+    onSelect,
+    afterSelect,
+    beforeSelect,
+    contextCollectionRef,
+    handleResetBtnText,
+    setDropDownValue,
+  });
 
   const memoizedOptions = useMemo(() => {
     return options;
@@ -222,25 +198,44 @@ const DropDownBox = ({
     setMenuOptions(arr);
   }, [memoizedOptions]);
 
-  useEffect(() => {
-    if (
-      incomingValue &&
-      historyIncomingValue !== incomingValue &&
-      !dropDownValueTwo
-    ) {
-      let index = null;
-      const result = options?.find((item, i) => {
-        if (item?.value === incomingValue) {
-          index = i;
-          return true;
-        }
-        return false;
-      });
+  // useEffect(() => {
+  //   if (
+  //     incomingValue &&
+  //     historyIncomingValue !== incomingValue &&
+  //     !dropDownValueTwo
+  //   ) {
+  //     let index = null;
+  //     const result = options?.find((item, i) => {
+  //       if (item?.value === incomingValue) {
+  //         index = i;
+  //         return true;
+  //       }
+  //       return false;
+  //     });
 
-      if (result?.value === incomingValue) {
-        setHistoryIncomingValue(result?.value);
-        handleSetValues({ ...result, key: keys?.incomingValueKey }, index);
-      }
+  //     if (result?.value === incomingValue) {
+  //       setHistoryIncomingValue(result?.value);
+  //       handleSetValues({ ...result, key: keys?.incomingValueKey }, index);
+  //     }
+  //   }
+  // }, [incomingValue, memoizedOptions]);
+
+  // Incoming value logic
+
+  useEffect(() => {
+    const shouldApplyIncomingValue =
+      incomingValue &&
+      incomingValue !== historyIncomingValue &&
+      !dropDownValueTwo;
+
+    if (!shouldApplyIncomingValue) return;
+
+    const index = options?.findIndex((item) => item?.value === incomingValue);
+    const result = index !== -1 ? options?.[index] : null;
+
+    if (result) {
+      setHistoryIncomingValue(result.value);
+      handleSetValues({ ...result, key: keys?.incomingValueKey }, index);
     }
   }, [incomingValue, memoizedOptions]);
 
@@ -254,61 +249,17 @@ const DropDownBox = ({
     return () => clearTimeout(id);
   }, [disabled, showMenu]);
 
-  const target = useMemo(
-    () => changeObserver?.target,
-    [changeObserver?.target]
-  );
+  //Custom Hook for ChangeObserver
 
-  useEffect(() => {
-    if (oldTargetedValue.current === keys?.changeObserverRefKey) {
-      oldTargetedValue.current = "";
-      return;
-    }
-
-    const { target, handler } = changeObserver;
-
-    if (checkType(handler, "function")) {
-      const setter = (value) => {
-        if (
-          (value === handleResetBtnText() || value === "") &&
-          dropDownValueTwo !== "" &&
-          dropDownValue !== placeholder
-        ) {
-          handleSetValues({
-            label: handleResetBtnText(),
-            value: "",
-            key: keys?.globalResetKey,
-          });
-          return;
-        }
-
-        let result = { label: value ? value : placeholder, value: value };
-        let index = null;
-        if (value !== undefined) {
-          result = options?.find((item, i) => {
-            if (item?.value === value) {
-              index = i;
-              return true;
-            }
-            return false;
-          });
-        }
-
-        if (result?.value === value) {
-          handleSetValues({ ...result, key: keys?.changeObserverKey }, index);
-        }
-        return { success: !!result, row: result || null, index };
-      };
-
-      handler(setter, {
-        newTargetedValue: target,
-        oldTargetedValue: oldTargetedValue.current,
-        dropdownValue: dropDownValueTwo,
-      });
-
-      oldTargetedValue.current = target;
-    }
-  }, [...(Array.isArray(target) ? target : [target])]);
+  useChangeObserverHandler({
+    changeObserver,
+    dropDownValue,
+    dropDownValueTwo,
+    placeholder,
+    handleResetBtnText,
+    options,
+    handleSetValues,
+  });
 
   return (
     <div
@@ -493,7 +444,28 @@ const DropDownBox = ({
               {customArrow?.element}
             </div>
           ) : (
+            // <svg
+            //   className={`drop-arrow ${addStyle ? "up-arrow" : ""} ${
+            //     checkType(styles?.arrow, "string") ? styles?.arrow : ""
+            //   }`}
+            //   style={{
+            //     ...dropArrowCSS,
+            //     ...(checkType(styles?.arrow, "object") ? styles?.arrow : {}),
+            //   }}
+            //   xmlns="http://www.w3.org/2000/svg"
+            //   height="1rem"
+            //   viewBox="0 -960 960 960"
+            //   width="24px"
+            //   //fill="#415094"
+            //   fill="black"
+            // >
+            //   <path d="M480-80 200-360l56-56 184 183v-647h80v647l184-184 56 57L480-80Z" />
+            // </svg>
             <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              width="20px"
+              height="20px"
               className={`drop-arrow ${addStyle ? "up-arrow" : ""} ${
                 checkType(styles?.arrow, "string") ? styles?.arrow : ""
               }`}
@@ -501,14 +473,14 @@ const DropDownBox = ({
                 ...dropArrowCSS,
                 ...(checkType(styles?.arrow, "object") ? styles?.arrow : {}),
               }}
-              xmlns="http://www.w3.org/2000/svg"
-              height="1rem"
-              viewBox="0 -960 960 960"
-              width="24px"
-              //fill="#415094"
-              fill="black"
+              fill="gray"
             >
-              <path d="M480-80 200-360l56-56 184 183v-647h80v647l184-184 56 57L480-80Z" />
+              <g transform="scale(1.6) translate(-4.5, -4.5)">
+                <path
+                  d="M12 15a1 1 0 0 1-.707-.293l-4-4a1 1 0 1 1 1.414-1.414L12 12.586l3.293-3.293a1 1 0 0 1 1.414 1.414l-4 4A1 1 0 0 1 12 15z"
+                  // style={{ fill: "dodgerblue" }}
+                />
+              </g>
             </svg>
           )}
         </div>
@@ -552,6 +524,7 @@ const DropDownBox = ({
               titlePosition={title && !animateTitle}
               onOpen={onOpen}
               scrollListenerTarget={scrollListenerTarget}
+              dynamicPositioning={dynamicPositioning}
               scrollbarClass={
                 disabled
                   ? ""
@@ -562,7 +535,7 @@ const DropDownBox = ({
                   : " hide-drop-scroll"
               }
             />,
-            mainRef.current
+            dynamicPositioning ? document.body : mainRef.current
           )}
       </div>
     </div>

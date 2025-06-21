@@ -55,10 +55,15 @@ declare module "ru-react-dropdown-component" {
     loading?: boolean;
 
     /** scrollablePatent adds eventListener to the parent of the Dropdown */
-    scrollListenerTarget?: {
-      id?: string;
-      className?: string;
-      ref?: React.RefObject<HTMLElement>;
+
+    dynamicPositioning?: {
+      scrollableParentTarget:
+        | false
+        | {
+            id?: string;
+            className?: string;
+            ref?: React.RefObject<HTMLElement>;
+          };
     };
 
     /** The incoming value to be set on render */

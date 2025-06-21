@@ -37,7 +37,8 @@ export const resetOptionsList = ({ options, setMenuOptions, delay = 250 }) => {
 };
 
 export const focusTheMain = (mainRef) => {
-  mainRef.current.lastChild.lastChild.focus();
+  // mainRef.current.lastChild.lastChild.focus();
+  mainRef.current.children[0].lastChild.focus();
 };
 
 export const checkIsValidValue = (value, key) => {
@@ -65,4 +66,61 @@ export const handleSetValidValue = (value) => {
 
 export const handleLog = ({ logType, message }) => {
   console[logType](message);
+};
+
+export function handleKeyDown({
+  handleSetValues,
+  mainRef,
+  options,
+  setMenuOptions,
+  search,
+  menuOptions,
+  resetButton,
+  dropDownValueTwo,
+  searchBar,
+  inputRef,
+  e,
+  index,
+  row,
+}) {
+  if (["Tab", "Enter", "ArrowDown", "ArrowUp"].includes(e.key)) {
+    e.preventDefault();
+  }
+  if (e.key === "Tab") {
+    handleSetValues({ key: keys?.globalKey });
+    focusTheMain(mainRef);
+    resetOptionsList({ options, setMenuOptions });
+  } else if (e.key === "Enter") {
+    handleSetValues(
+      row,
+      index, // ***********
+      options?.length,
+      search?.query && search?.touched
+    );
+    focusTheMain(mainRef);
+  } else if (e.key === "ArrowDown") {
+    if (index < menuOptions?.length - 1) {
+      e.target.nextElementSibling.focus();
+    }
+  } else if (
+    e.key === "ArrowUp" &&
+    (index > 0 || (resetButton && dropDownValueTwo && !search.query))
+  ) {
+    e.target.previousElementSibling.focus();
+  } else if (searchBar) {
+    // setSearch({ query: e.key, touched: true });
+    inputRef?.current?.focus();
+  }
+}
+
+//*** function for searchAndDebounce */
+
+export const getSearchOption = (option) => {
+  if (!option?.searchOptions && checkType(option?.label, "string")) {
+    return option?.label.replaceAll(" ", "")?.toLowerCase();
+  }
+
+  return (option?.searchOptions?.join("") + option?.label)
+    .replaceAll(" ", "")
+    ?.toLowerCase();
 };

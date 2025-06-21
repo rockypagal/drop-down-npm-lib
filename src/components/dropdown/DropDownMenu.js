@@ -1,586 +1,281 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
+import { keys } from "../../constant/constant";
 import {
   checkType,
   focusTheMain,
+  handleKeyDown,
   resetOptionsList,
   trim,
 } from "../../helper/helper";
-import { keys } from "../../constant/constant";
+import { useDynamicPosition } from "../../hooks/DropDownMenu/dynamicPositionHooks";
+import { useDebouncedDropdownSearch } from "../../hooks/DropDownMenu/searchAndDebounceHook";
+import { useInfiniteScroll } from "../../hooks/DropDownMenu/dynamicScrollingHook";
+import DropdownSearchInput from "../Search/SearchComponent";
+import DropDownResetItem from "../resetOptions/DropDownResetItem";
+import DropDownOptionsItem from "../optionsItems/DropDownOptionsItem";
 
-export const DropDownMenu = ({
-  options,
-  disabled,
-  addStyle,
-  searchBar,
-  dropDownValueTwo,
-  resetButton,
-  menuOptions,
-  setMenuOptions,
-  showMenu,
-  handleResetBtnText,
-  optionsContainer,
-  optionItemStyle,
-  inputSearchStyle,
-  selectedOptionItemStyle,
-  mainRef,
-  handleSetValues,
-  loading,
-  scrollbarClass,
-  noDataMessage,
-  titlePosition,
-  onOpen,
-  scrollListenerTarget,
-  animateTitle,
-}) => {
-  const [search, setSearch] = useState({
-    query: "",
-    touched: false,
-    searchComplete: false,
-    activeFocus: false,
-    totalSearchedResult: [],
-  });
-  const [menuPosition, setMenuPosition] = useState({});
-  const inputRef = useRef(null);
-  let lastLabelRef = useRef(null);
-  const menuRef = useRef();
-  const handleSearch = (e) => {
-    setSearch({ ...search, query: e.target.value, touched: true });
-  };
+export const DropDownMenu = memo(
+  ({
+    options,
+    disabled,
+    addStyle,
+    searchBar,
+    dropDownValueTwo,
+    resetButton,
+    menuOptions,
+    setMenuOptions,
+    showMenu,
+    handleResetBtnText,
+    optionsContainer,
+    optionItemStyle,
+    inputSearchStyle,
+    selectedOptionItemStyle,
+    mainRef,
+    handleSetValues,
+    loading,
+    scrollbarClass,
+    noDataMessage,
+    titlePosition,
+    onOpen,
+    scrollListenerTarget,
+    dynamicPositioning,
+    animateTitle,
+  }) => {
+    const [search, setSearch] = useState({
+      query: "",
+      touched: false,
+      searchComplete: false,
+      activeFocus: false,
+      totalSearchedResult: [],
+    });
+    const [menuPosition, setMenuPosition] = useState({});
+    const inputRef = useRef(null);
+    let lastLabelRef = useRef(null);
+    const menuRef = useRef();
+    const handleSearch = (e) => {
+      setSearch({ ...search, query: e.target.value, touched: true });
+    };
 
-  const getSearchOption = (option) => {
-    if (!option?.searchOptions && checkType(option?.label, "string")) {
-      return option?.label.replaceAll(" ", "")?.toLowerCase();
-    }
+    useDebouncedDropdownSearch({
+      search,
+      setSearch,
+      options,
+      setMenuOptions,
+      searchBar,
+    });
 
-    return (option?.searchOptions?.join("") + option?.label)
-      .replaceAll(" ", "")
-      ?.toLowerCase();
-  };
+    const [globalClick, setGlobalClick] = useState(false);
 
-  useEffect(() => {
-    let id;
-    if (searchBar && search?.touched) {
-      setSearch({ ...search, searchComplete: false, totalSearchedResult: [] });
-      if (searchBar?.onSearch && checkType(searchBar?.onSearch, "function")) {
-        searchBar?.onSearch(search?.query, options);
-        return;
+    useEffect(() => {
+      const handleGlobalClick = (event) => {
+        if (
+          menuRef?.current &&
+          !menuRef?.current?.contains(event.target) &&
+          !mainRef?.current?.contains(event.target)
+        ) {
+          handleSetValues({ key: keys?.globalKey });
+
+          // setTimeout(() => {
+          //   if (options?.length >= 100) {
+          //     setMenuOptions(options?.slice(0, 100));
+          //   } else {
+          //
+          //     setMenuOptions(options);
+          //   }
+          // }, 250);
+          resetOptionsList({ options, setMenuOptions });
+        }
+      };
+
+      document.addEventListener("click", handleGlobalClick);
+      // const resizeObserver = new ResizeObserver(handleGlobalClick);
+      // resizeObserver.observe(document.getElementById("drop_$_down_$_menu"));
+      return () => {
+        document.removeEventListener("click", handleGlobalClick);
+        // resizeObserver.disconnect();
+      };
+    }, [menuRef, menuOptions?.length]);
+
+    useEffect(() => {
+      if (showMenu) {
+        setGlobalClick(true);
       }
 
-      id = setTimeout(
-        () => {
-          if (!search?.query) {
-            if (options?.length > 100) {
-              setMenuOptions(options.slice(0, 100));
-            } else if (options?.length <= 100) {
-              setMenuOptions(options);
-            }
-            return;
-          }
+      // Handle onOpen callback function
+      if (onOpen && checkType(onOpen, "function")) {
+        onOpen();
+      }
+      //*******
+      // const menuElement = document.getElementById("drop_$_down_$_menu");
+      // menuElement.firstChild.focus();
+    }, []);
 
-          const arr = options.filter((item) => {
-            const newSearchQuery = search?.query
-              .replaceAll(" ", "")
-              ?.toLowerCase();
-
-            if (item?.searchOptions) {
-              return getSearchOption(item)?.includes(newSearchQuery);
-            } else {
-              return getSearchOption(item)?.includes(newSearchQuery);
-            }
-          });
-          setMenuOptions(arr?.length > 100 ? arr?.slice(0, 100) : arr);
-          setSearch({
-            ...search,
-            searchComplete: true,
-            totalSearchedResult: arr?.length > 100 ? arr : [],
-          });
-        },
-
-        (searchBar?.delay || searchBar?.delay === 0) &&
-          checkType(Number(searchBar?.delay), "number")
-          ? searchBar?.delay
-          : 400
-      );
-    }
-    return () => {
-      clearTimeout(id);
-    };
-  }, [search?.query]);
-
-  const [globalClick, setGlobalClick] = useState(false);
-
-  useEffect(() => {
-    const handleGlobalClick = (event) => {
-      if (
-        menuRef?.current &&
-        !menuRef?.current?.contains(event.target) &&
-        !mainRef?.current?.contains(event.target)
-      ) {
-        handleSetValues({ key: keys?.globalKey });
-
-        // setTimeout(() => {
-        //   if (options?.length >= 100) {
-        //     setMenuOptions(options?.slice(0, 100));
-        //   } else {
-        //
-        //     setMenuOptions(options);
-        //   }
-        // }, 250);
-        resetOptionsList({ options, setMenuOptions });
+    const handleLastLabel = (index, length) => {
+      // if (lastLabelRef && index === length - 101) {
+      //   lastLabelRef.current = null;
+      //   return;
+      // }
+      if (length >= 100 && index === length - 1) {
+        return lastLabelRef;
       }
     };
 
-    document.addEventListener("click", handleGlobalClick);
-    return () => {
-      document.removeEventListener("click", handleGlobalClick);
-    };
-  }, [menuRef, menuOptions?.length]);
+    useInfiniteScroll({
+      enabled: options.length >= 100,
+      options,
+      search,
+      setMenuOptions,
+      lastItemRef: lastLabelRef,
+      menuOptions,
+      chunkSize: 100,
+    });
 
-  useEffect(() => {
-    const calculatePosition = () => {
-      const viewportHeight = window.innerHeight;
-      const mainSectionBRC = mainRef.current.getBoundingClientRect();
-      const menuHeight =
-        document.getElementById("drop_$_down_$_menu")?.getBoundingClientRect()
-          .height || 0;
+    useDynamicPosition({
+      dynamicPositioning,
+      setMenuPosition,
+      mainRef,
+      animateTitle,
+      search,
+      menuOptions,
+      menuRef,
+      titlePosition,
+      handleSetValues
+    });
 
-      setMenuPosition(
-        viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) <
-          menuHeight
-      );
-    };
-
-    calculatePosition();
-    window.addEventListener("resize", calculatePosition);
-
-    return () => window.removeEventListener("resize", calculatePosition);
-  }, []);
-
-  //* optimize this this
-  // useLayoutEffect(() => {
-  //   const calculatePosition = () => {
-  //     const viewportHeight = window.innerHeight;
-  //     const mainSectionBRC = mainRef.current?.getBoundingClientRect();
-  //     const scrollY = window.scrollY;
-  //     const menuElement = document.getElementById("drop_$_down_$_menu");
-
-  //     const menuHeight = menuElement?.getBoundingClientRect().height || 0;
-  //     menuPosition; // temporary
-
-  //     setMenuPosition({
-  //       // openUp:
-  //       //   viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) <
-  //       //   menuHeight,
-
-  //       top: `${
-  //         viewportHeight - (mainSectionBRC?.height + mainSectionBRC?.top) <
-  //         menuElement?.getBoundingClientRect().height
-  //           ? mainSectionBRC?.bottom -
-  //             menuHeight -
-  //             mainSectionBRC?.height -
-  //             3 +
-  //             scrollY +
-  //             (titlePosition
-  //               ? mainRef.current?.firstChild?.getBoundingClientRect()?.height
-  //               : 0)
-  //           : mainSectionBRC?.bottom + 3 + scrollY
-  //       }px`,
-  //       left: `${mainSectionBRC?.left}px`,
-  //       width: `${mainSectionBRC?.width}px`,
-  //     });
-  //   };
-  //   calculatePosition();
-
-  //   const scrollTargets = [];
-
-  //   if (scrollListenerTarget) {
-  //     const { id, className, ref } = scrollListenerTarget;
-
-  //     if (id) {
-  //       const el = document.querySelector(
-  //         id.trim().startsWith("#") ? id : "#" + id
-  //       );
-  //       el?.addEventListener("scroll", calculatePosition);
-  //       if (el) scrollTargets.push(el);
-  //     } else if (className) {
-  //       const el = document.querySelector(
-  //         className.trim().startsWith(".") ? className : "." + className
-  //       );
-
-  //       el?.addEventListener("scroll", calculatePosition);
-  //       if (el) scrollTargets.push(el);
-  //     } else if (ref.current) {
-  //       ref.current.addEventListener("scroll", calculatePosition);
-  //       scrollTargets.push(ref.current);
-  //     }
-  //   }
-
-  //   window.addEventListener("resize", calculatePosition);
-  //   window.addEventListener("scroll", calculatePosition);
-  //   const resizeObserver = new ResizeObserver(calculatePosition);
-  //   resizeObserver.observe(document.getElementById("drop_$_down_$_menu"));
-  //   return () => {
-  //     window.removeEventListener("resize", calculatePosition);
-  //     window.removeEventListener("scroll", calculatePosition);
-  //     scrollTargets.forEach((el) =>
-  //       el.removeEventListener("scroll", calculatePosition)
-  //     );
-  //     resizeObserver.disconnect();
-  //   };
-  // }, [
-  //   mainRef.current.getBoundingClientRect().left,
-  //   mainRef.current.getBoundingClientRect().bottom,
-  //   search.searchComplete,
-  //   menuOptions?.length,
-  // ]);
-
-  useEffect(() => {
-    if (showMenu) {
-      setGlobalClick(true);
-    }
-
-    // Handle onOpen callback function
-    if (onOpen && checkType(onOpen, "function")) {
-      onOpen();
-    }
-    //*******
-    // const menuElement = document.getElementById("drop_$_down_$_menu");
-    // menuElement.firstChild.focus();
-  }, []);
-
-  const handleLastLabel = (index, length) => {
-    if (lastLabelRef && index === length - 101) {
-      lastLabelRef.current = null;
-      return;
-    }
-    if (length >= 100 && index === length - 1) {
-      return lastLabelRef;
-    }
-  };
-  const observerRef = useRef(null); // Store the observer instance
-
-  useEffect(() => {
-    if (options?.length >= 100) {
-      // Create the observer only if it doesn't already exist
-      if (!observerRef.current) {
-        observerRef.current = new IntersectionObserver((elements) => {
-          const label = elements[0];
-          if (!label.isIntersecting) return;
-
-          // Add more options when the last label is visible
-          setMenuOptions((prev) => {
-            if (search?.query) {
-              return search.totalSearchedResult?.slice(0, prev.length + 100);
-            }
-            return options?.slice(0, prev.length + 100);
-          });
-
-          // Unobserve the current element after it triggers
-          observerRef.current?.unobserve(label.target);
-        });
-      }
-
-      // Observe the last label if available
-      if (lastLabelRef.current) {
-        observerRef.current.observe(lastLabelRef.current);
-      }
-    }
-
-    // Cleanup function
-    return () => {
-      // Disconnect the observer only on unmount
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-        observerRef.current = null; // Clear the reference
-      }
-    };
-  }, [options, menuOptions, setMenuOptions]);
-
-  const handleKeyDown = (e, index, row) => {
-    if (["Tab", "Enter", "ArrowDown", "ArrowUp"].includes(e.key)) {
-      e.preventDefault();
-    }
-    if (e.key === "Tab") {
-      handleSetValues({ key: keys?.globalKey });
-      focusTheMain(mainRef);
-      resetOptionsList({ options, setMenuOptions });
-    } else if (e.key === "Enter") {
-      handleSetValues(
-        row,
-        index, // ***********
-        options?.length,
-        search?.query && search?.touched
-      );
-      focusTheMain(mainRef);
-    } else if (e.key === "ArrowDown") {
-      if (index < menuOptions?.length - 1) {
-        e.target.nextElementSibling.focus();
-      }
-    } else if (
-      e.key === "ArrowUp" &&
-      (index > 0 || (resetButton && dropDownValueTwo && !search.query))
-    ) {
-      e.target.previousElementSibling.focus();
-    } else if (searchBar) {
-      // setSearch({ query: e.key, touched: true });
-      inputRef?.current?.focus();
-    }
-  };
-
-  return (
-    <>
-      {disabled ? (
-        ""
-      ) : showMenu ? (
-        <div
-          className={trim(`drop-down-menu ${scrollbarClass} ${
-            addStyle ? "" : " hide_drop-down-menu "
-          }${checkType(optionsContainer, "string", {
-            ifTrue: optionsContainer,
-            ifFalse: "",
-          })}
+    return (
+      <>
+        {disabled ? (
+          ""
+        ) : showMenu ? (
+          <div
+            className={trim(`drop-down-menu ${scrollbarClass} ${
+              addStyle ? "" : " hide_drop-down-menu "
+            }${checkType(optionsContainer, "string", {
+              ifTrue: optionsContainer,
+              ifFalse: "",
+            })}
           `)}
-          ref={showMenu && globalClick ? menuRef : null}
-          id="drop_$_down_$_menu"
-          style={{
-            ...(optionsContainer &&
-              checkType(optionsContainer, "object") &&
-              optionsContainer),
-            // ...menuPosition,
-            ...(menuPosition && {
-              top: "auto",
-              bottom: `${animateTitle ? "115%" : "103%"}`, //*******
-            }),
-          }}
-        >
-          {searchBar && menuPosition?.top ? (
-            <div className="drop-down-search-bar">
-              <input
-                className={`drop-down-search-input ${checkType(
-                  inputSearchStyle,
+            ref={showMenu && globalClick ? menuRef : null}
+            id="drop_$_down_$_menu"
+            style={{
+              ...(optionsContainer &&
+                checkType(optionsContainer, "object") &&
+                optionsContainer),
+              ...menuPosition,
+              // ...(menuPosition && {
+              //   top: "auto",
+              //   bottom: `${animateTitle ? "115%" : "103%"}`, //*******
+              // }),
+            }}
+          >
+            {searchBar && menuPosition?.top ? (
+              <DropdownSearchInput
+                inputRef={inputRef}
+                menuRef={menuRef}
+                mainRef={mainRef}
+                showMenu={showMenu}
+                search={search}
+                setSearch={setSearch}
+                handleSearch={handleSearch}
+                handleSetValues={handleSetValues}
+                options={options}
+                menuOptions={menuOptions}
+                setMenuOptions={setMenuOptions}
+                searchBar={searchBar}
+                inputSearchStyle={inputSearchStyle}
+                focusTheMain={focusTheMain}
+                resetOptionsList={resetOptionsList}
+              />
+            ) : null}
+            {resetButton &&
+            dropDownValueTwo &&
+            !loading &&
+            !search?.query &&
+            menuPosition?.top ? (
+              <DropDownResetItem
+                optionItemStyle={optionItemStyle}
+                handleResetBtnText={handleResetBtnText}
+                handleSetValues={handleSetValues}
+                focusTheMain={focusTheMain}
+                mainRef={mainRef}
+                options={options}
+                setMenuOptions={setMenuOptions}
+                resetOptionsList={resetOptionsList}
+                inputRef={inputRef}
+                menuOptions={menuOptions}
+                search={search}
+              />
+            ) : null}
+            {loading ? (
+              <div className="drop-down-item">Loading...</div>
+            ) : checkType(menuPosition, "object", {
+                ifTrue: menuPosition?.top,
+                ifFalse: true,
+              }) && menuOptions?.length > 0 ? (
+              menuOptions?.map((row, index) => (
+                <FocusElement
+                  key={`${row.value}` + index}
+                  index={index}
+                  menuRef={menuRef}
+                  searchBar={searchBar}
+                >
+                
+                  <DropDownOptionsItem
+                    row={row}
+                    index={index}
+                    inputRef={inputRef}
+                    search={search}
+                    dropDownValueTwo={dropDownValueTwo}
+                    optionItemStyle={optionItemStyle}
+                    selectedOptionItemStyle={selectedOptionItemStyle}
+                    handleSetValues={handleSetValues}
+                    mainRef={mainRef}
+                    options={options}
+                    setMenuOptions={setMenuOptions}
+                    menuOptions={menuOptions}
+                    searchBar={searchBar}
+                    resetButton={resetButton}
+                    handleLastLabel={handleLastLabel}
+                  />
+                </FocusElement>
+              ))
+            ) : (
+              <div
+                className={`drop-down-item ${checkType(
+                  optionItemStyle,
                   "string",
                   {
-                    ifTrue: inputSearchStyle,
+                    ifTrue: optionItemStyle,
                     ifFalse: "",
                   }
                 )}`}
                 style={{
-                  ...(inputSearchStyle &&
-                    checkType(inputSearchStyle, "object") &&
-                    inputSearchStyle),
+                  ...(optionItemStyle &&
+                    checkType(optionItemStyle, "object") &&
+                    optionItemStyle),
                 }}
-                ref={inputRef}
-                autoFocus // ***********
-                type="text"
-                placeholder={searchBar?.placeholder ?? "search here..."}
-                name="search"
-                value={search?.query}
-                onChange={handleSearch}
-                maxLength={80}
-                onKeyDown={(e) => {
-                  if (e.key === "Tab" && showMenu) {
-                    e.preventDefault();
-                    handleSetValues({ key: keys?.globalKey });
-                    focusTheMain(mainRef);
-                    resetOptionsList({ options, setMenuOptions });
-                  } else if (e.key === "ArrowDown") {
-                    e.preventDefault();
-                    e.target.parentElement.nextElementSibling.focus();
-                  } else if (
-                    e.key === "Enter" &&
-                    menuOptions?.length > 0 &&
-                    search.query &&
-                    search.touched &&
-                    search?.searchComplete
-                  ) {
-                    const row = menuOptions[0];
-                    handleSetValues(
-                      row,
-                      0,
-                      options?.length,
-                      search?.query && search?.touched
-                    );
-                    // *******
-                    focusTheMain(mainRef);
-                  }
-                }}
-                onFocus={() => {
-                  setSearch({ ...search, activeFocus: true });
-                  if (menuRef.current && menuRef.current.scrollTop > 0) {
-                    menuRef.current.scrollTop = 0;
-                  }
-                }}
-                onBlur={() => {
-                  setSearch({ ...search, activeFocus: false });
-                }}
-                autoComplete="off"
-              />
-            </div>
-          ) : null}
-
-          {resetButton &&
-          dropDownValueTwo &&
-          !loading &&
-          !search?.query &&
-          menuPosition?.top ? (
-            <div
-              className={`drop-down-item ${checkType(
-                optionItemStyle,
-                "string",
-                {
-                  ifTrue: optionItemStyle,
-                  ifFalse: "",
-                }
-              )} `}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSetValues({
-                  label: handleResetBtnText(),
-                  value: "",
-                  key: keys?.resetKey,
-                });
-                focusTheMain(mainRef);
-              }}
-              style={{
-                ...(optionItemStyle &&
-                  checkType(optionItemStyle, "object") &&
-                  optionItemStyle),
-              }}
-              tabIndex={0} // ***********
-              onKeyDown={(e) => {
-                if (e.key === "Tab") {
-                  e.preventDefault();
-                  handleSetValues({ key: keys?.globalKey });
-                  focusTheMain(mainRef);
-                  resetOptionsList({ options, setMenuOptions });
-                } else if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleSetValues({
-                    label: handleResetBtnText(),
-                    value: "",
-                    key: keys?.resetKey,
-                  });
-                  focusTheMain(mainRef);
-                } else if (e.key === "ArrowDown") {
-                  e.preventDefault();
-                  if (menuOptions?.length > 0) {
-                    e.target.nextElementSibling.focus();
-                  }
-                } else if (e.key !== "Tab" && search) {
-                  // setSearch({ query: e.key, touched: true });
-                  inputRef?.current?.focus();
-                }
-              }}
-              // onKeyDown={handleKeyDown}
-            >
-              <span>{handleResetBtnText()}</span>
-            </div>
-          ) : null}
-
-          {loading ? (
-            <div className="drop-down-item">Loading...</div>
-          ) : checkType(menuPosition, "object", {
-              ifTrue: menuPosition?.top,
-              ifFalse: true,
-            }) && menuOptions?.length > 0 ? (
-            menuOptions?.map((row, index) => (
-              <FocusElement key={`${row.value}` + index} index={index}>
-                <div
-                  // className={
-                  //   "drop-down-item" +
-                  //   (dropDownValueTwo === row?.value ? " selectedDropBox" : "")
-                  // }
-
-                  className={trim(`drop-down-item ${checkType(
-                    optionItemStyle,
-                    "string",
-                    {
-                      ifTrue: optionItemStyle,
-                      ifFalse: "",
-                    }
-                  )}
-                  ${
-                    dropDownValueTwo === row?.value
-                      ? checkType(selectedOptionItemStyle, "string", {
-                          ifTrue: selectedOptionItemStyle,
-                          ifFalse: " selectedDropBox",
-                        })
-                      : ""
-                  }
-                  ${
-                    index === 0 &&
-                    search.query &&
-                    search.searchComplete &&
-                    document.activeElement === inputRef.current
-                      ? " search-active "
-                      : ""
-                  }
-                  
-                  `)}
-                  onClick={() => {
-                    handleSetValues(
-                      row,
-                      index,
-                      options?.length,
-                      search?.query && search?.touched
-                    );
-                    // *******
-                    focusTheMain(mainRef);
-                  }}
-                  style={{
-                    ...(optionItemStyle &&
-                      checkType(optionItemStyle, "object") &&
-                      optionItemStyle),
-                    ...(selectedOptionItemStyle &&
-                      dropDownValueTwo === row?.value &&
-                      checkType(selectedOptionItemStyle, "object") &&
-                      selectedOptionItemStyle),
-                  }}
-                  tabIndex={0} // ***********
-                  onKeyDown={(e) => handleKeyDown(e, index, row)}
-                >
-                  <span
-                    ref={
-                      menuOptions?.length >= 100
-                        ? handleLastLabel(index, menuOptions?.length)
-                        : null
-                    }
-                  >
-                    {row?.label}
-                  </span>
-                </div>
-              </FocusElement>
-            ))
-          ) : (
-            <div
-              className={`drop-down-item ${checkType(
-                optionItemStyle,
-                "string",
-                {
-                  ifTrue: optionItemStyle,
-                  ifFalse: "",
-                }
-              )}`}
-              style={{
-                ...(optionItemStyle &&
-                  checkType(optionItemStyle, "object") &&
-                  optionItemStyle),
-              }}
-            >
-              <span>{noDataMessage}</span>
-            </div>
-          )}
-        </div>
-      ) : null}
-    </>
-  );
-};
-const FocusElement = ({ children, index }) => {
+              >
+                <span>{noDataMessage}</span>
+              </div>
+            )}
+          </div>
+        ) : null}
+      </>
+    );
+  }
+);
+const FocusElement = memo(({ children, index, menuRef, searchBar }) => {
   useEffect(() => {
-    if (index === 0) {
-      const menuElement = document.getElementById("drop_$_down_$_menu");
-      menuElement.firstChild.focus();
+    if (index === 0 && !searchBar) {
+      const menuElement = menuRef.current;
+
+      if (menuElement?.firstChild) {
+        menuElement?.firstChild?.focus();
+      }
     }
   }, []);
   return <>{children}</>;
-};
+});
+
+DropDownMenu.displayName = "DropDown Menu";
+FocusElement.displayName = "Menu Options";
