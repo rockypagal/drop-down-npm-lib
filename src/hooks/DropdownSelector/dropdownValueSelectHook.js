@@ -51,9 +51,9 @@ export const useDropdownSelectionEffect = ({
       }
     }
 
-    if (contextCollectionRef.current) {
-      contextCollectionRef.current = null;
-    }
+    // if (contextCollectionRef.current) {
+    //   contextCollectionRef.current = null;
+    // }
   }, [dropDownValueTwo]);
 };
 

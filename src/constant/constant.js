@@ -84,3 +84,12 @@ export const truthyValuesObj = {
   " ": "",
   NaN: NaN,
 };
+
+export const onOpenInitialValue = {
+  oldValue: "",
+  index: null,
+  row: {
+    label: null,
+    value: null,
+  },
+};

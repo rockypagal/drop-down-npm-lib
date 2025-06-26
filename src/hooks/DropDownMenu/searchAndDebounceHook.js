@@ -8,6 +8,7 @@ export const useDebouncedDropdownSearch = ({
   setMenuOptions,
   searchBar,
   maxItems = 100,
+  delay = 400,
 }) => {
   const timerRef = useRef(null > null);
 
@@ -26,7 +27,7 @@ export const useDebouncedDropdownSearch = ({
       return;
     }
 
-    const delay = typeof searchBar.delay === "number" ? searchBar.delay : 400;
+    // const delay = typeof searchBar.delay === "number" ? searchBar.delay : 400;
 
     timerRef.current = setTimeout(() => {
       const query = search.query.replace(/\s+/g, "").toLowerCase();

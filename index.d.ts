@@ -73,7 +73,24 @@ declare module "ru-react-dropdown-component" {
     resetButton?: boolean | (string & { length: Exclude<number, 0> });
 
     /** Callback triggered when a menu is opened */
-    onOpen?: () => void;
+    onOpen?: (
+      value: any | null,
+      context: {
+        oldValue: any;
+        index: number;
+        row: { label: string; value: any };
+      }
+    ) => void;
+
+    /** Callback triggered when a menu is closed */
+    onClose?: (
+      value: any | null,
+      context: {
+        oldValue: any;
+        index: number;
+        row: { label: string; value: any };
+      }
+    ) => void;
 
     /** Callback triggered when a value is selected */
     onSelect?: (
@@ -104,6 +121,8 @@ declare module "ru-react-dropdown-component" {
         row: { label: string; value: any };
       }
     ) => void;
+
+    /** An object used to observe changes in an external value and programmatically update the dropdown state. */
     changeObserver?: {
       target: any;
       handler: (
@@ -137,7 +156,27 @@ declare module "ru-react-dropdown-component" {
   }
 
   /** DropDownBox component */
-  const DropDownBox: React.FC<DropDownBoxProps>;
 
+  type KeyPaths = {
+    labelPath: string[];
+    valuePath: string[];
+  };
+
+  type Option = {
+    label: string;
+    value: string;
+  };
+
+  const createOptions: (data: any[], paths: KeyPaths) => Option[] = (
+    data,
+    paths
+  ) => {
+    // your implementation here
+    return [];
+  };
+
+  export { createOptions };
+
+  const DropDownBox: React.FC<DropDownBoxProps>;
   export default DropDownBox;
 }

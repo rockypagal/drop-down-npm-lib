@@ -124,3 +124,17 @@ export const getSearchOption = (option) => {
     .replaceAll(" ", "")
     ?.toLowerCase();
 };
+
+//** Function to create options from array of objects*/
+
+const getValueByPath = (obj, path) =>
+  path.reduce((acc, key) => (acc ? acc[key] : undefined), obj);
+
+export function createOptions(arr, keyPaths) {
+  return arr
+    .map((item) => ({
+      label: getValueByPath(item, keyPaths.labelPath),
+      value: getValueByPath(item, keyPaths.valuePath),
+    }))
+    .filter((item) => item?.label !== undefined && item?.value !== undefined);
+}

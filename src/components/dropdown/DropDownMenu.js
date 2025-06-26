@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from "react";
-import { keys } from "../../constant/constant";
+import { keys, onOpenInitialValue } from "../../constant/constant";
 import {
   checkType,
   focusTheMain,
@@ -40,6 +40,7 @@ export const DropDownMenu = memo(
     scrollListenerTarget,
     dynamicPositioning,
     animateTitle,
+    contextCollectionRef,
   }) => {
     const [search, setSearch] = useState({
       query: "",
@@ -62,6 +63,7 @@ export const DropDownMenu = memo(
       options,
       setMenuOptions,
       searchBar,
+      delay: searchBar?.delay,
     });
 
     const [globalClick, setGlobalClick] = useState(false);
@@ -103,7 +105,10 @@ export const DropDownMenu = memo(
 
       // Handle onOpen callback function
       if (onOpen && checkType(onOpen, "function")) {
-        onOpen();
+        onOpen(dropDownValueTwo, {
+          ...(contextCollectionRef.current || onOpenInitialValue),
+          triggeredBy: "onOpen",
+        });
       }
       //*******
       // const menuElement = document.getElementById("drop_$_down_$_menu");
@@ -139,7 +144,7 @@ export const DropDownMenu = memo(
       menuOptions,
       menuRef,
       titlePosition,
-      handleSetValues
+      handleSetValues,
     });
 
     return (
@@ -219,7 +224,6 @@ export const DropDownMenu = memo(
                   menuRef={menuRef}
                   searchBar={searchBar}
                 >
-                
                   <DropDownOptionsItem
                     row={row}
                     index={index}
@@ -265,15 +269,15 @@ export const DropDownMenu = memo(
   }
 );
 const FocusElement = memo(({ children, index, menuRef, searchBar }) => {
-  useEffect(() => {
-    if (index === 0 && !searchBar) {
-      const menuElement = menuRef.current;
+  // useEffect(() => {
+  //   if (index === 0 && !searchBar) {
+  //     const menuElement = menuRef.current;
 
-      if (menuElement?.firstChild) {
-        menuElement?.firstChild?.focus();
-      }
-    }
-  }, []);
+  //     if (menuElement?.firstChild) {
+  //       menuElement?.firstChild?.focus();
+  //     }
+  //   }
+  // }, []);
   return <>{children}</>;
 });
 

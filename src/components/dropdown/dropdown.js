@@ -10,6 +10,7 @@ import {
   dropdownSelector,
   dropdownTitleCSS,
   keys,
+  onOpenInitialValue,
 } from "../../constant/constant";
 import {
   checkIsValidValue,
@@ -45,6 +46,7 @@ const DropDownBox = ({
   multiSelect = false,
   noDataMessage = "No Data Found",
   onOpen,
+  onClose,
   scrollListenerTarget,
   dynamicPositioning,
 }) => {
@@ -57,7 +59,7 @@ const DropDownBox = ({
   const [dropDownValueTwo, setDropDownValueTwo] = useState("");
   const [historyIncomingValue, setHistoryIncomingValue] = useState("");
   const mainRef = React.useRef(null);
-  let oldTargetedValue = useRef(keys?.changeObserverRefKey);
+  let onOpenFlag = useRef(null);
   let contextCollectionRef = useRef(null);
 
   const timerId = useRef(null);
@@ -66,7 +68,6 @@ const DropDownBox = ({
     // DropBoxVisibility();
   };
 
-  function DropBoxVisibility() {}
   useEffect(() => {
     if (timerId.current) {
       clearTimeout(timerId.current);
@@ -76,6 +77,7 @@ const DropDownBox = ({
     if (addStyle) {
       // Show immediately
       setShowMenu(true);
+      onOpenFlag.current = true;
     } else {
       // Delay hiding
       timerId.current = setTimeout(() => {
@@ -260,6 +262,20 @@ const DropDownBox = ({
     options,
     handleSetValues,
   });
+
+  useEffect(() => {
+    if (
+      onClose &&
+      checkType(onClose, "function") &&
+      !showMenu &&
+      onOpenFlag.current
+    ) {
+      onClose(dropDownValueTwo, {
+        ...(contextCollectionRef.current || onOpenInitialValue),
+        triggeredBy: "onClose",
+      });
+    }
+  }, [showMenu]);
 
   return (
     <div
@@ -525,6 +541,7 @@ const DropDownBox = ({
               onOpen={onOpen}
               scrollListenerTarget={scrollListenerTarget}
               dynamicPositioning={dynamicPositioning}
+              contextCollectionRef={contextCollectionRef}
               scrollbarClass={
                 disabled
                   ? ""
