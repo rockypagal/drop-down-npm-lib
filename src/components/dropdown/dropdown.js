@@ -226,7 +226,7 @@ const DropDownBox = ({
 
   useEffect(() => {
     const shouldApplyIncomingValue =
-      incomingValue &&
+      incomingValue !== undefined && //**********/
       incomingValue !== historyIncomingValue &&
       !dropDownValueTwo;
 
@@ -239,7 +239,7 @@ const DropDownBox = ({
       setHistoryIncomingValue(result.value);
       handleSetValues({ ...result, key: keys?.incomingValueKey }, index);
     }
-  }, [incomingValue, memoizedOptions]);
+  }, [incomingValue, memoizedOptions]); 
 
   useEffect(() => {
     const id = setTimeout(() => {

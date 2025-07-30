@@ -82,6 +82,7 @@ export function handleKeyDown({
   e,
   index,
   row,
+  setItemIndex,
 }) {
   if (["Tab", "Enter", "ArrowDown", "ArrowUp"].includes(e.key)) {
     e.preventDefault();
@@ -100,7 +101,8 @@ export function handleKeyDown({
     focusTheMain(mainRef);
   } else if (e.key === "ArrowDown") {
     if (index < menuOptions?.length - 1) {
-      e.target.nextElementSibling.focus();
+      // e.target.nextElementSibling.focus();
+      setItemIndex(index + 1);
     }
   } else if (
     e.key === "ArrowUp" &&
@@ -138,3 +140,13 @@ export function createOptions(arr, keyPaths) {
     }))
     .filter((item) => item?.label !== undefined && item?.value !== undefined);
 }
+
+//**  */
+
+export const checkIsConvertedValue = (value) => {
+  if (["null", "false", "undefined", " ", "0", "NaN"].includes(value)) {
+    return { isConverted: true, validValue: handleSetValidValue(value) };
+  }
+
+  return { isConverted: false, validValue: value };
+};
