@@ -101,8 +101,8 @@ export function handleKeyDown({
     focusTheMain(mainRef);
   } else if (e.key === "ArrowDown") {
     if (index < menuOptions?.length - 1) {
-      // e.target.nextElementSibling.focus();
-      setItemIndex(index + 1);
+      e.target.nextElementSibling.focus();
+      // setItemIndex(index + 1);
     }
   } else if (
     e.key === "ArrowUp" &&

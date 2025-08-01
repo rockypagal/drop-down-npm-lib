@@ -303,7 +303,8 @@
   outline: none;
 }
 .drop-down-menu .drop-down-item:hover {
-  background-color: #dbedff;
+  /* background-color: #dbedff; */
+  background-color: #dbedffcb;
 }
 .drop-down-menu .drop-down-item.selectedDropBox:focus {
   /* ********************* */

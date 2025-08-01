@@ -1,3 +1,4 @@
+
 import React, { memo, useEffect, useRef, useState } from "react";
 import {
   checkIsConvertedValue,
@@ -27,11 +28,8 @@ const DropdownOptionItem = ({
   // const isSelected = dropDownValueTwo === row?.value;
   const { validValue } = checkIsConvertedValue(dropDownValueTwo); //**********/
   const isSelected = validValue === row?.value;
-  const [selectedOption, setSelectedOptions] = useState();
   const optionsRef = useRef(null);
   console.log("optionsRef: ", optionsRef.current);
-  const [itemIndex, setItemIndex] = useState();
-  console.log("itemIndex: ", itemIndex);
   const isSearchActive =
     index === 0 &&
     search?.query &&
@@ -63,27 +61,17 @@ const DropdownOptionItem = ({
   };
 
   useEffect(() => {
-    console.log("hello");
-    if (optionsRef.current) {
-      // optionsRef.current.focus();
-      console.log("optionsRef.current: ", optionsRef.current?.scrollIntoView);
+    if (optionsRef.current && index < 100) {
+      /* *********** */
+      console.log("hello");
+      optionsRef.current.focus();
     }
-  }, [itemIndex]);
+  }, []);
   return (
     <div
       className={className}
       style={style}
-      ref={
-        itemIndex && itemIndex === index
-          ? optionsRef
-          : dropDownValueTwo
-          ? dropDownValueTwo === row.value
-            ? optionsRef
-            : null
-          : index === 0
-          ? optionsRef
-          : null
-      }
+      ref={isSelected ? optionsRef : index === 0 ? optionsRef : null}
       tabIndex={0}
       onClick={() => {
         handleSetValues(
@@ -109,7 +97,6 @@ const DropdownOptionItem = ({
           row,
           index,
           e,
-          setItemIndex,
         })
       }
     >
