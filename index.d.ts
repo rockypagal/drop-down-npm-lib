@@ -11,7 +11,7 @@ declare module "ru-react-dropdown-component" {
     value: Exclude<undefined | null>; // Value cannot be undefined or null
     searchOptions?: string[]; // Array of strings used for search functionality
   }
-  export interface DropDownBoxProps {
+  export interface DropDownBoxPropsTypes {
     /** The title to be displayed for the dropdown */
     title?: string;
 
@@ -177,6 +177,6 @@ declare module "ru-react-dropdown-component" {
 
   export { createOptions };
 
-  const DropDownBox: React.FC<DropDownBoxProps>;
+  const DropDownBox: React.FC<DropDownBoxPropsTypes>;
   export default DropDownBox;
 }

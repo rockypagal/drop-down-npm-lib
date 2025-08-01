@@ -29,7 +29,6 @@ const DropdownOptionItem = ({
   const { validValue } = checkIsConvertedValue(dropDownValueTwo); //**********/
   const isSelected = validValue === row?.value;
   const optionsRef = useRef(null);
-  console.log("optionsRef: ", optionsRef.current);
   const isSearchActive =
     index === 0 &&
     search?.query &&
@@ -63,7 +62,6 @@ const DropdownOptionItem = ({
   useEffect(() => {
     if (optionsRef.current && index < 100) {
       /* *********** */
-      console.log("hello");
       optionsRef.current.focus();
     }
   }, []);
