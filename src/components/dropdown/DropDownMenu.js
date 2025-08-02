@@ -41,6 +41,8 @@ export const DropDownMenu = memo(
     dynamicPositioning,
     animateTitle,
     contextCollectionRef,
+    multiSelectLimit,
+    multiSelect,
   }) => {
     const [search, setSearch] = useState({
       query: "",
@@ -193,7 +195,9 @@ export const DropDownMenu = memo(
               />
             ) : null}
             {resetButton &&
-            dropDownValueTwo &&
+            (Array.isArray(dropDownValueTwo)
+              ? dropDownValueTwo?.length
+              : dropDownValueTwo) &&
             !loading &&
             !search?.query &&
             menuPosition?.top ? (
@@ -240,6 +244,8 @@ export const DropDownMenu = memo(
                     searchBar={searchBar}
                     resetButton={resetButton}
                     handleLastLabel={handleLastLabel}
+                    multiSelectLimit={multiSelectLimit}
+                    multiSelect={multiSelect}
                   />
                 </FocusElement>
               ))

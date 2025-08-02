@@ -321,6 +321,17 @@
   outline: 1px solid dodgerblue;
 }
 
+.drop-down-menu .selectedMultiDropBox {
+  background-color: #dbedff;
+  border-top: 1px solid dodgerblue;
+  border-bottom: 1px solid dodgerblue;
+}
+
+/* If the next sibling is also selectedDropBox, remove bottom border */
+.drop-down-menu .selectedMultiDropBox:has(+ .selectedMultiDropBox) {
+  border-bottom: none;
+}
+
 .drop-down-menu .drop-down-search-bar {
   /* display: flex;
   justify-content: center;
@@ -419,6 +430,10 @@
     background-color: grey;
     transform: scale(1);
   }
+}
+
+.direct .remove:hover {
+  fill: red;
 }
 
 /* --- drop down box css end --- */

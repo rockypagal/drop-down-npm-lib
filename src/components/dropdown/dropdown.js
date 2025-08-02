@@ -9,13 +9,16 @@ import {
   dropdownMainCSS,
   dropdownSelector,
   dropdownTitleCSS,
+  errors,
   keys,
   onOpenInitialValue,
 } from "../../constant/constant";
 import {
   checkIsValidValue,
   checkType,
+  filterLabelAndValues,
   focusTheMain,
+  handleLog,
   handleSetValidValue,
   isValidCSSUnit,
   resetOptionsList,
@@ -25,6 +28,7 @@ import { useChangeObserverHandler } from "../../hooks/DropdownSelector/changeObs
 import { useDropdownSelectionEffect } from "../../hooks/DropdownSelector/dropdownValueSelectHook";
 import "./dropdown-style.css";
 import { DropDownMenu } from "./DropDownMenu";
+import { MultiSelect } from "../multiselect/multiSelect";
 const DropDownBox = ({
   title,
   animateTitle,
@@ -43,12 +47,15 @@ const DropDownBox = ({
   styles = {},
   hideScrollbar = false,
   loading = false,
-  multiSelect = false,
   noDataMessage = "No Data Found",
   onOpen,
   onClose,
   scrollListenerTarget,
   dynamicPositioning,
+  multiSelect = false,
+  showMultiCloseBtn,
+  multiSelectLimit,
+  closeOnSelect = true,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
 
@@ -103,6 +110,7 @@ const DropDownBox = ({
 
   function handleSetValues(row = {}, index = null, optionsLength, isSearched) {
     const { label, value, key } = row;
+    console.log("key: ", key);
 
     if (row?.key) delete row?.key;
 
@@ -111,6 +119,7 @@ const DropDownBox = ({
       return;
     }
     const { isValid, validValue } = checkIsValidValue(value, key);
+
     let beforeSelectCheck;
     let detailsObj = {
       oldValue: handleSetValidValue(dropDownValueTwo),
@@ -128,8 +137,69 @@ const DropDownBox = ({
       beforeSelectCheck = beforeSelect(value, detailsObj);
     }
     if (beforeSelectCheck !== false && (label || value)) {
-      setDropDownValue(label);
-      setDropDownValueTwo(validValue);
+      // setDropDownValue(label);
+      // setDropDownValueTwo(validValue);
+
+      setDropDownValue((oldValue) => {
+        let newValue;
+
+        if (multiSelect) {
+          if (Array.isArray(oldValue) && oldValue.includes(label)) {
+            newValue = filterLabelAndValues(oldValue, index, label);
+          } else if (
+            Array.isArray(oldValue) &&
+            Number(multiSelectLimit) === oldValue?.length &&
+            key !== keys?.resetKey
+          ) {
+            // handleLog?.({
+            //   logType: "error",
+            //   message: errors?.multiSelectLimit,
+            // });
+            newValue = oldValue;
+          } else {
+            newValue =
+              key === keys?.resetKey
+                ? []
+                : Array.isArray(oldValue)
+                ? [...oldValue, label]
+                : [label];
+          }
+        } else {
+          newValue = label;
+        }
+        return newValue;
+      });
+
+      setDropDownValueTwo((oldValue) => {
+        let newValue;
+
+        if (multiSelect) {
+          if (Array.isArray(oldValue) && oldValue.includes(value)) {
+            newValue = filterLabelAndValues(oldValue, index, value);
+          } else if (
+            Array.isArray(oldValue) &&
+            Number(multiSelectLimit) === oldValue?.length &&
+            key !== keys?.resetKey
+          ) {
+            handleLog?.({
+              logType: "error",
+              message: errors?.multiSelectLimit,
+            });
+
+            newValue = oldValue;
+          } else {
+            newValue =
+              key === keys?.resetKey
+                ? []
+                : Array.isArray(oldValue)
+                ? [...oldValue, value]
+                : [value];
+          }
+        } else {
+          newValue = validValue;
+        }
+        return newValue;
+      });
     }
 
     contextCollectionRef.current = {
@@ -154,9 +224,11 @@ const DropDownBox = ({
         keys?.changeObserverKey,
         keys?.globalResetKey,
         keys?.incomingValueKey,
-      ].includes(key)
-    )
+      ].includes(key) &&
+      closeOnSelect
+    ) {
       handleClick();
+    }
   }
 
   useEffect(() => {
@@ -226,7 +298,7 @@ const DropDownBox = ({
 
   useEffect(() => {
     const shouldApplyIncomingValue =
-      incomingValue !== undefined && //**********/
+      incomingValue !== undefined &&
       incomingValue !== historyIncomingValue &&
       !dropDownValueTwo;
 
@@ -239,7 +311,7 @@ const DropDownBox = ({
       setHistoryIncomingValue(result.value);
       handleSetValues({ ...result, key: keys?.incomingValueKey }, index);
     }
-  }, [incomingValue, memoizedOptions]); 
+  }, [incomingValue, memoizedOptions]);
 
   useEffect(() => {
     const id = setTimeout(() => {
@@ -436,9 +508,29 @@ const DropDownBox = ({
                 styles?.placeholder),
             }}
           >
-            {dropDownValue === handleResetBtnText() && dropDownValueTwo === ""
+            {/* {dropDownValue === handleResetBtnText() && dropDownValueTwo === ""
               ? "\u00A0"
-              : dropDownValue || "\u00A0"}
+              : dropDownValue || "\u00A0"} */}
+
+            {dropDownValue === handleResetBtnText() &&
+            dropDownValueTwo === "" ? (
+              "\u00A0"
+            ) : multiSelect ? (
+              Array.isArray(dropDownValue) ? (
+                <MultiSelect
+                  dropDownValue={dropDownValue}
+                  dropDownValueTwo={dropDownValueTwo}
+                  setDropDownValue={setDropDownValue}
+                  setDropDownValueTwo={setDropDownValueTwo}
+                  showMultiCloseBtn={showMultiCloseBtn}
+                  multiSelectLimit={multiSelectLimit}
+                />
+              ) : (
+                "\u00A0"
+              )
+            ) : (
+              dropDownValue || "\u00A0"
+            )}
           </div>
           {loading ? (
             <div className="dropdown-direct-loading">
@@ -542,6 +634,8 @@ const DropDownBox = ({
               scrollListenerTarget={scrollListenerTarget}
               dynamicPositioning={dynamicPositioning}
               contextCollectionRef={contextCollectionRef}
+              multiSelectLimit={multiSelectLimit}
+              multiSelect={multiSelect}
               scrollbarClass={
                 disabled
                   ? ""

@@ -1,4 +1,3 @@
-
 import React, { memo, useEffect, useRef, useState } from "react";
 import {
   checkIsConvertedValue,
@@ -24,10 +23,15 @@ const DropdownOptionItem = ({
   searchBar,
   resetButton,
   handleLastLabel,
+  multiSelectLimit,
+  multiSelect,
 }) => {
   // const isSelected = dropDownValueTwo === row?.value;
   const { validValue } = checkIsConvertedValue(dropDownValueTwo); //**********/
-  const isSelected = validValue === row?.value;
+  const isSelected = multiSelect
+    ? validValue?.includes(row.value)
+    : validValue === row?.value;
+
   const optionsRef = useRef(null);
   const isSearchActive =
     index === 0 &&
@@ -41,11 +45,21 @@ const DropdownOptionItem = ({
        ifTrue: optionItemStyle,
        ifFalse: "",
      })} 
+  
+  
+     ${
+       isSelected
+         ? multiSelect
+           ? "selectedMultiDropBox"
+           : "selectedDropBox"
+         : ""
+     }
+
      ${
        isSelected
          ? checkType(selectedOptionItemStyle, "string", {
              ifTrue: selectedOptionItemStyle,
-             ifFalse: "selectedDropBox",
+             ifFalse: "",
            })
          : ""
      }
@@ -60,7 +74,7 @@ const DropdownOptionItem = ({
   };
 
   useEffect(() => {
-    if (optionsRef.current && index < 100) {
+    if (optionsRef.current && index < 100 && !multiSelect) {
       /* *********** */
       optionsRef.current.focus();
     }
@@ -104,8 +118,27 @@ const DropdownOptionItem = ({
             ? handleLastLabel(index, menuOptions?.length)
             : null
         }
+        style={{
+          ...(multiSelect &&
+            isSelected && {
+              display: "flex",
+              width: "100%",
+              justifyContent: "space-between",
+            }),
+        }}
       >
-        {row?.label}
+        {row?.label}{" "}
+        {multiSelect && isSelected && (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="gray"
+          >
+            <path d="M400-304 240-464l56-56 104 104 264-264 56 56-320 320Z" />
+          </svg>
+        )}
       </span>
     </div>
   );

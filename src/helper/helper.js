@@ -150,3 +150,7 @@ export const checkIsConvertedValue = (value) => {
 
   return { isConverted: false, validValue: value };
 };
+
+export const filterLabelAndValues = (arr = [], index, item) => {
+  return arr?.filter((label, i) => i !== index && label !== item);
+};

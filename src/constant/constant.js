@@ -55,6 +55,7 @@ export const dropArrowCSS = {
   transition: "all 0.15s",
   color: "black",
   pointerEvents: "none",
+  flexShrink: 0,
 };
 export const dropdownTitleCSS = {
   padding: "0.5rem 0",
@@ -66,6 +67,8 @@ export const errors = {
     "Dropdown component requires a callback function to handle value changes. Please provide a valid 'onSelect','beforeSelect' or 'afterSelect' prop.",
   provideValidValues:
     "Please provide valid dropdown values. This dropdown does not accept undefined and null.",
+  multiSelectLimit:
+    "Multi-select limit reached. Remove some options to select new ones.",
 };
 
 export const falsyValuesObj = {
@@ -93,3 +96,25 @@ export const onOpenInitialValue = {
     value: null,
   },
 };
+
+//  setDropDownValue((oldValue) => {
+//     let newValue;
+
+//     if (multiSelect) {
+//       newValue = Array.isArray(oldValue) ? [...oldValue, label] : [label];
+//     } else {
+//       newValue = label;
+//     }
+//     return newValue;
+//   });
+
+//   setDropDownValueTwo((oldValue) => {
+//     let newValue;
+
+//     if (multiSelect) {
+//       newValue = Array.isArray(oldValue) ? [...oldValue, value] : [value];
+//     } else {
+//       newValue = validValue;
+//     }
+//     return newValue;
+//   });
