@@ -141,8 +141,6 @@ export function createOptions(arr, keyPaths) {
     .filter((item) => item?.label !== undefined && item?.value !== undefined);
 }
 
-//**  */
-
 export const checkIsConvertedValue = (value) => {
   if (["null", "false", "undefined", " ", "0", "NaN"].includes(value)) {
     return { isConverted: true, validValue: handleSetValidValue(value) };
@@ -151,6 +149,36 @@ export const checkIsConvertedValue = (value) => {
   return { isConverted: false, validValue: value };
 };
 
+//* this is to remove the selected values from multi select
 export const filterLabelAndValues = (arr = [], index, item) => {
-  return arr?.filter((label, i) => i !== index && label !== item);
+  return arr?.filter((label, i) => label !== item);
+};
+
+// * function to set the values on multi select
+
+export const multiSelectSetter = ({
+  memoizedIncomingMultiVal,
+  multiSelectLimit,
+  options,
+}) => {
+  const result = memoizedIncomingMultiVal
+    .map((filterItem) =>
+      options.find((findItem) => findItem.value === filterItem)
+    )
+    .reduce(
+      (acc, item, index) => {
+        if (item && index < multiSelectLimit) {
+          const { label, value } = item;
+          acc.labels.push(label);
+          acc.values.push(value);
+          acc.row.push(item);
+          return acc;
+        } else {
+          return acc;
+        }
+      },
+      { labels: [], values: [], row: [] }
+    );
+
+  return result;
 };

@@ -5,6 +5,8 @@ export const keys = {
   globalResetKey: "GlobalReset",
   incomingValueKey: "incomingValue",
   changeObserverKey: "changeObserver",
+  incomingValueMultiSelect: "multiSelectIncomingValues",
+  changeObserverMultiSelect: "multiSelectChangeObserver",
   changeObserverRefKey: "mpnxmaxQGA-DropDownBox-Ref-gNcFybupRk",
 };
 export const cssSizeUnits = [

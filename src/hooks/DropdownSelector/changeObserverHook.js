@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
-import { checkType } from "../../helper/helper"; // Adjust the path as needed
 import { keys } from "../../constant/constant"; // Adjust path
+import { checkType, multiSelectSetter } from "../../helper/helper"; // Adjust the path as needed
 
 export const useChangeObserverHandler = ({
   changeObserver,
@@ -10,6 +10,10 @@ export const useChangeObserverHandler = ({
   handleResetBtnText,
   options,
   handleSetValues,
+  multiSelect,
+  multiSelectLimit,
+  setDropDownValue,
+  setDropDownValueTwo,
 }) => {
   const oldTargetedValue = useRef("");
 
@@ -44,6 +48,32 @@ export const useChangeObserverHandler = ({
           key: keys?.globalResetKey,
         });
         return;
+      }
+
+      if (multiSelect && Array.isArray(value)) {
+        const { labels, values, row } = multiSelectSetter({
+          memoizedIncomingMultiVal: value,
+          multiSelectLimit,
+          options,
+        });
+
+        // setDropDownValue(labels);
+        // setDropDownValueTwo(values);
+
+        handleSetValues(
+          {
+            label: labels,
+            value: values,
+            key: keys?.changeObserverMultiSelect,
+          },
+          null
+        );
+
+        return {
+          success: !!values?.length,
+          row,
+          index: null,
+        };
       }
 
       let index = -1;

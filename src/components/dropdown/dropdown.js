@@ -21,6 +21,7 @@ import {
   handleLog,
   handleSetValidValue,
   isValidCSSUnit,
+  multiSelectSetter,
   resetOptionsList,
   trim,
 } from "../../helper/helper";
@@ -38,6 +39,7 @@ const DropDownBox = ({
   showSearch,
   disabled = false,
   incomingValue,
+  incomingMultiSelectValues,
   resetButton,
   onSelect,
   beforeSelect,
@@ -110,7 +112,6 @@ const DropDownBox = ({
 
   function handleSetValues(row = {}, index = null, optionsLength, isSearched) {
     const { label, value, key } = row;
-    console.log("key: ", key);
 
     if (row?.key) delete row?.key;
 
@@ -142,7 +143,13 @@ const DropDownBox = ({
 
       setDropDownValue((oldValue) => {
         let newValue;
-
+        if (
+          multiSelect &&
+          (key === keys.changeObserverMultiSelect ||
+            key === keys.incomingValueMultiSelect)
+        ) {
+          return label;
+        }
         if (multiSelect) {
           if (Array.isArray(oldValue) && oldValue.includes(label)) {
             newValue = filterLabelAndValues(oldValue, index, label);
@@ -151,10 +158,6 @@ const DropDownBox = ({
             Number(multiSelectLimit) === oldValue?.length &&
             key !== keys?.resetKey
           ) {
-            // handleLog?.({
-            //   logType: "error",
-            //   message: errors?.multiSelectLimit,
-            // });
             newValue = oldValue;
           } else {
             newValue =
@@ -172,7 +175,13 @@ const DropDownBox = ({
 
       setDropDownValueTwo((oldValue) => {
         let newValue;
-
+        if (
+          multiSelect &&
+          (key === keys.changeObserverMultiSelect ||
+            key === keys.incomingValueMultiSelect)
+        ) {
+          return value;
+        }
         if (multiSelect) {
           if (Array.isArray(oldValue) && oldValue.includes(value)) {
             newValue = filterLabelAndValues(oldValue, index, value);
@@ -224,6 +233,7 @@ const DropDownBox = ({
         keys?.changeObserverKey,
         keys?.globalResetKey,
         keys?.incomingValueKey,
+        keys?.changeObserverMultiSelect,
       ].includes(key) &&
       closeOnSelect
     ) {
@@ -325,16 +335,6 @@ const DropDownBox = ({
 
   //Custom Hook for ChangeObserver
 
-  useChangeObserverHandler({
-    changeObserver,
-    dropDownValue,
-    dropDownValueTwo,
-    placeholder,
-    handleResetBtnText,
-    options,
-    handleSetValues,
-  });
-
   useEffect(() => {
     if (
       onClose &&
@@ -348,6 +348,47 @@ const DropDownBox = ({
       });
     }
   }, [showMenu]);
+
+  const memoizedIncomingMultiVal = useMemo(
+    () => incomingMultiSelectValues,
+    [incomingMultiSelectValues]
+  );
+
+  useEffect(() => {
+    if (
+      Array.isArray(memoizedIncomingMultiVal) &&
+      memoizedIncomingMultiVal.length &&
+      !dropDownValueTwo?.length
+    ) {
+      const { labels, values } = multiSelectSetter({
+        memoizedIncomingMultiVal,
+        multiSelectLimit,
+        options,
+      });
+
+      handleSetValues(
+        {
+          label: labels,
+          value: values,
+          key: keys?.incomingValueMultiSelect,
+        },
+        null
+      );
+    }
+  }, [memoizedIncomingMultiVal]);
+  useChangeObserverHandler({
+    changeObserver,
+    dropDownValue,
+    dropDownValueTwo,
+    placeholder,
+    handleResetBtnText,
+    options,
+    handleSetValues,
+    multiSelect,
+    multiSelectLimit,
+    setDropDownValue,
+    setDropDownValueTwo,
+  });
 
   return (
     <div

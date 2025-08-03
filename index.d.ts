@@ -30,6 +30,15 @@ declare module "ru-react-dropdown-component" {
     /** To enable multi select */
     multiSelect?: boolean;
 
+    /** To enable remove button on selected value */
+    showMultiCloseBtn?: boolean;
+
+    /** To set limit on dropdown for selective values */
+    multiSelectLimit?: boolean;
+
+    /** to close the menu on select */
+    closeOnSelect?: boolean;
+
     /** Size of the dropdown (e.g., "small", "large", "mini") */
     width?: "small" | "medium" | "mini" | string | number;
 
@@ -68,6 +77,9 @@ declare module "ru-react-dropdown-component" {
 
     /** The incoming value to be set on render */
     incomingValue?: any;
+
+    /** The incoming multi select values to be set on render */
+    incomingMultiSelectValues?: any[];
 
     /** Enables or customizes the reset button */
     resetButton?: boolean | (string & { length: Exclude<number, 0> });
