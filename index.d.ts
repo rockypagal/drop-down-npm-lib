@@ -31,7 +31,7 @@ declare module "ru-react-dropdown-component" {
     multiSelect?: boolean;
 
     /** To enable remove button on selected value */
-    showMultiCloseBtn?: boolean;
+    showMultiRemoveBtn?: boolean;
 
     /** To set limit on dropdown for selective values */
     multiSelectLimit?: boolean;

@@ -151,7 +151,11 @@ export const checkIsConvertedValue = (value) => {
 
 //* this is to remove the selected values from multi select
 export const filterLabelAndValues = (arr = [], index, item) => {
-  return arr?.filter((label, i) => label !== item);
+  if (index !== undefined) {
+    return arr?.filter((label, i) => i !== index && label !== item);
+  } else {
+    return arr?.filter((label, i) => label !== item);
+  }
 };
 
 // * function to set the values on multi select

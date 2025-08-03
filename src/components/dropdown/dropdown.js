@@ -55,7 +55,7 @@ const DropDownBox = ({
   scrollListenerTarget,
   dynamicPositioning,
   multiSelect = false,
-  showMultiCloseBtn,
+  showMultiRemoveBtn,
   multiSelectLimit,
   closeOnSelect = true,
 }) => {
@@ -152,7 +152,7 @@ const DropDownBox = ({
         }
         if (multiSelect) {
           if (Array.isArray(oldValue) && oldValue.includes(label)) {
-            newValue = filterLabelAndValues(oldValue, index, label);
+            newValue = filterLabelAndValues(oldValue, undefined, label);
           } else if (
             Array.isArray(oldValue) &&
             Number(multiSelectLimit) === oldValue?.length &&
@@ -184,7 +184,7 @@ const DropDownBox = ({
         }
         if (multiSelect) {
           if (Array.isArray(oldValue) && oldValue.includes(value)) {
-            newValue = filterLabelAndValues(oldValue, index, value);
+            newValue = filterLabelAndValues(oldValue, undefined, value);
           } else if (
             Array.isArray(oldValue) &&
             Number(multiSelectLimit) === oldValue?.length &&
@@ -563,7 +563,7 @@ const DropDownBox = ({
                   dropDownValueTwo={dropDownValueTwo}
                   setDropDownValue={setDropDownValue}
                   setDropDownValueTwo={setDropDownValueTwo}
-                  showMultiCloseBtn={showMultiCloseBtn}
+                  showMultiRemoveBtn={showMultiRemoveBtn}
                   multiSelectLimit={multiSelectLimit}
                 />
               ) : (

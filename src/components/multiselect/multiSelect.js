@@ -5,7 +5,7 @@ export function MultiSelect({
   dropDownValueTwo,
   setDropDownValue,
   setDropDownValueTwo,
-  showMultiCloseBtn,
+  showMultiRemoveBtn,
   multiSelectLimit,
 }) {
   return (
@@ -33,7 +33,7 @@ export function MultiSelect({
             key={index}
           >
             <span>{item}</span>
-            {showMultiCloseBtn && (
+            {showMultiRemoveBtn && (
               <div
                 onClick={(e) => {
                   e.stopPropagation();
