@@ -389,7 +389,6 @@ const DropDownBox = ({
     setDropDownValue,
     setDropDownValueTwo,
   });
-  console.log("dropDownValue: ", dropDownValue);
   return (
     <div
       className={`drop-down-main ${
