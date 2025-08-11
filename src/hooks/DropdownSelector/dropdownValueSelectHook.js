@@ -16,7 +16,9 @@ export const useDropdownSelectionEffect = ({
   useEffect(() => {
     const resetButtonText = handleResetBtnText();
     const isReset =
-      dropDownValue === resetButtonText && dropDownValueTwo === "";
+      dropDownValue === resetButtonText &&
+      (dropDownValueTwo === "" ||
+        (Array.isArray(dropDownValueTwo) && dropDownValueTwo?.length === 0));
 
     let validSelectedValue;
     if (contextCollectionRef.current) {
@@ -56,4 +58,3 @@ export const useDropdownSelectionEffect = ({
     // }
   }, [dropDownValueTwo]);
 };
-

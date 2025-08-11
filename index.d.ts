@@ -34,7 +34,7 @@ declare module "ru-react-dropdown-component" {
     showMultiRemoveBtn?: boolean;
 
     /** To set limit on dropdown for selective values */
-    multiSelectLimit?: boolean;
+    multiSelectLimit?: number;
 
     /** to close the menu on select */
     closeOnSelect?: boolean;
@@ -111,6 +111,7 @@ declare module "ru-react-dropdown-component" {
         oldValue: any;
         index: number;
         row: { label: string; value: any };
+        triggeredBy: string;
       }
     ) => void;
 
@@ -121,6 +122,7 @@ declare module "ru-react-dropdown-component" {
         oldValue: any;
         index: number;
         row: { label: string; value: any };
+        triggeredBy: string;
       }
     ) => boolean | void;
 
@@ -131,6 +133,7 @@ declare module "ru-react-dropdown-component" {
         oldValue: any;
         index: number;
         row: { label: string; value: any };
+        triggeredBy: string;
       }
     ) => void;
 

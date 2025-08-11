@@ -162,7 +162,7 @@ const DropDownBox = ({
           } else {
             newValue =
               key === keys?.resetKey
-                ? []
+                ? placeholder || ""
                 : Array.isArray(oldValue)
                 ? [...oldValue, label]
                 : [label];
@@ -389,7 +389,7 @@ const DropDownBox = ({
     setDropDownValue,
     setDropDownValueTwo,
   });
-
+  console.log("dropDownValue: ", dropDownValue);
   return (
     <div
       className={`drop-down-main ${
@@ -556,19 +556,18 @@ const DropDownBox = ({
             {dropDownValue === handleResetBtnText() &&
             dropDownValueTwo === "" ? (
               "\u00A0"
-            ) : multiSelect ? (
-              Array.isArray(dropDownValue) ? (
-                <MultiSelect
-                  dropDownValue={dropDownValue}
-                  dropDownValueTwo={dropDownValueTwo}
-                  setDropDownValue={setDropDownValue}
-                  setDropDownValueTwo={setDropDownValueTwo}
-                  showMultiRemoveBtn={showMultiRemoveBtn}
-                  multiSelectLimit={multiSelectLimit}
-                />
-              ) : (
-                "\u00A0"
-              )
+            ) : multiSelect &&
+              Array.isArray(dropDownValue) &&
+              Array.isArray(dropDownValueTwo) ? (
+              <MultiSelect
+                dropDownValue={dropDownValue}
+                dropDownValueTwo={dropDownValueTwo}
+                setDropDownValue={setDropDownValue}
+                setDropDownValueTwo={setDropDownValueTwo}
+                showMultiRemoveBtn={showMultiRemoveBtn}
+                multiSelectLimit={multiSelectLimit}
+                handleResetBtnText={handleResetBtnText}
+              />
             ) : (
               dropDownValue || "\u00A0"
             )}

@@ -1,5 +1,4 @@
-import { useEffect, useLayoutEffect } from "react";
-import { keys } from "../../constant/constant";
+import { useLayoutEffect } from "react";
 
 export const useDynamicPosition = ({
   dynamicPositioning,
@@ -13,18 +12,17 @@ export const useDynamicPosition = ({
   handleSetValues,
 }) => {
   useLayoutEffect(() => {
+    let hasInitialPosition = false;
+    const scrollTargets = [];
+
     const calculatePosition = () => {
-      if (!menuRef.current && !mainRef.current) return;
+      if (!menuRef.current || !mainRef.current) return;
 
       const viewportHeight = window.innerHeight;
       const mainSectionBRC = mainRef.current.getBoundingClientRect();
+
       if (!dynamicPositioning) {
         const menuHeight = menuRef.current?.getBoundingClientRect().height || 0;
-
-        // setMenuPosition(
-        //   viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) <
-        //   menuHeight
-        // );
         const isNotEnoughSpace =
           viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) <
           menuHeight;
@@ -34,24 +32,17 @@ export const useDynamicPosition = ({
           ...(isNotEnoughSpace && {
             bottom: `${animateTitle ? "115%" : "103%"}`,
           }),
+          visibility: "visible",
         });
-
-        return;
-      } else if (dynamicPositioning) {
+      } else {
         const scrollY = window.scrollY;
         const menuElement = menuRef.current;
-
         const menuHeight = menuElement?.getBoundingClientRect().height || 0;
-        //   menuPosition; // temporary
 
         setMenuPosition({
-          // openUp:
-          //   viewportHeight - (mainSectionBRC.height + mainSectionBRC.top) <
-          //   menuHeight,
-
           top: `${
             viewportHeight - (mainSectionBRC?.height + mainSectionBRC?.top) <
-            menuElement?.getBoundingClientRect().height
+            menuHeight
               ? mainSectionBRC?.bottom -
                 menuHeight -
                 mainSectionBRC?.height -
@@ -64,29 +55,18 @@ export const useDynamicPosition = ({
           }px`,
           left: `${mainSectionBRC?.left}px`,
           width: `${mainSectionBRC?.width}px`,
+          visibility: "visible",
         });
       }
+
+      hasInitialPosition = true;
     };
+
+    // Run initial calculation before any paint
     calculatePosition();
 
-    const scrollTargets = [];
-
     if (dynamicPositioning?.scrollableParentTarget) {
-      const {
-        id,
-        className,
-        ref,
-        hideOnScroll = true,
-      } = dynamicPositioning?.scrollableParentTarget;
-
-      // function callCal() {
-      //   if (hideOnScroll) {
-      //     handleSetValues({ key: keys?.globalKey });
-
-      //     return;
-      //   }
-      //   calculatePosition();
-      // }
+      const { id, className, ref } = dynamicPositioning?.scrollableParentTarget;
 
       if (id) {
         const el = document.querySelector(
@@ -94,14 +74,15 @@ export const useDynamicPosition = ({
         );
         el?.addEventListener("scroll", calculatePosition);
         if (el) scrollTargets.push(el);
-      } else if (className) {
+      }
+      if (className) {
         const el = document.querySelector(
           className.trim().startsWith(".") ? className : "." + className
         );
-
         el?.addEventListener("scroll", calculatePosition);
         if (el) scrollTargets.push(el);
-      } else if (ref.current) {
+      }
+      if (ref?.current) {
         ref.current.addEventListener("scroll", calculatePosition);
         scrollTargets.push(ref.current);
       }
@@ -109,8 +90,11 @@ export const useDynamicPosition = ({
     }
 
     window.addEventListener("resize", calculatePosition);
+
     const resizeObserver = new ResizeObserver(calculatePosition);
-    resizeObserver.observe(document.getElementById("drop_$_down_$_menu"));
+    const menuNode = document.getElementById("drop_$_down_$_menu");
+    if (menuNode) resizeObserver.observe(menuNode);
+
     return () => {
       window.removeEventListener("resize", calculatePosition);
       window.removeEventListener("scroll", calculatePosition);

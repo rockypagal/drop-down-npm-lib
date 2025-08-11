@@ -7,6 +7,7 @@ export function MultiSelect({
   setDropDownValueTwo,
   showMultiRemoveBtn,
   multiSelectLimit,
+  handleResetBtnText,
 }) {
   return (
     <div
@@ -47,8 +48,10 @@ export function MultiSelect({
                     index,
                     item
                   );
-                  setDropDownValue(newLabels);
-                  setDropDownValueTwo(newValues);
+                  setDropDownValue(
+                    newLabels?.length ? newLabels : handleResetBtnText()
+                  );
+                  setDropDownValueTwo(newValues?.length ? newValues : "");
                 }}
               >
                 <svg
