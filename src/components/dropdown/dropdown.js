@@ -151,7 +151,12 @@ const DropDownBox = ({
           return label;
         }
         if (multiSelect) {
-          if (Array.isArray(oldValue) && oldValue.includes(label)) {
+          if (
+            Array.isArray(oldValue) &&
+            oldValue.includes(label) &&
+            Array.isArray(dropDownValueTwo) &&
+            dropDownValueTwo.includes(value)
+          ) {
             newValue = filterLabelAndValues(oldValue, undefined, label);
           } else if (
             Array.isArray(oldValue) &&

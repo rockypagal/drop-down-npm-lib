@@ -22,14 +22,14 @@ export const useDebouncedDropdownSearch = ({
     }));
 
     // External search
-    if (typeof searchBar.onSearch === "function") {
-      searchBar.onSearch(search.query, options);
-      return;
-    }
 
     // const delay = typeof searchBar.delay === "number" ? searchBar.delay : 400;
 
     timerRef.current = setTimeout(() => {
+      if (typeof searchBar.onSearch === "function") {
+        searchBar.onSearch(search.query, options);
+        return;
+      }
       const query = search.query.replace(/\s+/g, "").toLowerCase();
 
       if (!query) {

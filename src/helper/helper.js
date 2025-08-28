@@ -84,6 +84,9 @@ export function handleKeyDown({
   row,
   setItemIndex,
 }) {
+  console.log("searchBar: ", searchBar);
+  console.log("index: ", index);
+  console.log("e.key: ", e.key);
   if (["Tab", "Enter", "ArrowDown", "ArrowUp"].includes(e.key)) {
     e.preventDefault();
   }
@@ -106,10 +109,12 @@ export function handleKeyDown({
     }
   } else if (
     e.key === "ArrowUp" &&
-    (index > 0 || (resetButton && dropDownValueTwo && !search.query))
+    (index > 0 || (resetButton && dropDownValueTwo?.length && !search.query))
   ) {
     e.target.previousElementSibling.focus();
+    console.log("helloooo 22");
   } else if (searchBar) {
+    console.log("helloooo");
     // setSearch({ query: e.key, touched: true });
     inputRef?.current?.focus();
   }
@@ -135,8 +140,12 @@ const getValueByPath = (obj, path) =>
 export function createOptions(arr, keyPaths) {
   return arr
     .map((item) => ({
-      label: getValueByPath(item, keyPaths.labelPath),
-      value: getValueByPath(item, keyPaths.valuePath),
+      label: checkType(item, "string")
+        ? item
+        : getValueByPath(item, keyPaths.labelPath),
+      value: checkType(item, "string")
+        ? item
+        : getValueByPath(item, keyPaths.valuePath),
     }))
     .filter((item) => item?.label !== undefined && item?.value !== undefined);
 }
@@ -171,15 +180,13 @@ export const multiSelectSetter = ({
     )
     .reduce(
       (acc, item, index) => {
-        if (item && index < multiSelectLimit) {
+        if (item && (!multiSelectLimit || index < multiSelectLimit)) {
           const { label, value } = item;
           acc.labels.push(label);
           acc.values.push(value);
           acc.row.push(item);
-          return acc;
-        } else {
-          return acc;
         }
+        return acc;
       },
       { labels: [], values: [], row: [] }
     );

@@ -179,7 +179,7 @@ declare module "ru-react-dropdown-component" {
 
   type Option = {
     label: string;
-    value: string;
+    value: any;
   };
 
   const createOptions: (data: any[], paths: KeyPaths) => Option[] = (
